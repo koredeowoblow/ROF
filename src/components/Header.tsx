@@ -11,6 +11,24 @@ export const Header: React.FC = () => {
   const bagOpen = useBagStore((s) => s.isOpen)
   const setBagOpen = useBagStore((s) => s.setIsOpen)
   const totalPieces = useBagStore((s) => s.totalPieces())
+  const [sealedMindset, setSealedMindset] = useState<string | null>(null)
+
+  React.useEffect(() => {
+    const syncMindset = () => {
+      try {
+        setSealedMindset(localStorage.getItem('rof_sealed_mindset'))
+      } catch {
+        // Fallback
+      }
+    }
+    syncMindset()
+    window.addEventListener('storage', syncMindset)
+    const interval = setInterval(syncMindset, 2000)
+    return () => {
+      window.removeEventListener('storage', syncMindset)
+      clearInterval(interval)
+    }
+  }, [])
 
   // Close mobile menu on route change
   const routerState = useRouterState()
@@ -41,11 +59,17 @@ export const Header: React.FC = () => {
         className="fixed top-0 left-0 right-0 z-40 bg-[var(--ink)]/95 backdrop-blur-md border-b border-[rgba(236,230,216,0.18)]"
       >
         <div className="mx-auto flex h-16 md:h-20 max-w-[var(--max-content)] items-center justify-between px-4 md:px-8">
-          {/* Left: Logo */}
-          <div className="flex items-center">
+          {/* Left: Logo & Mindset Retention Badge */}
+          <div className="flex items-center gap-3">
             <Link to="/" aria-label="ROF RAGE Home" className="flex items-center gap-2 group">
               <Logo size="md" className="transition-transform group-hover:scale-[1.02]" />
             </Link>
+            {sealedMindset && (
+              <span className="hidden xl:inline-flex items-center gap-1.5 px-2.5 py-1 border border-[var(--hairline)] bg-[var(--bone)]/5 text-[var(--bone)] text-[10px] font-mono uppercase tracking-widest rounded-xs">
+                <DiamondMark size={5} accent filled />
+                <span>MINDSET: {sealedMindset}</span>
+              </span>
+            )}
           </div>
 
           {/* Desktop Center: Navigation */}
