@@ -5,3 +5,4 @@ Disallow: /checkout
 Disallow: /order/
 
 Sitemap: https://rofrage.com/sitemap.xml
+

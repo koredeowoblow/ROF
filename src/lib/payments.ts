@@ -93,3 +93,4 @@ export const paymentProviders = {
   bank_transfer: new BankTransferPaymentProvider(),
   delivery: new DeliveryPaymentProvider(),
 }
+

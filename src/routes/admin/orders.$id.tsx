@@ -434,6 +434,58 @@ function AdminOrderDetailPage() {
           </div>
         </div>
       )}
+
+      {/* Printable Warehouse Packing Slip (Visible only during print) */}
+      <div className="hidden print:block p-8 bg-white text-black font-sans text-sm">
+        <div className="flex justify-between items-start border-b-2 border-black pb-4 mb-6">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">ROF RAGE</h1>
+            <p className="text-xs uppercase tracking-widest text-neutral-600">Roof of Fame • Packing Slip</p>
+          </div>
+          <div className="text-right">
+            <p className="text-xl font-mono font-bold">{order.id}</p>
+            <p className="text-xs text-neutral-600">{new Date(order.createdAt).toLocaleDateString()}</p>
+          </div>
+        </div>
+
+        <div className="mb-6 p-4 border border-black space-y-1">
+          <p className="font-bold uppercase text-xs text-neutral-600">Ship To:</p>
+          <p className="font-semibold text-base">{order.customer.name}</p>
+          <p>{order.customer.address}</p>
+          <p>{order.customer.city}, {order.customer.state}</p>
+          <p className="text-xs">Tel: {order.customer.phone}</p>
+          {order.notes && <p className="text-xs italic pt-1">Note: {order.notes}</p>}
+        </div>
+
+        <table className="w-full text-left border-collapse border border-black mb-6">
+          <thead>
+            <tr className="bg-neutral-100 border-b border-black text-xs uppercase">
+              <th className="p-2 border-r border-black w-10">Checked</th>
+              <th className="p-2 border-r border-black">Piece</th>
+              <th className="p-2 border-r border-black">Colour</th>
+              <th className="p-2 border-r border-black">Size</th>
+              <th className="p-2 text-right">Qty</th>
+            </tr>
+          </thead>
+          <tbody>
+            {order.items.map((item, idx) => (
+              <tr key={idx} className="border-b border-black">
+                <td className="p-2 border-r border-black text-center">☐</td>
+                <td className="p-2 border-r border-black font-semibold">{item.name}</td>
+                <td className="p-2 border-r border-black">{item.colour}</td>
+                <td className="p-2 border-r border-black font-mono font-bold">{item.size}</td>
+                <td className="p-2 text-right font-mono font-bold">{item.qty}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <div className="flex justify-between text-xs pt-8 border-t border-black text-neutral-600">
+          <p>Packed by: _______________________</p>
+          <p>Inspected by: _______________________</p>
+          <p>Courier: {order.courier || 'Pending Dispatch'}</p>
+        </div>
+      </div>
     </div>
   )
 }
