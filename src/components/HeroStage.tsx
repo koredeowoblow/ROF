@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence, useReducedMotion } from 'motion/react'
-import { ArrowDown, Volume2, VolumeX, Shuffle, Sparkles, Compass } from 'lucide-react'
+import { Volume2, VolumeX, Shuffle, RotateCw, Eye, EyeOff, Sparkles } from 'lucide-react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { DiamondMark } from '@/components/Logo'
 import { Button } from '@/components/Button'
@@ -11,7 +11,7 @@ interface HeroStageProps {
 }
 
 // ---------------------------------------------------------------------------
-// TACTILE WEB AUDIO API SYNTHESIZER (Pure native audio, zero external files)
+// TACTILE WEB AUDIO API SYNTHESIZER (Native low-latency luxury haptics)
 // ---------------------------------------------------------------------------
 let globalAudioCtx: AudioContext | null = null
 
@@ -35,7 +35,7 @@ function getAudioContext(): AudioContext | null {
   }
 }
 
-function playHapticSound(type: 'card' | 'dice' | 'shuffle' | 'click', enabled: boolean) {
+function playHapticSound(type: 'card' | 'flip' | 'dice' | 'shuffle' | 'click', enabled: boolean) {
   if (!enabled) return
   const ctx = getAudioContext()
   if (!ctx) return
@@ -46,33 +46,46 @@ function playHapticSound(type: 'card' | 'dice' | 'shuffle' | 'click', enabled: b
     const gain = ctx.createGain()
 
     if (type === 'card') {
-      // Crisp mechanical card flick (high-end playing card shuffle)
+      // Crisp mechanical card flick
       osc.type = 'triangle'
-      osc.frequency.setValueAtTime(1100, now)
-      osc.frequency.exponentialRampToValueAtTime(220, now + 0.04)
+      osc.frequency.setValueAtTime(1150, now)
+      osc.frequency.exponentialRampToValueAtTime(240, now + 0.04)
 
-      gain.gain.setValueAtTime(0.07, now)
+      gain.gain.setValueAtTime(0.08, now)
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04)
 
       osc.connect(gain)
       gain.connect(ctx.destination)
       osc.start(now)
       osc.stop(now + 0.04)
-    } else if (type === 'dice') {
-      // Heavy resin dice tumble and impact
+    } else if (type === 'flip') {
+      // Tactile card whoosh & snap
       osc.type = 'sine'
-      osc.frequency.setValueAtTime(460, now)
-      osc.frequency.exponentialRampToValueAtTime(90, now + 0.08)
+      osc.frequency.setValueAtTime(480, now)
+      osc.frequency.exponentialRampToValueAtTime(980, now + 0.06)
 
-      gain.gain.setValueAtTime(0.12, now)
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08)
+      gain.gain.setValueAtTime(0.09, now)
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06)
 
       osc.connect(gain)
       gain.connect(ctx.destination)
       osc.start(now)
-      osc.stop(now + 0.08)
+      osc.stop(now + 0.06)
+    } else if (type === 'dice') {
+      // Heavy resin dice tumble and impact
+      osc.type = 'sine'
+      osc.frequency.setValueAtTime(440, now)
+      osc.frequency.exponentialRampToValueAtTime(90, now + 0.09)
+
+      gain.gain.setValueAtTime(0.12, now)
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09)
+
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.start(now)
+      osc.stop(now + 0.09)
     } else if (type === 'shuffle') {
-      // Rapid 4-step deck riffling
+      // Rapid 4-step deck riffle
       for (let i = 0; i < 4; i++) {
         const subOsc = ctx.createOscillator()
         const subGain = ctx.createGain()
@@ -107,83 +120,82 @@ function playHapticSound(type: 'card' | 'dice' | 'shuffle' | 'click', enabled: b
 }
 
 // ---------------------------------------------------------------------------
-// 5 CARDS OF DESTINY DATA (Brand Mythos & Graphic Lore)
+// THE 3 CARDS OF ROF (The Holy Trinity: Ambition, Confidence, Originality)
 // ---------------------------------------------------------------------------
-interface DestinyCard {
+interface RofCard {
   id: number
-  letter: 'R' | 'O' | 'F' | 'R' | 'G'
-  code: string
+  letter: 'R' | 'O' | 'F'
+  number: string
+  label: string
   title: string
-  subtitle: string
+  motto: string
   creed: string
+  serial: string
   rot: number
   xOffset: number
 }
 
-const DESTINY_CARDS: DestinyCard[] = [
+const ROF_CARDS: RofCard[] = [
   {
     id: 1,
     letter: 'R',
-    code: '01 / DEAL',
+    number: '01',
+    label: 'AMBITION',
     title: 'THE RELENTLESS DRIVE',
-    subtitle: 'Ambition Unsettled',
-    creed: 'We do not wait for permission. We build through the noise and pursue what was destined for us.',
-    rot: -14,
-    xOffset: -80,
+    motto: 'No Permission Needed',
+    creed: 'We do not wait for permission. We build through the noise, outwork every doubt, and relentlessly claim what was destined for us.',
+    serial: 'ROF-AMB-8821',
+    rot: -12,
+    xOffset: -120,
   },
   {
     id: 2,
     letter: 'O',
-    code: '02 / DIAMOND',
+    number: '02',
+    label: 'CONFIDENCE',
     title: 'THE DIAMOND MINDSET',
-    subtitle: 'Confidence Under Pressure',
-    creed: 'Pressure does not break us; it refines us into geometric sharpness. Cut sharp, worn with pride.',
-    rot: -7,
-    xOffset: -40,
-  },
-  {
-    id: 3,
-    letter: 'F',
-    code: '03 / ROOF',
-    title: 'THE ROOF OF FAME',
-    subtitle: 'Originality & Craft',
-    creed: 'The apex of ambition. 260 GSM heavyweight intention woven into every fiber for a lasting legacy.',
+    motto: 'Refined Under Pressure',
+    creed: 'Pressure does not break us; it refines us into geometric sharpness. Cut sharp with mathematical precision and worn with unwavering pride.',
+    serial: 'ROF-DIA-9940',
     rot: 0,
     xOffset: 0,
   },
   {
-    id: 4,
-    letter: 'R',
-    code: '04 / ROLL',
-    title: 'THE CALCULATED RISK',
-    subtitle: 'Resilience In Motion',
-    creed: 'Fortune favors those who stake everything on their vision. Roll the dice with unwavering grit.',
-    rot: 7,
-    xOffset: 40,
-  },
-  {
-    id: 5,
-    letter: 'G',
-    code: '05 / HAND',
-    title: 'THE WINNING HAND',
-    subtitle: 'Destined For Riches',
-    creed: 'Destiny is not chance; it is heavyweight execution. The winning hand was already written.',
-    rot: 14,
-    xOffset: 80,
+    id: 3,
+    letter: 'F',
+    number: '03',
+    label: 'ORIGINALITY',
+    title: 'THE ROOF OF FAME',
+    motto: 'Heavyweight Legacy',
+    creed: 'Heavyweight intention woven into every fiber. Built for those creating something authentic that outlives the temporary hype.',
+    serial: 'ROF-FAM-7703',
+    rot: 12,
+    xOffset: 120,
   },
 ]
+
+const DICE_OUTCOMES: Record<number, { title: string; desc: string }> = {
+  1: { title: 'AMBITION IGNITED', desc: 'The relentless drive begins now.' },
+  2: { title: 'PRESSURE ENDURED', desc: 'Resilience solidifies the core.' },
+  3: { title: 'CONFIDENCE REFINED', desc: 'The diamond cuts through doubt.' },
+  4: { title: 'ORIGINALITY WOVEN', desc: 'Standing distinct from the crowd.' },
+  5: { title: 'ROOF OF FAME REACHED', desc: 'Heavyweight mindset recognized.' },
+  6: { title: 'DESTINED FOR RICHES', desc: 'The winning roll. Your destiny is secured.' },
+}
 
 export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   const navigate = useNavigate()
   const prefersReduced = useReducedMotion()
 
-  const [activeCardIndex, setActiveCardIndex] = useState<number>(2) // Center card 'F' default
+  const [activeCardIndex, setActiveCardIndex] = useState<number>(1) // Center 'O' card default
+  const [isFlipped, setIsFlipped] = useState<boolean>(false)
   const [lagosTime, setLagosTime] = useState<string>('12:00:00')
   const [isTouch, setIsTouch] = useState(true)
   const [isShuffling, setIsShuffling] = useState(false)
   const [soundEnabled, setSoundEnabled] = useState(true)
+  const [showHud, setShowHud] = useState(false)
   const [diceRolling, setDiceRolling] = useState(false)
-  const [diceNumber, setDiceNumber] = useState<number>(5) // Signature 5 pips
+  const [diceNumber, setDiceNumber] = useState<number>(5)
 
   const stageRef = useRef<HTMLDivElement>(null)
 
@@ -220,16 +232,17 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   const rawMouseX = useMotionValue(0)
   const rawMouseY = useMotionValue(0)
 
-  const springConfig = { damping: 28, stiffness: 120, mass: 0.6 }
+  const springConfig = { damping: 26, stiffness: 120, mass: 0.6 }
   const smoothMouseX = useSpring(rawMouseX, springConfig)
   const smoothMouseY = useSpring(rawMouseY, springConfig)
 
-  // Card Stage 3D rotations & parallax
-  const stageRotateX = useTransform(smoothMouseY, [-0.5, 0.5], [12, -12])
-  const stageRotateY = useTransform(smoothMouseX, [-0.5, 0.5], [-16, 16])
-  const stageTranslateZ = useTransform(smoothMouseY, [-0.5, 0.5], [-10, 15])
-  const spotlightX = useTransform(smoothMouseX, [-0.5, 0.5], [-80, 80])
-  const spotlightY = useTransform(smoothMouseY, [-0.5, 0.5], [-60, 60])
+  // 3D rotations & parallax transformations
+  const stageRotateX = useTransform(smoothMouseY, [-0.5, 0.5], [14, -14])
+  const stageRotateY = useTransform(smoothMouseX, [-0.5, 0.5], [-18, 18])
+  const stageTranslateZ = useTransform(smoothMouseY, [-0.5, 0.5], [-15, 20])
+  const spotlightX = useTransform(smoothMouseX, [-0.5, 0.5], [-90, 90])
+  const spotlightY = useTransform(smoothMouseY, [-0.5, 0.5], [-70, 70])
+  const holoGleam = useTransform(smoothMouseX, [-0.5, 0.5], [0, 100])
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (isTouch || prefersReduced || !stageRef.current) return
@@ -254,13 +267,19 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
     [soundEnabled]
   )
 
-  // Handle Shuffle
+  // Handle Card Flip
+  const handleToggleFlip = useCallback(() => {
+    setIsFlipped((prev) => !prev)
+    playHapticSound('flip', soundEnabled)
+  }, [soundEnabled])
+
+  // Handle Deck Shuffle
   const handleShuffle = useCallback(() => {
     if (isShuffling) return
     setIsShuffling(true)
     playHapticSound('shuffle', soundEnabled)
     setTimeout(() => {
-      setActiveCardIndex((prev) => (prev + 1) % DESTINY_CARDS.length)
+      setActiveCardIndex((prev) => (prev + 1) % ROF_CARDS.length)
       setIsShuffling(false)
     }, 450)
   }, [isShuffling, soundEnabled])
@@ -271,15 +290,16 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
     setDiceRolling(true)
     playHapticSound('dice', soundEnabled)
     setTimeout(() => {
-      // High-stakes roll lands on 5 or 6 (Destined)
-      const nextRoll = Math.random() > 0.4 ? 6 : 5
+      const outcomes = [3, 4, 5, 6, 6]
+      const nextRoll = outcomes[Math.floor(Math.random() * outcomes.length)]
       setDiceNumber(nextRoll)
       setDiceRolling(false)
       playHapticSound('click', soundEnabled)
-    }, 600)
+    }, 550)
   }, [diceRolling, soundEnabled])
 
-  const currentCard = DESTINY_CARDS[activeCardIndex]
+  const currentCard = ROF_CARDS[activeCardIndex]
+  const currentOutcome = DICE_OUTCOMES[diceNumber]
 
   return (
     <section
@@ -300,30 +320,53 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
           x: isTouch || prefersReduced ? 0 : spotlightX,
           y: isTouch || prefersReduced ? 0 : spotlightY,
         }}
-        className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] sm:w-[1100px] h-[600px] pointer-events-none z-0 opacity-30 transition-opacity duration-700"
+        className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] sm:w-[1200px] h-[650px] pointer-events-none z-0 opacity-35 transition-opacity duration-700"
       >
-        <div className="w-full h-full rounded-full bg-[radial-gradient(ellipse_at_center,rgba(229,55,45,0.25)_0%,rgba(236,230,216,0.06)_45%,transparent_70%)] blur-2xl" />
+        <div className="w-full h-full rounded-full bg-[radial-gradient(ellipse_at_center,rgba(229,55,45,0.28)_0%,rgba(236,230,216,0.06)_45%,transparent_70%)] blur-2xl" />
       </motion.div>
 
-      {/* Massive Ghosted Background Marquee for Brutalist Depth */}
+      {/* Massive Ghosted Background Marquee */}
       <div className="absolute inset-0 flex flex-col justify-center pointer-events-none z-0 overflow-hidden opacity-[0.035] select-none">
-        <div className="text-[14vw] font-display font-bold leading-none tracking-tighter whitespace-nowrap text-[var(--bone)]">
-          ROOF OF FAME ◇ DESTINED FOR RICHES ◇ AMBITION ◇ CONFIDENCE ◇ ORIGINALITY
+        <div className="text-[15vw] font-display font-bold leading-none tracking-tighter whitespace-nowrap text-[var(--bone)]">
+          ROF ◇ ROOF OF FAME ◇ DESTINED FOR RICHES ◇ AMBITION ◇ CONFIDENCE ◇ ORIGINALITY
         </div>
-        <div className="text-[14vw] font-display font-bold leading-none tracking-tighter whitespace-nowrap text-[var(--bone)] translate-x-[-12vw]">
-          260 GSM HEAVYWEIGHT ◇ LAGOS RUNWAY 01 ◇ THE DIAMOND MINDSET ◇ NO PERMISSION
+        <div className="text-[15vw] font-display font-bold leading-none tracking-tighter whitespace-nowrap text-[var(--bone)] -translate-x-[15vw]">
+          R • O • F ◇ 260 GSM HEAVYWEIGHT ◇ LAGOS RUNWAY ARCHIVE ◇ THE DIAMOND MINDSET
         </div>
       </div>
 
-      {/* Crosshair Grid Markers at Corners */}
+      {/* Crosshairs & Technical Corner Watermarks */}
       <div className="absolute top-4 left-4 z-20 pointer-events-none font-mono text-[10px] text-[var(--bone)]/40 flex items-center gap-1.5">
         <span className="text-[var(--acc)]">+</span>
-        <span className="hidden sm:inline">VAULT PROTOCOL 01</span>
+        <span className="hidden sm:inline">ROF RUNWAY SPEC 01</span>
       </div>
       <div className="absolute top-4 right-4 z-20 pointer-events-none font-mono text-[10px] text-[var(--bone)]/40 flex items-center gap-1.5">
         <span className="hidden sm:inline">6.4541° N, 3.4246° E</span>
         <span className="text-[var(--acc)]">+</span>
       </div>
+
+      {/* Floating Diamond Embers */}
+      {!prefersReduced && (
+        <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
+          {[
+            { top: '22%', left: '15%', size: 4, delay: 0 },
+            { top: '38%', left: '82%', size: 6, delay: 1.2 },
+            { top: '65%', left: '25%', size: 5, delay: 0.8 },
+            { top: '75%', left: '78%', size: 4, delay: 1.8 },
+          ].map((pt, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0.2, y: 0 }}
+              animate={{ opacity: [0.2, 0.7, 0.2], y: [-8, 8, -8] }}
+              transition={{ duration: 4 + i, repeat: Infinity, ease: 'easeInOut', delay: pt.delay }}
+              style={{ top: pt.top, left: pt.left }}
+              className="absolute text-[var(--acc)] opacity-40"
+            >
+              <DiamondMark size={pt.size} accent filled />
+            </motion.div>
+          ))}
+        </div>
+      )}
 
       {/* ============================================================ */}
       {/* 2. TOP MASTHEAD TELEMETRY */}
@@ -341,13 +384,13 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             </span>
             <span className="hidden md:inline-block text-[var(--hairline)]">/</span>
             <span className="hidden md:inline-block font-mono text-[11px] text-[var(--muted)]">
-              HEAVYWEIGHT STREETWEAR
+              LAGOS STREETWEAR VAULT
             </span>
           </div>
 
-          {/* Interactive Card/Pillar Quick Selector */}
-          <div className="hidden lg:flex items-center gap-1 bg-[var(--ink)]/90 backdrop-blur-md border border-[var(--hairline)] p-1 rounded-sm shadow-xl">
-            {DESTINY_CARDS.map((card, idx) => {
+          {/* 3 ROF Pillars Quick Selector */}
+          <div className="hidden lg:flex items-center gap-1.5 bg-[var(--ink)]/90 backdrop-blur-md border border-[var(--hairline)] p-1 rounded-sm shadow-xl">
+            {ROF_CARDS.map((card, idx) => {
               const isActive = activeCardIndex === idx
               return (
                 <button
@@ -355,7 +398,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                   type="button"
                   onClick={() => handleSelectCard(idx)}
                   className={cn(
-                    'px-3 py-1 text-[11px] font-mono uppercase tracking-[0.18em] transition-all cursor-pointer rounded-xs flex items-center gap-1.5',
+                    'px-3.5 py-1 text-[11px] font-mono uppercase tracking-[0.18em] transition-all cursor-pointer rounded-xs flex items-center gap-1.5',
                     isActive
                       ? 'bg-[var(--acc)] text-[#fff6ec] font-bold shadow-md'
                       : 'text-[var(--muted)] hover:text-[var(--bone)] hover:bg-[var(--bone)]/5'
@@ -364,14 +407,34 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                   <span className={isActive ? 'text-[#fff6ec]' : 'text-[var(--acc)]'}>
                     [{card.letter}]
                   </span>
-                  <span>{card.code.split('/')[1].trim()}</span>
+                  <span>{card.label}</span>
                 </button>
               )
             })}
           </div>
 
-          {/* Live Lagos Clock & Audio Toggle */}
-          <div className="flex items-center gap-3 font-mono text-xs text-[var(--bone)]">
+          {/* Action Utilities: HUD, Audio, Live Clock */}
+          <div className="flex items-center gap-2.5 sm:gap-3 font-mono text-xs text-[var(--bone)]">
+            {/* Tech HUD Toggle */}
+            <button
+              type="button"
+              onClick={() => {
+                setShowHud(!showHud)
+                playHapticSound('click', soundEnabled)
+              }}
+              title="Toggle Streetwear Technical HUD"
+              className={cn(
+                'flex items-center gap-1 px-2 py-1 border text-[10px] uppercase tracking-wider cursor-pointer transition-colors rounded-xs',
+                showHud
+                  ? 'border-[var(--acc)] bg-[var(--acc)] text-[#fff6ec] font-bold'
+                  : 'border-[var(--hairline)] text-[var(--bone)]/75 hover:text-[var(--bone)] hover:border-[var(--bone)]/60 bg-[var(--ink)]/70'
+              )}
+            >
+              {showHud ? <EyeOff size={11} /> : <Eye size={11} />}
+              <span className="hidden sm:inline">HUD SPECS</span>
+            </button>
+
+            {/* Audio Toggle */}
             <button
               type="button"
               onClick={() => {
@@ -395,6 +458,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               )}
             </button>
 
+            {/* Live Clock */}
             <div className="flex items-center gap-1.5 pl-1 border-l border-[var(--hairline)]">
               <span className="w-1.5 h-1.5 rounded-full bg-[var(--acc)]" />
               <span className="tracking-wider text-[11px] sm:text-xs">LAGOS {lagosTime} WAT</span>
@@ -404,14 +468,14 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
       </div>
 
       {/* ============================================================ */}
-      {/* 3. CENTERPIECE: KINETIC 3D "DECK OF DESTINY" & INTERACTIVE RED DIE */}
+      {/* 3. CENTERPIECE: THE 3 MONUMENTAL CARDS OF ROF (R • O • F) */}
       {/* ============================================================ */}
-      <div className="relative z-10 flex-1 flex flex-col items-center justify-center my-auto py-6 sm:py-10 px-4 md:px-8">
+      <div className="relative z-10 flex-1 flex flex-col items-center justify-center my-auto py-4 sm:py-8 px-4 md:px-8">
         {/* Sub-label banner */}
-        <div className="flex items-center gap-2 mb-3 sm:mb-5">
+        <div className="flex items-center gap-2 mb-2 sm:mb-4">
           <span className="h-[1px] w-6 sm:w-10 bg-[var(--acc)]" />
-          <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.3em] text-[var(--acc)] font-bold">
-            THE 5 PILLARS OF FAME // INTERACTIVE DECK
+          <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.28em] text-[var(--acc)] font-bold">
+            THE ROF TRINITY // R • O • F
           </span>
           <span className="h-[1px] w-6 sm:w-10 bg-[var(--acc)]" />
         </div>
@@ -419,7 +483,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
         {/* 3D Tilted Perspective Canvas */}
         <div
           style={{ perspective: 1200 }}
-          className="relative w-full max-w-[680px] h-[220px] sm:h-[260px] md:h-[290px] flex items-center justify-center mb-4 sm:mb-6"
+          className="relative w-full max-w-[620px] h-[260px] sm:h-[310px] md:h-[350px] flex items-center justify-center mb-3 sm:mb-5"
         >
           <motion.div
             style={{
@@ -430,14 +494,14 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             }}
             className="relative w-full h-full flex items-center justify-center"
           >
-            {/* Soft Ambient Contact Shadow under Card Fan */}
-            <div className="absolute -bottom-6 w-3/4 h-8 bg-black/60 blur-xl rounded-full pointer-events-none" />
+            {/* Deep Contact Shadow */}
+            <div className="absolute -bottom-8 w-4/5 h-10 bg-black/75 blur-2xl rounded-full pointer-events-none" />
 
-            {/* The 5 Tactile Playing Cards */}
-            {DESTINY_CARDS.map((card, idx) => {
+            {/* THE 3 CARDS: R, O, F */}
+            {ROF_CARDS.map((card, idx) => {
               const isSelected = activeCardIndex === idx
               const baseRot = card.rot
-              const baseOffsetX = card.xOffset * (window.innerWidth < 640 ? 0.6 : 1)
+              const baseOffsetX = card.xOffset * (window.innerWidth < 640 ? 0.65 : 1)
 
               return (
                 <motion.div
@@ -452,28 +516,30 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                           x: 0,
                           y: 0,
                           rotateZ: 0,
+                          rotateY: isFlipped ? 180 : 0,
                           scale: 0.95,
                           zIndex: idx,
                         }
                       : {
                           x: baseOffsetX,
-                          y: isSelected ? -24 : 0,
+                          y: isSelected ? -26 : 0,
                           rotateZ: isSelected ? 0 : baseRot,
-                          scale: isSelected ? 1.08 : 0.98,
-                          zIndex: isSelected ? 30 : idx + 5,
+                          rotateY: isFlipped ? 180 : 0,
+                          scale: isSelected ? 1.08 : 0.96,
+                          zIndex: isSelected ? 30 : idx + 10,
                         }
                   }
                   transition={{
                     type: 'spring',
-                    stiffness: 380,
+                    stiffness: 350,
                     damping: 26,
-                    mass: 0.8,
+                    mass: 0.75,
                   }}
                   whileHover={
                     isTouch
                       ? undefined
                       : {
-                          y: -32,
+                          y: -36,
                           scale: 1.12,
                           zIndex: 40,
                           transition: { duration: 0.2 },
@@ -481,83 +547,151 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                   }
                   style={{ transformStyle: 'preserve-3d' }}
                   className={cn(
-                    'absolute cursor-pointer select-none rounded-lg p-2.5 sm:p-3.5 flex flex-col justify-between transition-shadow duration-300',
-                    'w-[105px] h-[160px] sm:w-[135px] sm:h-[200px] md:w-[150px] md:h-[225px]',
-                    // Heavy cardstock styling
-                    'bg-[#f7f3ea] text-[#141312] border border-[#2b2824]',
+                    'absolute cursor-pointer select-none rounded-xl p-3.5 sm:p-5 flex flex-col justify-between transition-shadow duration-300',
+                    'w-[130px] h-[200px] sm:w-[170px] sm:h-[260px] md:w-[195px] md:h-[300px]',
                     isSelected
-                      ? 'ring-2 ring-[var(--acc)] shadow-[0_20px_45px_rgba(229,55,45,0.4)]'
-                      : 'shadow-[0_12px_28px_rgba(0,0,0,0.65)] hover:shadow-[0_16px_36px_rgba(229,55,45,0.25)]'
+                      ? 'ring-2 ring-[var(--acc)] shadow-[0_24px_50px_rgba(229,55,45,0.45)]'
+                      : 'shadow-[0_16px_32px_rgba(0,0,0,0.7)] hover:shadow-[0_20px_40px_rgba(229,55,45,0.3)]'
                   )}
                 >
-                  {/* Card Specular Light Flare Overlay */}
-                  <div className="absolute inset-0 rounded-lg bg-gradient-to-tr from-transparent via-white/10 to-white/40 pointer-events-none" />
+                  {/* FRONT FACE OF CARD (Bone paper cardstock, cracks, typography) */}
+                  <div
+                    style={{ backfaceVisibility: 'hidden' }}
+                    className="absolute inset-0 rounded-xl p-3.5 sm:p-5 flex flex-col justify-between bg-[#f7f3ea] text-[#141312] border border-[#2b2824] overflow-hidden"
+                  >
+                    {/* Top Specular Sheen */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-white/40 pointer-events-none" />
 
-                  {/* Top-Left Card Corner Index */}
-                  <div className="flex flex-col items-center leading-none text-left self-start">
-                    <span
-                      className={cn(
-                        'font-serif text-lg sm:text-2xl font-bold',
-                        idx % 2 === 0 ? 'text-[var(--acc-on-bone)]' : 'text-[#141312]'
-                      )}
-                    >
-                      {card.letter}
-                    </span>
-                    <DiamondMark
-                      size={6}
-                      accent={idx % 2 === 0}
-                      filled
-                      className="mt-0.5 opacity-90"
-                    />
-                  </div>
-
-                  {/* Card Center Graphic */}
-                  <div className="relative flex flex-col items-center justify-center my-auto">
-                    {/* Authentic Vintage Fissure Crack Lines */}
-                    <svg
-                      viewBox="0 0 60 70"
-                      className="w-12 h-14 sm:w-16 sm:h-20 text-[#2b2824]/20 absolute inset-0 m-auto pointer-events-none"
-                    >
-                      <path
-                        d="M 10,12 L 25,28 L 50,22 M 15,55 L 32,45 L 48,60"
-                        stroke="currentColor"
-                        strokeWidth="1.2"
-                        fill="none"
+                    {/* Top-Left Card Corner Index */}
+                    <div className="relative z-10 flex flex-col items-center leading-none text-left self-start">
+                      <span
+                        className={cn(
+                          'font-serif text-2xl sm:text-3xl font-bold',
+                          card.letter === 'O' ? 'text-[var(--acc-on-bone)]' : 'text-[#141312]'
+                        )}
+                      >
+                        {card.letter}
+                      </span>
+                      <DiamondMark
+                        size={7}
+                        accent={card.letter === 'O'}
+                        filled
+                        className="mt-0.5 opacity-90"
                       />
-                    </svg>
+                      <span className="font-mono text-[8px] text-[#575249] font-bold mt-1">
+                        {card.number}
+                      </span>
+                    </div>
 
-                    {/* Central Monumental Serif Letter */}
-                    <span
-                      className={cn(
-                        'relative z-10 font-serif font-bold text-4xl sm:text-5xl md:text-6xl drop-shadow-sm',
-                        idx % 2 === 0 ? 'text-[var(--acc-on-bone)]' : 'text-[#141312]'
+                    {/* Center Monumental Art */}
+                    <div className="relative z-10 flex flex-col items-center justify-center my-auto">
+                      {/* Geometric Concentric Diamond Motif for 'O', Cracks for 'R' & 'F' */}
+                      {card.letter === 'O' ? (
+                        <div className="relative flex items-center justify-center my-1">
+                          <svg
+                            viewBox="0 0 100 100"
+                            className="w-20 h-20 sm:w-24 sm:h-24 text-[var(--acc-on-bone)]"
+                          >
+                            {/* Outer Diamond */}
+                            <polygon
+                              points="50,10 90,50 50,90 10,50"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                              fill="rgba(193,33,26,0.06)"
+                            />
+                            {/* Inner Accent Diamond */}
+                            <polygon
+                              points="50,28 72,50 50,72 28,50"
+                              stroke="currentColor"
+                              strokeWidth="2.5"
+                              fill="rgba(193,33,26,0.12)"
+                            />
+                            {/* Center pip */}
+                            <circle cx="50" cy="50" r="4" fill="currentColor" />
+                          </svg>
+                          <span className="absolute font-serif font-bold text-5xl sm:text-6xl text-[var(--acc-on-bone)] drop-shadow-sm">
+                            O
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="relative flex items-center justify-center my-1">
+                          {/* Fissure vintage lines */}
+                          <svg
+                            viewBox="0 0 80 80"
+                            className="w-16 h-16 sm:w-20 sm:h-20 text-[#2b2824]/25 absolute inset-0 m-auto pointer-events-none"
+                          >
+                            <path
+                              d="M 12,15 L 32,34 L 65,28 M 18,65 L 40,52 L 62,70"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                              fill="none"
+                            />
+                          </svg>
+                          <span className="relative z-10 font-serif font-bold text-6xl sm:text-7xl text-[#141312] drop-shadow-sm">
+                            {card.letter}
+                          </span>
+                        </div>
                       )}
-                    >
-                      {card.letter}
-                    </span>
 
-                    {/* Micro card label */}
-                    <span className="relative z-10 font-mono text-[8px] sm:text-[9px] uppercase tracking-[0.2em] font-bold text-[#4a453e] mt-1">
-                      {card.subtitle.split(' ')[0]}
-                    </span>
+                      {/* Card Pillar Tag */}
+                      <span className="relative z-10 font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.24em] font-bold text-[#4a453e] mt-1">
+                        {card.label}
+                      </span>
+                    </div>
+
+                    {/* Bottom-Right Inverted Corner Index */}
+                    <div className="relative z-10 flex flex-col items-center leading-none text-right self-end rotate-180">
+                      <span
+                        className={cn(
+                          'font-serif text-2xl sm:text-3xl font-bold',
+                          card.letter === 'O' ? 'text-[var(--acc-on-bone)]' : 'text-[#141312]'
+                        )}
+                      >
+                        {card.letter}
+                      </span>
+                      <DiamondMark
+                        size={7}
+                        accent={card.letter === 'O'}
+                        filled
+                        className="mt-0.5 opacity-90"
+                      />
+                    </div>
                   </div>
 
-                  {/* Bottom-Right Inverted Corner Index */}
-                  <div className="flex flex-col items-center leading-none text-right self-end rotate-180">
-                    <span
-                      className={cn(
-                        'font-serif text-lg sm:text-2xl font-bold',
-                        idx % 2 === 0 ? 'text-[var(--acc-on-bone)]' : 'text-[#141312]'
-                      )}
-                    >
-                      {card.letter}
-                    </span>
-                    <DiamondMark
-                      size={6}
-                      accent={idx % 2 === 0}
-                      filled
-                      className="mt-0.5 opacity-90"
-                    />
+                  {/* REVERSE FACE OF CARD (Obsidian Luxury Cardback & Serial Stamp) */}
+                  <div
+                    style={{
+                      backfaceVisibility: 'hidden',
+                      transform: 'rotateY(180deg)',
+                    }}
+                    className="absolute inset-0 rounded-xl p-3.5 sm:p-5 flex flex-col justify-between bg-[#11100f] text-[#ece6d8] border border-[var(--acc)] overflow-hidden shadow-2xl"
+                  >
+                    {/* Metallic Geometric Diamond Pattern Backing */}
+                    <div className="absolute inset-2 border border-[var(--bone)]/20 rounded-lg flex items-center justify-center overflow-hidden">
+                      <div className="absolute inset-0 opacity-15 bg-[radial-gradient(circle_at_center,var(--acc)_0%,transparent_70%)]" />
+
+                      {/* Concentric Guilloche Diamond Core */}
+                      <svg
+                        viewBox="0 0 120 120"
+                        className="w-24 h-24 sm:w-28 sm:h-28 text-[var(--bone)]/30"
+                      >
+                        <polygon points="60,8 112,60 60,112 8,60" stroke="currentColor" strokeWidth="1" fill="none" />
+                        <polygon points="60,20 100,60 60,100 20,60" stroke="currentColor" strokeWidth="1" fill="none" />
+                        <polygon points="60,32 88,60 60,88 32,60" stroke="var(--acc)" strokeWidth="1.5" fill="rgba(229,55,45,0.15)" />
+                        <polygon points="60,44 76,60 60,76 44,60" stroke="var(--acc)" strokeWidth="1" fill="none" />
+                      </svg>
+
+                      {/* Brand Monogram */}
+                      <span className="absolute font-serif text-2xl sm:text-3xl font-bold text-[var(--bone)] tracking-widest">
+                        ROF
+                      </span>
+                    </div>
+
+                    {/* Serial Tag at Bottom */}
+                    <div className="relative z-10 w-full flex items-center justify-between text-[8px] font-mono text-[var(--bone)]/60 pt-1">
+                      <span>CERTIFIED ARCHIVE</span>
+                      <span className="text-[var(--acc)]">{card.serial}</span>
+                    </div>
                   </div>
                 </motion.div>
               )
@@ -565,31 +699,30 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
           </motion.div>
         </div>
 
-        {/* Tactical Controls Strip: Shuffle & Roll The Dice */}
-        <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+        {/* Tactical Interactive Bar: Flip Card, Roll Dice, Shuffle */}
+        <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3.5 mb-3 sm:mb-5">
           {/* Interactive Red Die Button */}
           <motion.button
             type="button"
             onClick={handleRollDice}
-            whileHover={{ scale: 1.06 }}
-            whileTap={{ scale: 0.92 }}
-            className="flex items-center gap-2.5 px-3.5 py-1.5 bg-[#c1211a] hover:bg-[#e5372d] text-[#fff6ec] rounded-sm shadow-lg border border-[#8a140f] cursor-pointer transition-colors"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.94 }}
+            className="flex items-center gap-2 px-3.5 py-1.5 bg-[#c1211a] hover:bg-[#e5372d] text-[#fff6ec] rounded-sm shadow-lg border border-[#8a140f] cursor-pointer transition-colors"
           >
-            {/* 3D Rolling Die Element */}
+            {/* 3D Tumbling Die */}
             <motion.div
               animate={
                 diceRolling
                   ? {
                       rotateX: [0, 360, 720],
                       rotateY: [0, 540, 1080],
-                      scale: [1, 1.3, 1],
+                      scale: [1, 1.35, 1],
                     }
                   : { rotateX: 0, rotateY: 0, scale: 1 }
               }
-              transition={{ duration: 0.6, ease: 'easeInOut' }}
+              transition={{ duration: 0.55, ease: 'easeInOut' }}
               className="w-5 h-5 bg-[#96120c] rounded-xs border border-[#ffe0dc]/40 flex items-center justify-center p-0.5 shadow-inner"
             >
-              {/* 5 or 6 pips render */}
               {diceNumber === 6 ? (
                 <div className="grid grid-cols-2 gap-0.5 w-full h-full p-0.5">
                   <div className="w-1 h-1 bg-white rounded-full" />
@@ -610,11 +743,23 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               )}
             </motion.div>
             <span className="font-mono text-[11px] font-bold uppercase tracking-wider">
-              {diceRolling ? 'ROLLING...' : `ROLL DESTINY [${diceNumber}]`}
+              {diceRolling ? 'ROLLING...' : `ROLL [${diceNumber}]`}
             </span>
           </motion.button>
 
-          {/* Shuffle Hand Button */}
+          {/* Flip Card Button */}
+          <motion.button
+            type="button"
+            onClick={handleToggleFlip}
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.94 }}
+            className="flex items-center gap-1.5 px-3 py-1.5 border border-[var(--hairline)] hover:border-[var(--bone)] text-[11px] font-mono uppercase tracking-wider text-[var(--bone)] bg-[var(--ink)]/80 backdrop-blur-md rounded-sm cursor-pointer transition-colors"
+          >
+            <RotateCw size={13} className={cn('text-[var(--acc)]', isFlipped && 'rotate-180 transition-transform duration-300')} />
+            <span>{isFlipped ? 'SHOW FRONT' : 'FLIP CARDS'}</span>
+          </motion.button>
+
+          {/* Shuffle Deck Button */}
           <motion.button
             type="button"
             onClick={handleShuffle}
@@ -624,14 +769,14 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             className="flex items-center gap-1.5 px-3 py-1.5 border border-[var(--hairline)] hover:border-[var(--bone)] text-[11px] font-mono uppercase tracking-wider text-[var(--bone)] bg-[var(--ink)]/80 backdrop-blur-md rounded-sm cursor-pointer transition-colors"
           >
             <Shuffle size={13} className={cn('text-[var(--acc)]', isShuffling && 'animate-spin')} />
-            <span>SHUFFLE DECK</span>
+            <span>SHUFFLE ROF</span>
           </motion.button>
         </div>
 
         {/* ============================================================ */}
         {/* 4. MONUMENTAL HEADLINE & ACTIVE PILLAR CREED */}
         {/* ============================================================ */}
-        <div className="relative z-20 w-full max-w-3xl text-center flex flex-col items-center gap-3 sm:gap-4">
+        <div className="relative z-20 w-full max-w-3xl text-center flex flex-col items-center gap-2.5 sm:gap-3.5">
           {/* Masked Clip-Reveal Monumental Headline */}
           <div className="overflow-hidden py-1">
             <motion.h1
@@ -651,20 +796,20 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
           </div>
 
           {/* Active Card Creed Box with Live Micro-Fade */}
-          <div className="min-h-[56px] flex flex-col items-center justify-center max-w-xl px-4">
+          <div className="min-h-[52px] flex flex-col items-center justify-center max-w-xl px-4">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentCard.id}
                 initial={{ opacity: 0, y: 8, filter: 'blur(3px)' }}
                 animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                 exit={{ opacity: 0, y: -8, filter: 'blur(3px)' }}
-                transition={{ duration: 0.22 }}
+                transition={{ duration: 0.2 }}
                 className="flex flex-col items-center text-center gap-1"
               >
                 <div className="flex items-center gap-2 text-xs font-mono text-[var(--acc)] uppercase tracking-widest font-bold">
                   <DiamondMark size={6} accent filled />
                   <span>
-                    CARD [{currentCard.letter}] • {currentCard.title}
+                    PILLAR {currentCard.number} • {cardLabelDisplay(currentCard)}
                   </span>
                 </div>
                 <p className="text-xs sm:text-sm text-[var(--bone)]/85 leading-relaxed font-sans font-normal">
@@ -674,8 +819,25 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             </AnimatePresence>
           </div>
 
+          {/* Dice Roll Outcome Flash Message */}
+          <div className="h-6 flex items-center justify-center">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={diceNumber}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="text-[11px] font-mono text-[var(--bone)]/70 uppercase tracking-widest flex items-center gap-2"
+              >
+                <span className="text-[var(--acc)]">ROLL {diceNumber}:</span>
+                <span className="text-[var(--bone)] font-semibold">{currentOutcome.title}</span>
+                <span className="hidden sm:inline text-[var(--muted)]">• {currentOutcome.desc}</span>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
           {/* Action Hub: Enter Capsule & Story */}
-          <div className="flex flex-col sm:flex-row items-center gap-3 pt-2 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row items-center gap-3 pt-1 w-full sm:w-auto">
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.96 }} className="w-full sm:w-auto">
               <Button
                 variant="primary"
@@ -708,7 +870,55 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
       </div>
 
       {/* ============================================================ */}
-      {/* 5. FULL-WIDTH BONE CREDENTIAL BAND (THE 30% BONE GROUND) */}
+      {/* 5. STREETWEAR TECHNICAL HUD OVERLAY (Toggled via HUD SPECS) */}
+      {/* ============================================================ */}
+      <AnimatePresence>
+        {showHud && (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 15 }}
+            transition={{ duration: 0.2 }}
+            className="absolute bottom-16 left-4 right-4 sm:left-8 sm:right-8 z-40 bg-[var(--ink)]/95 backdrop-blur-xl border border-[var(--acc)] p-4 sm:p-5 rounded-md shadow-2xl"
+          >
+            <div className="flex items-center justify-between pb-3 border-b border-[var(--hairline)] text-xs font-mono">
+              <div className="flex items-center gap-2 text-[var(--acc)] font-bold tracking-wider">
+                <Sparkles size={14} />
+                <span>ROF ARCHITECTURAL SPECIFICATIONS // ARCHIVE 01</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowHud(false)}
+                className="text-[var(--muted)] hover:text-[var(--bone)] cursor-pointer"
+              >
+                [CLOSE ×]
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-3 font-mono text-xs">
+              <div>
+                <span className="text-[var(--muted)] text-[10px] uppercase block">GARMENT FABRIC</span>
+                <span className="text-[var(--bone)] font-semibold">260 GSM Heavyweight French Terry</span>
+              </div>
+              <div>
+                <span className="text-[var(--muted)] text-[10px] uppercase block">SILHOUETTE</span>
+                <span className="text-[var(--bone)] font-semibold">Oversized Boxy Drop-Shoulder</span>
+              </div>
+              <div>
+                <span className="text-[var(--muted)] text-[10px] uppercase block">FINISH & DYE</span>
+                <span className="text-[var(--bone)] font-semibold">Silicon Enzyme Preshrunk Wash</span>
+              </div>
+              <div>
+                <span className="text-[var(--muted)] text-[10px] uppercase block">LAGOS STUDIO</span>
+                <span className="text-[var(--acc)] font-semibold">6.4541° N, 3.4246° E</span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ============================================================ */}
+      {/* 6. FULL-WIDTH BONE CREDENTIAL BAND (THE 30% BONE GROUND) */}
       {/* ============================================================ */}
       <div
         data-tone="bone"
@@ -736,4 +946,8 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
       </div>
     </section>
   )
+}
+
+function cardLabelDisplay(card: RofCard): string {
+  return `${card.label} — ${card.title}`
 }
