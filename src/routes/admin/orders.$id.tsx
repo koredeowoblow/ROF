@@ -98,7 +98,7 @@ function AdminOrderDetailPage() {
   const currentStepIdx = STATUS_STEPS.indexOf(order.status)
 
   return (
-    <div className="space-y-8 max-w-6xl mx-auto">
+    <div className="space-y-8 w-full max-w-6xl">
       {/* Toast Alert */}
       {toast && (
         <div className="fixed top-20 right-8 z-50 p-4 bg-[var(--bone)] text-[var(--ink)] border-2 border-[var(--ink)] shadow-2xl text-xs font-sans font-semibold flex items-center gap-2">

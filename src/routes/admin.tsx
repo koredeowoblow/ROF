@@ -137,29 +137,24 @@ function AdminLayout() {
           <DiamondMark size={8} accent filled />
         </div>
 
-        {/* Navigation Links */}
+        {/* Navigation Links - fixed in place, not sliding on hover */}
         <nav className="flex-1 overflow-y-auto px-4 py-6 space-y-1">
           {navItems.map((item) => {
             const Icon = item.icon
             const isActive = currentPath === item.href
             return (
-              <motion.div
+              <Link
                 key={item.href}
-                whileHover={{ x: 3 }}
-                transition={{ duration: 0.12 }}
+                to={item.href}
+                className={`flex items-center gap-3 px-3 py-2.5 text-xs font-sans uppercase tracking-[0.16em] transition-colors ${
+                  isActive
+                    ? 'bg-[var(--bone)] text-[var(--ink)] font-semibold shadow-sm'
+                    : 'text-[var(--bone)]/75 hover:text-[var(--bone)] hover:bg-[var(--surface-tint)]'
+                }`}
               >
-                <Link
-                  to={item.href}
-                  className={`flex items-center gap-3 px-3 py-2.5 text-xs font-sans uppercase tracking-[0.16em] transition-colors ${
-                    isActive
-                      ? 'bg-[var(--bone)] text-[var(--ink)] font-semibold shadow-sm'
-                      : 'text-[var(--bone)]/75 hover:text-[var(--bone)] hover:bg-[var(--surface-tint)]'
-                  }`}
-                >
-                  <Icon className={`h-4 w-4 ${isActive ? 'text-[var(--ink)]' : 'text-[var(--acc)]'}`} />
-                  <span>{item.label}</span>
-                </Link>
-              </motion.div>
+                <Icon className={`h-4 w-4 shrink-0 ${isActive ? 'text-[var(--ink)]' : 'text-[var(--acc)]'}`} />
+                <span>{item.label}</span>
+              </Link>
             )
           })}
         </nav>

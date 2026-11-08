@@ -515,3 +515,4 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
     </section>
   )
 }
+

@@ -14,8 +14,10 @@ interface LogoProps {
  * ROF Angular Wordmark Logo
  * Angular line wordmark "ROF" where the O is drawn as a diamond.
  * Stroke only.
- * Features 1.1s stroke-dash drawing entrance, separate R, O, F letter animation,
- * and ambient levitation for hero stage.
+ * Geometrically exact concentric diamond O:
+ * - Outer Diamond: (140,8) (178,46) (140,84) (102,46) - Center (140, 46), radius 38
+ * - Inner Diamond: (140,26) (160,46) (140,66) (120,46) - Center (140, 46), radius 20
+ * Perfectly parallel 45° edges with uniform 18px vertex spacing and zero skew.
  */
 export const Logo: React.FC<LogoProps> = ({
   className,
@@ -31,7 +33,7 @@ export const Logo: React.FC<LogoProps> = ({
     hero: 'w-full max-w-[840px] h-auto',
   }
 
-  // Hero Background Animated Ghost Mode: R, Diamond O, and F animated with visible stroke drawing & ambient float
+  // Hero Background Animated Ghost Mode
   if (ghost) {
     return (
       <svg
@@ -46,7 +48,7 @@ export const Logo: React.FC<LogoProps> = ({
         )}
         aria-hidden="true"
       >
-        {/* 'R' Path with stroke drawing & gentle floating */}
+        {/* 'R' Path with stroke drawing */}
         <motion.path
           d="M 20,82 L 20,10 L 64,10 L 84,32 L 64,52 L 20,52 M 56,52 L 86,82"
           stroke="currentColor"
@@ -57,16 +59,14 @@ export const Logo: React.FC<LogoProps> = ({
           animate={{
             pathLength: 1,
             opacity: [0, 0.22, 0.16],
-            y: [0, -4, 0],
           }}
           transition={{
             pathLength: { duration: 1.1, ease: [0.16, 1, 0.3, 1] },
             opacity: { duration: 1.2 },
-            y: { duration: 6, repeat: Infinity, ease: 'easeInOut' },
           }}
         />
 
-        {/* 'O' Diamond Outer Contour with stroke drawing */}
+        {/* 'O' Diamond Outer Contour */}
         <motion.polygon
           points="140,8 178,46 140,84 102,46"
           stroke="currentColor"
@@ -76,37 +76,31 @@ export const Logo: React.FC<LogoProps> = ({
           animate={{
             pathLength: 1,
             opacity: [0, 0.24, 0.18],
-            y: [0, -5, 0],
           }}
           transition={{
             pathLength: { duration: 1.1, delay: 0.18, ease: [0.16, 1, 0.3, 1] },
             opacity: { duration: 1.2, delay: 0.18 },
-            y: { duration: 5.2, repeat: Infinity, ease: 'easeInOut', delay: 0.3 },
           }}
         />
 
-        {/* 'O' Inner Accent Diamond with Dynamic Red Pulse */}
+        {/* 'O' Inner Accent Diamond - perfectly concentric, zero skew */}
         <motion.polygon
-          points="140,24 158,46 140,68 122,46"
+          points="140,26 160,46 140,66 120,46"
           stroke="var(--acc)"
-          strokeWidth="3.5"
+          strokeWidth="3"
           strokeLinejoin="miter"
-          initial={{ pathLength: 0, scale: 0.8, opacity: 0 }}
+          initial={{ pathLength: 0, opacity: 0 }}
           animate={{
             pathLength: 1,
-            scale: [1, 1.08, 1],
-            opacity: [0.45, 0.9, 0.45],
-            y: [0, -5, 0],
+            opacity: [0.45, 0.85, 0.45],
           }}
           transition={{
             pathLength: { duration: 0.9, delay: 0.35, ease: [0.16, 1, 0.3, 1] },
-            scale: { duration: 3.5, repeat: Infinity, ease: 'easeInOut' },
             opacity: { duration: 3.5, repeat: Infinity, ease: 'easeInOut' },
-            y: { duration: 5.2, repeat: Infinity, ease: 'easeInOut', delay: 0.3 },
           }}
         />
 
-        {/* 'F' Path with stroke drawing & gentle floating */}
+        {/* 'F' Path with stroke drawing */}
         <motion.path
           d="M 205,82 L 205,10 L 268,10 M 205,46 L 252,46"
           stroke="currentColor"
@@ -117,12 +111,10 @@ export const Logo: React.FC<LogoProps> = ({
           animate={{
             pathLength: 1,
             opacity: [0, 0.22, 0.16],
-            y: [0, -4, 0],
           }}
           transition={{
             pathLength: { duration: 1.1, delay: 0.32, ease: [0.16, 1, 0.3, 1] },
             opacity: { duration: 1.2, delay: 0.32 },
-            y: { duration: 6.4, repeat: Infinity, ease: 'easeInOut', delay: 0.6 },
           }}
         />
       </svg>
@@ -151,7 +143,7 @@ export const Logo: React.FC<LogoProps> = ({
           animate={{ pathLength: 1, opacity: 1 }}
           transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
         />
-        {/* Diamond O */}
+        {/* Diamond O Outer */}
         <motion.polygon
           points="140,8 178,46 140,84 102,46"
           stroke="currentColor"
@@ -161,22 +153,21 @@ export const Logo: React.FC<LogoProps> = ({
           animate={{ pathLength: 1, opacity: 1 }}
           transition={{ duration: 1.1, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
         />
-        {/* Inner subtle diamond accent */}
+        {/* Diamond O Inner Accent - perfectly concentric */}
         <motion.polygon
-          points="140,24 158,46 140,68 122,46"
+          points="140,26 160,46 140,66 120,46"
           stroke="var(--acc)"
           strokeWidth="2.5"
           strokeLinejoin="miter"
           initial={{ pathLength: 0, opacity: 0 }}
           animate={{
             pathLength: 1,
-            opacity: [0.4, 0.9, 0.4],
-            scale: [0.98, 1.02, 0.98],
+            opacity: 1,
           }}
           transition={{
-            pathLength: { duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] },
-            opacity: { duration: 3, repeat: Infinity, ease: 'easeInOut' },
-            scale: { duration: 3, repeat: Infinity, ease: 'easeInOut' },
+            duration: 0.8,
+            delay: 0.4,
+            ease: [0.16, 1, 0.3, 1],
           }}
         />
         {/* F path */}
@@ -194,15 +185,16 @@ export const Logo: React.FC<LogoProps> = ({
     )
   }
 
-  // Static Fallback
+  // Static Fallback & Standard Crisp Logo (Sidebar, Footer, etc.)
   return (
     <svg
       viewBox="0 0 280 90"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn(sizeClasses[size], 'text-[var(--fg)]', className)}
+      className={cn(sizeClasses[size], 'text-[var(--fg)] shrink-0', className)}
       aria-label="ROF logo"
     >
+      {/* R */}
       <path
         d="M 20,82 L 20,10 L 64,10 L 84,32 L 64,52 L 20,52 M 56,52 L 86,82"
         stroke="currentColor"
@@ -210,18 +202,21 @@ export const Logo: React.FC<LogoProps> = ({
         strokeLinecap="square"
         strokeLinejoin="miter"
       />
+      {/* Outer Diamond O */}
       <polygon
         points="140,8 178,46 140,84 102,46"
         stroke="currentColor"
         strokeWidth="6"
         strokeLinejoin="miter"
       />
+      {/* Inner Diamond Accent - exact concentric 45° square, zero skew */}
       <polygon
-        points="140,24 158,46 140,68 122,46"
+        points="140,26 160,46 140,66 120,46"
         stroke="var(--acc)"
         strokeWidth="2.5"
         strokeLinejoin="miter"
       />
+      {/* F */}
       <path
         d="M 205,82 L 205,10 L 268,10 M 205,46 L 252,46"
         stroke="currentColor"
@@ -235,11 +230,6 @@ export const Logo: React.FC<LogoProps> = ({
 
 /**
  * Dedicated Interactive Hero R-O-F Letters Component
- * Prominently presents the letters R, Diamond O, and F with:
- * - 1.1s stroke-dash entrance drawing
- * - Out-of-phase levitation floating for each letter
- * - Interactive hover & tap states with red accent illumination
- * - Replayable kinetic drawing trigger
  */
 interface HeroROFLettersProps {
   className?: string
@@ -270,9 +260,7 @@ export const HeroROFLetters: React.FC<HeroROFLettersProps> = ({
         role="group"
         aria-label="Interactive ROF wordmark"
       >
-        {/* ======================================================== */}
-        {/* LETTER 'R': Ambition / Journey */}
-        {/* ======================================================== */}
+        {/* LETTER 'R' */}
         <motion.g
           tabIndex={0}
           role="button"
@@ -281,21 +269,11 @@ export const HeroROFLetters: React.FC<HeroROFLettersProps> = ({
           onMouseLeave={() => handleHover(null)}
           onFocus={() => handleHover('R')}
           onBlur={() => handleHover(null)}
-          whileHover={{ scale: 1.05, y: -4 }}
+          whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.96 }}
-          animate={{
-            y: [0, -3.5, 0],
-          }}
-          transition={{
-            y: { duration: 5.6, repeat: Infinity, ease: 'easeInOut' },
-            scale: { duration: 0.2 },
-          }}
           className="outline-none"
         >
-          {/* Background interactive hitbox */}
           <rect x="10" y="5" width="85" height="80" fill="transparent" />
-
-          {/* Glowing accent aura on hover */}
           {hoveredLetter === 'R' && (
             <motion.path
               d="M 20,82 L 20,10 L 64,10 L 84,32 L 64,52 L 20,52 M 56,52 L 86,82"
@@ -308,8 +286,6 @@ export const HeroROFLetters: React.FC<HeroROFLettersProps> = ({
               className="filter blur-[4px]"
             />
           )}
-
-          {/* Main 'R' Stroke */}
           <motion.path
             d="M 20,82 L 20,10 L 64,10 L 84,32 L 64,52 L 20,52 M 56,52 L 86,82"
             stroke={hoveredLetter === 'R' ? 'var(--acc)' : 'var(--bone)'}
@@ -322,9 +298,7 @@ export const HeroROFLetters: React.FC<HeroROFLettersProps> = ({
           />
         </motion.g>
 
-        {/* ======================================================== */}
-        {/* LETTER 'O': The Signature Diamond / Mindset */}
-        {/* ======================================================== */}
+        {/* LETTER 'O' - The Diamond */}
         <motion.g
           tabIndex={0}
           role="button"
@@ -333,21 +307,11 @@ export const HeroROFLetters: React.FC<HeroROFLettersProps> = ({
           onMouseLeave={() => handleHover(null)}
           onFocus={() => handleHover('O')}
           onBlur={() => handleHover(null)}
-          whileHover={{ scale: 1.08, y: -5 }}
+          whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          animate={{
-            y: [0, -5, 0],
-          }}
-          transition={{
-            y: { duration: 4.8, repeat: Infinity, ease: 'easeInOut', delay: 0.4 },
-            scale: { duration: 0.2 },
-          }}
           className="outline-none"
         >
-          {/* Hitbox */}
           <rect x="95" y="5" width="90" height="80" fill="transparent" />
-
-          {/* Outer glow on hover */}
           {hoveredLetter === 'O' && (
             <motion.polygon
               points="140,8 178,46 140,84 102,46"
@@ -359,7 +323,6 @@ export const HeroROFLetters: React.FC<HeroROFLettersProps> = ({
               className="filter blur-[4px]"
             />
           )}
-
           {/* Outer Diamond */}
           <motion.polygon
             points="140,8 178,46 140,84 102,46"
@@ -370,30 +333,22 @@ export const HeroROFLetters: React.FC<HeroROFLettersProps> = ({
             animate={{ pathLength: 1 }}
             transition={{ duration: 1.1, delay: 0.16, ease: [0.16, 1, 0.3, 1] }}
           />
-
-          {/* Inner Accent Diamond with Pulse & Breathing */}
+          {/* Inner Accent Diamond - exact concentric (140,26)(160,46)(140,66)(120,46) */}
           <motion.polygon
-            points="140,24 158,46 140,68 122,46"
+            points="140,26 160,46 140,66 120,46"
             stroke="var(--acc)"
-            strokeWidth="3.2"
+            strokeWidth="2.8"
             strokeLinejoin="miter"
-            initial={{ pathLength: 0, scale: 0.8 }}
+            initial={{ pathLength: 0 }}
             animate={{
               pathLength: 1,
-              scale: hoveredLetter === 'O' ? [1.12, 1.2, 1.12] : [1, 1.06, 1],
-              opacity: hoveredLetter === 'O' ? 1 : [0.55, 0.95, 0.55],
+              opacity: hoveredLetter === 'O' ? 1 : 0.75,
             }}
-            transition={{
-              pathLength: { duration: 0.8, delay: 0.35, ease: [0.16, 1, 0.3, 1] },
-              scale: { duration: hoveredLetter === 'O' ? 1.4 : 3.2, repeat: Infinity, ease: 'easeInOut' },
-              opacity: { duration: hoveredLetter === 'O' ? 1.4 : 3.2, repeat: Infinity, ease: 'easeInOut' },
-            }}
+            transition={{ duration: 0.8, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
           />
         </motion.g>
 
-        {/* ======================================================== */}
-        {/* LETTER 'F': Greatness / Legacy */}
-        {/* ======================================================== */}
+        {/* LETTER 'F' */}
         <motion.g
           tabIndex={0}
           role="button"
@@ -402,21 +357,11 @@ export const HeroROFLetters: React.FC<HeroROFLettersProps> = ({
           onMouseLeave={() => handleHover(null)}
           onFocus={() => handleHover('F')}
           onBlur={() => handleHover(null)}
-          whileHover={{ scale: 1.05, y: -4 }}
+          whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.96 }}
-          animate={{
-            y: [0, -3.5, 0],
-          }}
-          transition={{
-            y: { duration: 6.2, repeat: Infinity, ease: 'easeInOut', delay: 0.8 },
-            scale: { duration: 0.2 },
-          }}
           className="outline-none"
         >
-          {/* Hitbox */}
           <rect x="195" y="5" width="85" height="80" fill="transparent" />
-
-          {/* Glow on hover */}
           {hoveredLetter === 'F' && (
             <motion.path
               d="M 205,82 L 205,10 L 268,10 M 205,46 L 252,46"
@@ -429,8 +374,6 @@ export const HeroROFLetters: React.FC<HeroROFLettersProps> = ({
               className="filter blur-[4px]"
             />
           )}
-
-          {/* Main 'F' Stroke */}
           <motion.path
             d="M 205,82 L 205,10 L 268,10 M 205,46 L 252,46"
             stroke={hoveredLetter === 'F' ? 'var(--acc)' : 'var(--bone)'}
@@ -444,16 +387,15 @@ export const HeroROFLetters: React.FC<HeroROFLettersProps> = ({
         </motion.g>
       </svg>
 
-      {/* Dynamic letter meaning indicator below the wordmark */}
       <div className="h-5 mt-2 flex items-center justify-center">
         <AnimatePresence mode="wait">
-          {hoveredLetter ? (
+          {hoveredLetter && (
             <motion.span
               key={hoveredLetter}
-              initial={{ opacity: 0, y: 4 }}
+              initial={{ opacity: 0, y: 3 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.18 }}
+              exit={{ opacity: 0, y: -3 }}
+              transition={{ duration: 0.15 }}
               className="label-caps text-[10px] tracking-[0.28em] text-[var(--acc)]"
             >
               {hoveredLetter === 'R'
@@ -461,16 +403,6 @@ export const HeroROFLetters: React.FC<HeroROFLettersProps> = ({
                 : hoveredLetter === 'O'
                 ? 'O • The Diamond Mindset'
                 : 'F • Greatness and Legacy'}
-            </motion.span>
-          ) : (
-            <motion.span
-              key="default"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.5 }}
-              exit={{ opacity: 0 }}
-              className="label-caps text-[9px] tracking-[0.22em] text-[var(--muted)]"
-            >
-              Hover or tap R • O • F to inspect
             </motion.span>
           )}
         </AnimatePresence>

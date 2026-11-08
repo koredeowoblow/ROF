@@ -106,7 +106,7 @@ function AdminProductsPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-6 w-full max-w-7xl">
       {/* Toast Alert with spring entrance */}
       <AnimatePresence>
         {toast && (
