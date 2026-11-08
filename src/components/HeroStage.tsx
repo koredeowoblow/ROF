@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'motion/react'
+import { motion, useMotionValue, useSpring, useTransform, AnimatePresence, useReducedMotion } from 'motion/react'
 import { ArrowRight, ChevronLeft, ChevronRight, Clock, Sparkles } from 'lucide-react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { initialProducts } from '@/api/products'
@@ -15,6 +15,7 @@ interface HeroStageProps {
 
 export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   const navigate = useNavigate()
+  const prefersReduced = useReducedMotion()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [inspectMode, setInspectMode] = useState<'full' | 'closeup'>('full')
   const [isTouch, setIsTouch] = useState(true)
@@ -23,7 +24,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   const activeProduct = initialProducts[currentIndex]
   const stageRef = useRef<HTMLDivElement>(null)
 
-  // Live Lagos Studio Clock
+  // Live Lagos Studio Clock (1s interval)
   useEffect(() => {
     const updateTime = () => {
       try {
@@ -75,7 +76,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   const shadowScale = useTransform(smoothY, [-0.5, 0.5], [0.92, 1.08])
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (isTouch || !stageRef.current) return
+    if (isTouch || prefersReduced || !stageRef.current) return
     const rect = stageRef.current.getBoundingClientRect()
     const x = (e.clientX - rect.left) / rect.width - 0.5
     const y = (e.clientY - rect.top) / rect.height - 0.5
@@ -126,12 +127,30 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
         {/* ============================================================ */}
         {/* LEFT PANE (BONE ~35% / 5 COLS): EDITORIAL MANIFESTO & IDENTITY */}
         {/* ============================================================ */}
-        <div
+        <motion.div
           data-tone="bone"
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.1,
+                delayChildren: 0.1,
+              },
+            },
+          }}
           className="relative lg:col-span-5 flex flex-col justify-between p-6 sm:p-10 lg:p-14 bg-[var(--bone)] text-[var(--ink)] border-b lg:border-b-0 lg:border-r border-[var(--hairline)] order-2 lg:order-1"
         >
           {/* Top: Live Telemetry & Drop Status */}
-          <div className="flex items-center justify-between border-b border-[var(--hairline)] pb-4 text-xs font-mono">
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: -12 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
+            }}
+            className="flex items-center justify-between border-b border-[var(--hairline)] pb-4 text-xs font-mono"
+          >
             <div className="flex items-center gap-2.5">
               <span className="relative flex h-2.5 w-2.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--acc-on-bone)] opacity-75" />
@@ -143,59 +162,111 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             </div>
 
             <div className="flex items-center gap-2 text-[var(--ink)]/80">
-              <Clock className="w-3.5 h-3.5 text-[var(--acc-on-bone)]" />
+              <Clock className="w-3.5 h-3.5 text-[var(--acc-on-bone)] animate-spin-slow" />
               <span className="tracking-wider">LAGOS {lagosTime}</span>
             </div>
-          </div>
+          </motion.div>
 
           {/* Center Editorial Manifesto & Headline */}
           <div className="my-auto py-8 sm:py-12 flex flex-col gap-6">
-            {/* Colossal Index Numeral */}
-            <div className="flex items-center gap-3">
-              <span className="text-4xl sm:text-5xl font-serif italic text-[var(--acc-on-bone)] font-bold">
-                0{currentIndex + 1}
-              </span>
+            {/* Colossal Index Numeral with spring counter */}
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, x: -16 },
+                visible: { opacity: 1, x: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } },
+              }}
+              className="flex items-center gap-3"
+            >
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={currentIndex}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  transition={{ duration: 0.25 }}
+                  className="text-4xl sm:text-5xl font-serif italic text-[var(--acc-on-bone)] font-bold"
+                >
+                  0{currentIndex + 1}
+                </motion.span>
+              </AnimatePresence>
               <span className="text-[var(--hairline)] text-xl">/</span>
               <span className="text-xs font-mono tracking-widest text-[var(--ink)]/60 uppercase">
                 Silhouette 05
               </span>
-            </div>
+            </motion.div>
 
-            {/* Monumental Headline */}
-            <div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-display text-[var(--ink)] leading-[0.92] tracking-tight">
+            {/* Monumental Headline with overflow clip reveal */}
+            <div className="overflow-hidden">
+              <motion.h1
+                variants={{
+                  hidden: { opacity: 0, y: 30 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
+                }}
+                className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-display text-[var(--ink)] leading-[0.92] tracking-tight"
+              >
                 Destined for{' '}
                 <span className="italic font-serif text-[var(--acc-on-bone)]">
                   riches.
                 </span>
-              </h1>
-              <p className="mt-4 text-sm sm:text-base font-sans text-[var(--ink)]/80 leading-relaxed max-w-md">
+              </motion.h1>
+              <motion.p
+                variants={{
+                  hidden: { opacity: 0, y: 16 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] } },
+                }}
+                className="mt-4 text-sm sm:text-base font-sans text-[var(--ink)]/80 leading-relaxed max-w-md"
+              >
                 ROF is ambition, confidence and originality. Engineered in Lagos with heavy 260 GSM combed cotton, custom boxy drape, and archival prints.
-              </p>
+              </motion.p>
             </div>
 
-            {/* Active Garment Card */}
-            <div className="border-t border-b border-[var(--hairline)] py-4 flex items-center justify-between">
+            {/* Active Garment Card with morph transition */}
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, scale: 0.98 },
+                visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
+              }}
+              className="border-t border-b border-[var(--hairline)] py-4 flex items-center justify-between"
+            >
               <div>
                 <span className="text-[10px] font-mono text-[var(--acc-on-bone)] uppercase tracking-wider block font-bold">
                   ACTIVE RUNWAY PIECE
                 </span>
-                <span className="text-xl sm:text-2xl font-serif font-bold text-[var(--ink)] block">
-                  {activeProduct.name}
-                </span>
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={activeProduct.id}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.2 }}
+                    className="text-xl sm:text-2xl font-serif font-bold text-[var(--ink)] block"
+                  >
+                    {activeProduct.name}
+                  </motion.span>
+                </AnimatePresence>
                 <span className="text-xs font-sans text-[var(--ink)]/70 block mt-0.5">
                   Colourway: {activeProduct.colour}
                 </span>
               </div>
-              <div
+              <motion.div
+                key={activeProduct.swatch}
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.3 }}
                 className="w-8 h-8 rounded-full border border-black/20 shadow-inner shrink-0"
                 style={{ backgroundColor: activeProduct.swatch }}
                 title={activeProduct.colour}
               />
-            </div>
+            </motion.div>
 
-            {/* Point of Attraction CTA */}
-            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            {/* Point of Attraction CTA Buttons with tactile micro-interactions */}
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 14 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
+              }}
+              className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3"
+            >
               <Button
                 variant="primary"
                 size="lg"
@@ -208,7 +279,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                     navigate({ to: '/shop' })
                   }
                 }}
-                className="w-full sm:w-auto uppercase tracking-wider text-xs font-semibold px-6 py-4 cursor-pointer shadow-lg"
+                className="w-full sm:w-auto uppercase tracking-wider text-xs font-semibold px-6 py-4 cursor-pointer shadow-lg hover:shadow-xl transition-shadow"
               >
                 Explore Capsule
               </Button>
@@ -216,11 +287,11 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               <Link
                 to="/product/$id"
                 params={{ id: activeProduct.id }}
-                className="inline-flex items-center justify-center px-4 py-3.5 border border-[var(--hairline)] hover:border-[var(--ink)] text-xs font-mono uppercase tracking-wider text-[var(--ink)] transition-colors"
+                className="inline-flex items-center justify-center px-4 py-3.5 border border-[var(--hairline)] hover:border-[var(--ink)] text-xs font-mono uppercase tracking-wider text-[var(--ink)] transition-all hover:bg-[rgba(12,11,10,0.04)]"
               >
                 View Piece Story
               </Link>
-            </div>
+            </motion.div>
           </div>
 
           {/* Bottom: Technical Guarantee */}
@@ -230,7 +301,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               LAGOS DISPATCH
             </span>
           </div>
-        </div>
+        </motion.div>
 
         {/* ============================================================ */}
         {/* RIGHT PANE (INK ~65% / 7 COLS): THE RUNWAY SPECTACLE STAGE */}
@@ -242,9 +313,13 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
           data-tone="ink"
           className="relative lg:col-span-7 flex flex-col justify-between p-6 sm:p-10 lg:p-12 bg-[#0c0b0a] grain-overlay overflow-hidden min-h-[580px] sm:min-h-[680px] lg:min-h-[880px] order-1 lg:order-2"
         >
-          {/* 1. Dramatic Overhead Spotlight Beam */}
-          <div
-            className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] sm:w-[850px] h-[600px] pointer-events-none z-0 opacity-45 transition-all duration-700"
+          {/* 1. Dramatic Overhead Spotlight Beam (Fades color with garment) */}
+          <motion.div
+            key={activeMeta.colour}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.45 }}
+            transition={{ duration: 0.7 }}
+            className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] sm:w-[850px] h-[600px] pointer-events-none z-0"
             style={{
               background:
                 activeMeta.colour === 'forest-green'
@@ -260,11 +335,11 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             <div className="w-[380px] sm:w-[580px] h-[380px] sm:h-[580px] rounded-full bg-[radial-gradient(circle,rgba(229,55,45,0.09)_0%,transparent_68%)]" />
           </div>
 
-          {/* 2. Monumental Architectural ROF Logo Ghost with Parallax */}
+          {/* 2. Monumental Architectural ROF Logo Ghost with Parallax & Stroke Drawing */}
           <motion.div
             style={{
-              x: isTouch ? 0 : ghostShiftX,
-              y: isTouch ? 0 : ghostShiftY,
+              x: isTouch || prefersReduced ? 0 : ghostShiftX,
+              y: isTouch || prefersReduced ? 0 : ghostShiftY,
             }}
             className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 px-4"
             aria-hidden="true"
@@ -284,7 +359,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                 strokeLinejoin="miter"
                 initial={{ pathLength: 0, opacity: 0 }}
                 animate={{ pathLength: 1, opacity: 0.5 }}
-                transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
               />
 
               {/* 'O' Diamond Outer */}
@@ -295,7 +370,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                 strokeLinejoin="miter"
                 initial={{ pathLength: 0, opacity: 0 }}
                 animate={{ pathLength: 1, opacity: 0.55 }}
-                transition={{ duration: 1.1, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 1.2, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
               />
 
               {/* 'O' Concentric Red Accent Core - Pulsing with Rage Red */}
@@ -307,8 +382,8 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                 initial={{ pathLength: 0, opacity: 0 }}
                 animate={{
                   pathLength: 1,
-                  opacity: [0.6, 1, 0.6],
-                  scale: [1, 1.04, 1],
+                  opacity: prefersReduced ? 0.7 : [0.6, 1, 0.6],
+                  scale: prefersReduced ? 1 : [1, 1.04, 1],
                 }}
                 transition={{
                   pathLength: { duration: 1, delay: 0.3 },
@@ -326,12 +401,12 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                 strokeLinejoin="miter"
                 initial={{ pathLength: 0, opacity: 0 }}
                 animate={{ pathLength: 1, opacity: 0.5 }}
-                transition={{ duration: 1.1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 1.2, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
               />
             </svg>
           </motion.div>
 
-          {/* 3. Top Stage Strip: View Mode Switcher */}
+          {/* 3. Top Stage Strip: View Mode Switcher with spring pill */}
           <div className="relative z-20 flex items-center justify-between border-b border-[var(--hairline)] pb-3">
             <div className="flex items-center gap-2">
               <DiamondMark size={8} accent filled />
@@ -370,38 +445,46 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             </div>
           </div>
 
-          {/* 4. Massive Suspended Heavyweight Garment (Large Scale) */}
+          {/* 4. Massive Suspended Heavyweight Garment with Organic Floating Physics */}
           <div
             style={{ perspective: 1200 }}
             className="relative z-10 flex-1 flex flex-col items-center justify-center my-auto py-6"
           >
             <motion.div
               style={{
-                rotateX: isTouch ? 0 : garmentRotateX,
-                rotateY: isTouch ? 0 : garmentRotateY,
-                x: isTouch ? 0 : garmentTranslateX,
-                y: isTouch ? 0 : garmentTranslateY,
+                rotateX: isTouch || prefersReduced ? 0 : garmentRotateX,
+                rotateY: isTouch || prefersReduced ? 0 : garmentRotateY,
+                x: isTouch || prefersReduced ? 0 : garmentTranslateX,
+                y: isTouch || prefersReduced ? 0 : garmentTranslateY,
                 transformStyle: 'preserve-3d',
               }}
-              animate={{
-                y: [0, -16, 0],
-                rotateZ: [-1, 1, -1],
-              }}
-              transition={{
-                duration: 5.5,
-                repeat: Infinity,
-                ease: 'easeInOut',
-              }}
+              animate={
+                prefersReduced
+                  ? undefined
+                  : {
+                      y: [0, -16, 0],
+                      rotateZ: [-1, 1, -1],
+                    }
+              }
+              transition={
+                prefersReduced
+                  ? undefined
+                  : {
+                      duration: 5.5,
+                      repeat: Infinity,
+                      ease: 'easeInOut',
+                    }
+              }
               className="relative z-10 flex flex-col items-center justify-center w-full"
             >
-              {/* Active Garment Cutout */}
+              {/* Active Garment Cutout with Camera Zoom transition */}
               <AnimatePresence mode="wait">
                 <motion.div
                   key={`${activeProduct.id}-${inspectMode}`}
                   initial={{ opacity: 0, scale: 0.92, y: 22 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.96, y: -18 }}
-                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
                   className="w-full flex justify-center cursor-pointer"
                   onClick={() => setInspectMode((m) => (m === 'full' ? 'closeup' : 'full'))}
                 >
@@ -423,35 +506,51 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               {/* Dynamic Ground Contact Shadow */}
               <motion.div
                 style={{
-                  skewX: isTouch ? 0 : shadowSkewX,
-                  scaleX: isTouch ? 1 : shadowScale,
+                  skewX: isTouch || prefersReduced ? 0 : shadowSkewX,
+                  scaleX: isTouch || prefersReduced ? 1 : shadowScale,
                 }}
-                animate={{
-                  scaleX: [1, 0.92, 1],
-                  opacity: [0.7, 0.45, 0.7],
-                }}
-                transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
+                animate={
+                  prefersReduced
+                    ? undefined
+                    : {
+                        scaleX: [1, 0.92, 1],
+                        opacity: [0.7, 0.45, 0.7],
+                      }
+                }
+                transition={
+                  prefersReduced
+                    ? undefined
+                    : {
+                        duration: 5.5,
+                        repeat: Infinity,
+                        ease: 'easeInOut',
+                      }
+                }
                 className="w-64 sm:w-96 h-5 bg-black/90 rounded-full blur-[14px] -mt-1 pointer-events-none"
               />
             </motion.div>
 
-            {/* Prev/Next Stage Navigators */}
-            <button
+            {/* Prev/Next Stage Navigators with spring hover micro-interactions */}
+            <motion.button
               type="button"
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
               onClick={handlePrev}
               aria-label="Previous piece"
-              className="absolute left-0 top-1/2 -translate-y-1/2 p-3 text-[var(--bone)] border border-[var(--hairline)] hover:border-[var(--bone)] bg-[var(--ink)]/80 backdrop-blur-md transition-all cursor-pointer z-30 shadow-lg"
+              className="absolute left-0 top-1/2 -translate-y-1/2 p-3 text-[var(--bone)] border border-[var(--hairline)] hover:border-[var(--bone)] bg-[var(--ink)]/80 backdrop-blur-md transition-colors cursor-pointer z-30 shadow-lg"
             >
               <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               type="button"
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
               onClick={handleNext}
               aria-label="Next piece"
-              className="absolute right-0 top-1/2 -translate-y-1/2 p-3 text-[var(--bone)] border border-[var(--hairline)] hover:border-[var(--bone)] bg-[var(--ink)]/80 backdrop-blur-md transition-all cursor-pointer z-30 shadow-lg"
+              className="absolute right-0 top-1/2 -translate-y-1/2 p-3 text-[var(--bone)] border border-[var(--hairline)] hover:border-[var(--bone)] bg-[var(--ink)]/80 backdrop-blur-md transition-colors cursor-pointer z-30 shadow-lg"
             >
               <ChevronRight className="w-5 h-5" />
-            </button>
+            </motion.button>
           </div>
 
           {/* 5. Bottom Interactive Runway Switcher Tape */}
@@ -465,9 +564,11 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               {initialProducts.map((p, idx) => {
                 const isCurrent = idx === currentIndex
                 return (
-                  <button
+                  <motion.button
                     key={p.id}
                     type="button"
+                    whileHover={{ y: -2 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={() => {
                       setCurrentIndex(idx)
                       setInspectMode('full')
@@ -489,7 +590,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                     <span className="truncate max-w-[100px] sm:max-w-none text-[11px]">
                       {p.name.replace(' Tee', '')}
                     </span>
-                  </button>
+                  </motion.button>
                 )
               })}
             </div>
