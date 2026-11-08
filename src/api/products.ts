@@ -1,0 +1,128 @@
+import { Product } from './types'
+
+export const initialProducts: Product[] = [
+  {
+    id: 'prod-1',
+    slug: 'destined-cards-tee',
+    name: 'Destined Cards Tee',
+    colour: 'Forest green',
+    colourKey: 'green',
+    swatch: '#1b382b',
+    print: 'Five cracked playing cards spelling ROF RAGE, red dice, Destined for riches print',
+    price: 30000,
+    blurb:
+      'Heavyweight 260 GSM combed cotton. Oversized boxy silhouette featuring five hand-rendered cracked playing cards spelling ROF RAGE, accented with high-gloss red dice and the signature brand conviction.',
+    ground: 'bone', // Green sits on Bone where it reads best
+    zoomOrigin: '50% 45%',
+    images: ['/images/destined-cards-green.webp', '/images/destined-cards-green-detail.webp'],
+    position: 1,
+    published: true,
+    variants: [
+      { size: 'S', stock: 12 },
+      { size: 'M', stock: 18 },
+      { size: 'L', stock: 24 },
+      { size: 'XL', stock: 16 },
+      { size: 'XXL', stock: 8 },
+    ],
+  },
+  {
+    id: 'prod-2',
+    slug: 'rage-wave-tee-white',
+    name: 'Rage Wave Tee',
+    colour: 'White',
+    colourKey: 'white',
+    swatch: '#f4f3ef',
+    print: 'Warped ROF RAGE wordmark in red and mint, lilac tag',
+    price: 25000,
+    blurb:
+      'Crisp heavyweight organic cotton with dropped shoulders and a dense 1.25-inch rib neckband. Features a warped screenprint across the chest in rage red and cool mint with an authentic lilac brand tag.',
+    ground: 'ink', // White sits on Ink where it reads best
+    zoomOrigin: '50% 40%',
+    images: ['/images/rage-wave-white.webp', '/images/rage-wave-white-detail.webp'],
+    pairId: 'prod-3',
+    position: 2,
+    published: true,
+    variants: [
+      { size: 'S', stock: 15 },
+      { size: 'M', stock: 22 },
+      { size: 'L', stock: 30 },
+      { size: 'XL', stock: 18 },
+      { size: 'XXL', stock: 10 },
+    ],
+  },
+  {
+    id: 'prod-3',
+    slug: 'rage-wave-tee-black',
+    name: 'Rage Wave Tee',
+    colour: 'Black',
+    colourKey: 'black',
+    swatch: '#141312',
+    print: 'Warped ROF RAGE wordmark in red and mint, lilac tag',
+    price: 25000,
+    blurb:
+      'Deep jet black heavy cotton construction. Engineered for maximum longevity with reinforced chain-stitched seams and the signature warped ROF RAGE wave graphic in high-contrast inks.',
+    ground: 'bone', // Black sits on Bone where it reads best
+    zoomOrigin: '50% 40%',
+    images: ['/images/rage-wave-black.webp', '/images/rage-wave-black-detail.webp'],
+    pairId: 'prod-2',
+    position: 3,
+    published: true,
+    variants: [
+      { size: 'S', stock: 10 },
+      { size: 'M', stock: 25 },
+      { size: 'L', stock: 28 },
+      { size: 'XL', stock: 14 },
+      { size: 'XXL', stock: 6 },
+    ],
+  },
+  {
+    id: 'prod-4',
+    slug: 'rage-scribble-tee-white',
+    name: 'Rage Scribble Tee',
+    colour: 'White',
+    colourKey: 'white',
+    swatch: '#f4f3ef',
+    print: 'Continuous line drawing in an orange frame, ROF Rage worked into the lines',
+    price: 28000,
+    blurb:
+      'A singular piece of wearable art. Features an intricate continuous line drawing contained within a burnt orange architectural frame, seamlessly weaving the ROF Rage identity into every contour.',
+    ground: 'ink', // White sits on Ink
+    zoomOrigin: '50% 45%',
+    images: ['/images/rage-scribble-white.webp', '/images/rage-scribble-white-detail.webp'],
+    pairId: 'prod-5',
+    position: 4,
+    published: true,
+    variants: [
+      { size: 'S', stock: 8 },
+      { size: 'M', stock: 14 },
+      { size: 'L', stock: 20 },
+      { size: 'XL', stock: 12 },
+      { size: 'XXL', stock: 4 },
+    ],
+  },
+  {
+    id: 'prod-5',
+    slug: 'rage-scribble-tee-black',
+    name: 'Rage Scribble Tee',
+    colour: 'Black',
+    colourKey: 'black',
+    swatch: '#141312',
+    print: 'Continuous line drawing in an orange frame, ROF Rage worked into the lines',
+    price: 28000,
+    blurb:
+      'Jet black boxy silhouette providing a high-impact contrast against the burnt orange continuous line artwork. Screenprinted by hand using water-based discharge inks for a soft, breathable hand feel.',
+    ground: 'bone', // Black sits on Bone
+    zoomOrigin: '50% 45%',
+    images: ['/images/rage-scribble-black.webp', '/images/rage-scribble-black-detail.webp'],
+    pairId: 'prod-4',
+    position: 5,
+    published: true,
+    variants: [
+      { size: 'S', stock: 14 },
+      { size: 'M', stock: 19 },
+      { size: 'L', stock: 26 },
+      { size: 'XL', stock: 15 },
+      { size: 'XXL', stock: 7 },
+    ],
+  },
+]

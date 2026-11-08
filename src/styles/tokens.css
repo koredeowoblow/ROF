@@ -1,0 +1,69 @@
+:root {
+  /* Three colours, one rule */
+  --ink: #0c0b0a;
+  --bone: #ece6d8;
+  --acc-on-ink: #e5372d;
+  --acc-on-bone: #c1211a;
+  --label-on-acc: #fff6ec;
+
+  /* Typography */
+  --font-display: 'Instrument Serif', Georgia, serif;
+  --font-sans: 'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Fluid typography scale */
+  --fs-label: 11px;
+  --fs-small: 13px;
+  --fs-body: 16px;
+  --fs-lead: 20px;
+  --fs-h3: 28px;
+  --fs-h2: clamp(44px, 5.4vw, 88px);
+  --fs-h1: clamp(52px, 8vw, 128px);
+
+  /* Spacing */
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-48: 48px;
+  --space-72: 72px;
+  --space-120: 120px;
+
+  /* Max content width */
+  --max-content: 1360px;
+
+  /* Default tone is ink */
+  --bg: var(--ink);
+  --fg: var(--bone);
+  --acc: var(--acc-on-ink);
+  --muted: rgba(236, 230, 216, 0.64);
+  --faint: rgba(236, 230, 216, 0.40);
+  --hairline: rgba(236, 230, 216, 0.18);
+  --surface-tint: rgba(236, 230, 216, 0.05);
+}
+
+/* Tone bindings: components read ONLY --fg, --bg, --acc, --muted, --hairline */
+[data-tone="ink"] {
+  --bg: var(--ink);
+  --fg: var(--bone);
+  --acc: var(--acc-on-ink);
+  --muted: rgba(236, 230, 216, 0.64);
+  --faint: rgba(236, 230, 216, 0.40);
+  --hairline: rgba(236, 230, 216, 0.18);
+  --surface-tint: rgba(236, 230, 216, 0.05);
+  background-color: var(--bg);
+  color: var(--fg);
+}
+
+[data-tone="bone"] {
+  --bg: var(--bone);
+  --fg: var(--ink);
+  --acc: var(--acc-on-bone);
+  --muted: rgba(12, 11, 10, 0.64);
+  --faint: rgba(12, 11, 10, 0.40);
+  --hairline: rgba(12, 11, 10, 0.18);
+  --surface-tint: rgba(12, 11, 10, 0.05);
+  background-color: var(--bg);
+  color: var(--fg);
+}
