@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { createRootRoute, Outlet, useRouterState, Link, ErrorComponentProps } from '@tanstack/react-router'
+import { motion, AnimatePresence } from 'motion/react'
 import { WifiOff, RefreshCw } from 'lucide-react'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
@@ -83,6 +84,11 @@ function RootComponent() {
   const isAdmin = router.location.pathname.startsWith('/admin')
   const [isOffline, setIsOffline] = useState(false)
 
+  // Scroll to top smoothly on every route transition
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [router.location.pathname])
+
   useEffect(() => {
     const handleOnline = () => setIsOffline(false)
     const handleOffline = () => setIsOffline(true)
@@ -116,7 +122,18 @@ function RootComponent() {
       {!isAdmin && <Header />}
 
       <main id="main-content" className={`flex-1 ${isOffline ? 'pt-8' : ''}`}>
-        <Outlet />
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={router.location.pathname}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            className="w-full h-full"
+          >
+            <Outlet />
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       {!isAdmin && <BagDrawer />}

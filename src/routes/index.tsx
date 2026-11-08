@@ -23,6 +23,7 @@ export const Route = createFileRoute('/')({
 function HomePage() {
   const navigate = useNavigate()
   const addItem = useBagStore((s) => s.addItem)
+  const [addedId, setAddedId] = useState<string | null>(null)
   const [selectedSizes, setSelectedSizes] = useState<Record<string, 'S' | 'M' | 'L' | 'XL' | 'XXL'>>({
     'prod-1': 'L',
     'prod-2': 'M',
@@ -51,6 +52,10 @@ function HomePage() {
       unitPrice: product.price,
       image: product.images[0],
     })
+    setAddedId(product.id)
+    setTimeout(() => {
+      setAddedId((prev) => (prev === product.id ? null : prev))
+    }, 1800)
   }
 
   return (
@@ -186,11 +191,12 @@ function HomePage() {
                 <div className="mt-8 pt-6 border-t border-[var(--hairline)] flex flex-col sm:flex-row items-center gap-4">
                   <Button
                     variant="primary"
-                    withArrow
+                    withArrow={addedId !== product.id}
                     fullWidth
                     onClick={() => handleQuickAdd(product)}
+                    className={addedId === product.id ? 'bg-[#1b382b] text-[#fff6ec]' : ''}
                   >
-                    Add to bag
+                    {addedId === product.id ? 'Piece added to bag ✓' : 'Add to bag'}
                   </Button>
 
                   <Link
