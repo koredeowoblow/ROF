@@ -1,11 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence, useReducedMotion } from 'motion/react'
-import { ArrowRight, ChevronLeft, ChevronRight, Clock, Sparkles } from 'lucide-react'
+import { ArrowRight, Compass, Shield, Flame, Sparkles } from 'lucide-react'
 import { Link, useNavigate } from '@tanstack/react-router'
-import { initialProducts } from '@/api/products'
-import { Product } from '@/api/types'
-import { TeeCutout, TeeDesign, TeeColour } from '@/components/TeeCutout'
-import { DiamondMark } from '@/components/Logo'
+import { TeeCutout } from '@/components/TeeCutout'
+import { DiamondMark, Logo } from '@/components/Logo'
 import { Button } from '@/components/Button'
 import { cn } from '@/lib/utils'
 
@@ -13,18 +11,53 @@ interface HeroStageProps {
   className?: string
 }
 
+type PillarKey = 'ambition' | 'mindset' | 'greatness'
+
+interface PillarInfo {
+  letter: string
+  title: string
+  subtitle: string
+  manifesto: string
+  quote: string
+}
+
+const PILLARS: Record<PillarKey, PillarInfo> = {
+  ambition: {
+    letter: 'R',
+    title: 'Ambition & Drive',
+    subtitle: 'The Journey to Becoming Somebody',
+    manifesto:
+      'We do not wait for permission. We build through the noise, stay relentless in our craft, and relentlessly pursue what was destined for us.',
+    quote: 'Never settle for less than your potential.',
+  },
+  mindset: {
+    letter: 'O',
+    title: 'The Diamond Mindset',
+    subtitle: 'Unbreakable & Original',
+    manifesto:
+      'Pressure does not break us; it refines us. Cut sharp with precision and pride, the diamond is our permanent mark of resilience.',
+    quote: 'Destined for riches.',
+  },
+  greatness: {
+    letter: 'F',
+    title: 'Legacy & Greatness',
+    subtitle: 'Building Something Bigger',
+    manifesto:
+      'Clothing that carries weight, intention, and history. You wear ROF not to blend into the room, but to declare your purpose.',
+    quote: 'Wear it with pride.',
+  },
+}
+
 export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   const navigate = useNavigate()
   const prefersReduced = useReducedMotion()
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [inspectMode, setInspectMode] = useState<'full' | 'closeup'>('full')
+  const [activePillar, setActivePillar] = useState<PillarKey>('mindset')
   const [isTouch, setIsTouch] = useState(true)
   const [lagosTime, setLagosTime] = useState<string>('12:00:00')
 
-  const activeProduct = initialProducts[currentIndex]
   const stageRef = useRef<HTMLDivElement>(null)
 
-  // Live Lagos Studio Clock (1s interval)
+  // Live Lagos Studio Clock
   useEffect(() => {
     const updateTime = () => {
       try {
@@ -61,19 +94,19 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   const smoothX = useSpring(rawMouseX, springConfig)
   const smoothY = useSpring(rawMouseY, springConfig)
 
-  // 3D Perspective Transformations for the suspended garment
-  const garmentRotateX = useTransform(smoothY, [-0.5, 0.5], [10, -10])
+  // 3D Perspective Transformations for the suspended brand artifact
+  const garmentRotateX = useTransform(smoothY, [-0.5, 0.5], [8, -8])
   const garmentRotateY = useTransform(smoothX, [-0.5, 0.5], [-12, 12])
-  const garmentTranslateX = useTransform(smoothX, [-0.5, 0.5], [-16, 16])
-  const garmentTranslateY = useTransform(smoothY, [-0.5, 0.5], [-12, 12])
+  const garmentTranslateX = useTransform(smoothX, [-0.5, 0.5], [-14, 14])
+  const garmentTranslateY = useTransform(smoothY, [-0.5, 0.5], [-10, 10])
 
-  // Parallax for Background Logo Ghost
-  const ghostShiftX = useTransform(smoothX, [-0.5, 0.5], [22, -22])
-  const ghostShiftY = useTransform(smoothY, [-0.5, 0.5], [14, -14])
+  // Parallax for Monumental Background Letters
+  const lettersShiftX = useTransform(smoothX, [-0.5, 0.5], [26, -26])
+  const lettersShiftY = useTransform(smoothY, [-0.5, 0.5], [16, -16])
 
   // Dynamic Contact Shadow
   const shadowSkewX = useTransform(smoothX, [-0.5, 0.5], [-14, 14])
-  const shadowScale = useTransform(smoothY, [-0.5, 0.5], [0.92, 1.08])
+  const shadowScale = useTransform(smoothY, [-0.5, 0.5], [0.94, 1.06])
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (isTouch || prefersReduced || !stageRef.current) return
@@ -89,29 +122,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
     rawMouseY.set(0)
   }
 
-  const handlePrev = () => {
-    setCurrentIndex((prev) => (prev === 0 ? initialProducts.length - 1 : prev - 1))
-  }
-
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev === initialProducts.length - 1 ? 0 : prev + 1))
-  }
-
-  const getTeeMeta = (p: Product): { design: TeeDesign; colour: TeeColour } => {
-    const design: TeeDesign = p.name.includes('Cards')
-      ? 'cards'
-      : p.name.includes('Wave')
-      ? 'wave'
-      : 'scribble'
-    const colour: TeeColour = p.colour.toLowerCase().includes('green')
-      ? 'forest-green'
-      : p.colour.toLowerCase().includes('white')
-      ? 'white'
-      : 'black'
-    return { design, colour }
-  }
-
-  const activeMeta = getTeeMeta(activeProduct)
+  const currentPillar = PILLARS[activePillar]
 
   return (
     <section
@@ -121,11 +132,13 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
       )}
     >
       {/* ============================================================ */}
-      {/* 60-30-10 DUAL PANE ARCHITECTURE: BONE (35%) + INK (65%) */}
+      {/* 60-30-10 DUAL PANE STORYTELLING ARCHITECTURE */}
+      {/* LEFT PANE (BONE ~35% / 5 COLS): THE BRAND MANIFESTO */}
+      {/* RIGHT PANE (INK ~65% / 7 COLS): THE MONUMENTAL SPECTACLE STAGE */}
       {/* ============================================================ */}
       <div className="w-full grid grid-cols-1 lg:grid-cols-12 min-h-[92svh]">
         {/* ============================================================ */}
-        {/* LEFT PANE (BONE ~35% / 5 COLS): EDITORIAL MANIFESTO & IDENTITY */}
+        {/* LEFT PANE (BONE ~35% / 5 COLS): STORY, IDENTITY & MANIFESTO */}
         {/* ============================================================ */}
         <motion.div
           data-tone="bone"
@@ -135,15 +148,12 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             hidden: { opacity: 0 },
             visible: {
               opacity: 1,
-              transition: {
-                staggerChildren: 0.1,
-                delayChildren: 0.1,
-              },
+              transition: { staggerChildren: 0.12, delayChildren: 0.1 },
             },
           }}
           className="relative lg:col-span-5 flex flex-col justify-between p-6 sm:p-10 lg:p-14 bg-[var(--bone)] text-[var(--ink)] border-b lg:border-b-0 lg:border-r border-[var(--hairline)] order-2 lg:order-1"
         >
-          {/* Top: Live Telemetry & Drop Status */}
+          {/* Top: Brand Signal & Lagos Time */}
           <motion.div
             variants={{
               hidden: { opacity: 0, y: -12 },
@@ -157,113 +167,99 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[var(--acc-on-bone)]" />
               </span>
               <span className="label-caps text-[var(--ink)] font-semibold tracking-[0.24em]">
-                Drop 01 // Archive
+                ROF RAGE • Lagos
               </span>
             </div>
 
             <div className="flex items-center gap-2 text-[var(--ink)]/80">
-              <Clock className="w-3.5 h-3.5 text-[var(--acc-on-bone)] animate-spin-slow" />
-              <span className="tracking-wider">LAGOS {lagosTime}</span>
+              <span className="text-[11px] font-mono tracking-wider">
+                LAGOS {lagosTime} WAT
+              </span>
             </div>
           </motion.div>
 
-          {/* Center Editorial Manifesto & Headline */}
+          {/* Center: Monumental Brand Story Manifesto */}
           <div className="my-auto py-8 sm:py-12 flex flex-col gap-6">
-            {/* Colossal Index Numeral with spring counter */}
+            {/* The Badge */}
             <motion.div
               variants={{
                 hidden: { opacity: 0, x: -16 },
-                visible: { opacity: 1, x: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } },
+                visible: { opacity: 1, x: 0, transition: { duration: 0.5 } },
               }}
-              className="flex items-center gap-3"
+              className="flex items-center gap-2"
             >
-              <AnimatePresence mode="wait">
-                <motion.span
-                  key={currentIndex}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -12 }}
-                  transition={{ duration: 0.25 }}
-                  className="text-4xl sm:text-5xl font-serif italic text-[var(--acc-on-bone)] font-bold"
-                >
-                  0{currentIndex + 1}
-                </motion.span>
-              </AnimatePresence>
-              <span className="text-[var(--hairline)] text-xl">/</span>
-              <span className="text-xs font-mono tracking-widest text-[var(--ink)]/60 uppercase">
-                Silhouette 05
+              <DiamondMark size={9} accent filled />
+              <span className="label-caps text-[var(--acc-on-bone)] tracking-[0.28em] font-bold">
+                THE ROF MINDSET
               </span>
             </motion.div>
 
-            {/* Monumental Headline with overflow clip reveal */}
+            {/* Monumental Headline */}
             <div className="overflow-hidden">
               <motion.h1
                 variants={{
-                  hidden: { opacity: 0, y: 30 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
+                  hidden: { opacity: 0, y: 32 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.75, ease: [0.16, 1, 0.3, 1] } },
                 }}
                 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-display text-[var(--ink)] leading-[0.92] tracking-tight"
               >
-                Destined for{' '}
-                <span className="italic font-serif text-[var(--acc-on-bone)]">
-                  riches.
+                More than clothing.{' '}
+                <span className="italic font-serif text-[var(--acc-on-bone)] block sm:inline">
+                  A mindset.
                 </span>
               </motion.h1>
+
               <motion.p
                 variants={{
                   hidden: { opacity: 0, y: 16 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] } },
                 }}
-                className="mt-4 text-sm sm:text-base font-sans text-[var(--ink)]/80 leading-relaxed max-w-md"
+                className="mt-4 text-sm sm:text-base font-sans text-[var(--ink)]/85 leading-relaxed max-w-md"
               >
-                ROF is ambition, confidence and originality. Engineered in Lagos with heavy 260 GSM combed cotton, custom boxy drape, and archival prints.
+                ROF stands for ambition, confidence and originality. It is built for people who stay focused on their goals, never settle for less, and wear it with pride because it represents something bigger than themselves.
               </motion.p>
             </div>
 
-            {/* Active Garment Card with morph transition */}
+            {/* Dynamic Interactive Pillar Story Box */}
             <motion.div
               variants={{
                 hidden: { opacity: 0, scale: 0.98 },
-                visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
+                visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } },
               }}
-              className="border-t border-b border-[var(--hairline)] py-4 flex items-center justify-between"
+              className="border-t border-b border-[var(--hairline)] py-4 flex flex-col gap-2"
             >
-              <div>
-                <span className="text-[10px] font-mono text-[var(--acc-on-bone)] uppercase tracking-wider block font-bold">
-                  ACTIVE RUNWAY PIECE
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-mono text-[var(--acc-on-bone)] uppercase tracking-wider font-bold">
+                  PILLAR • {currentPillar.letter}
                 </span>
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={activeProduct.id}
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
-                    transition={{ duration: 0.2 }}
-                    className="text-xl sm:text-2xl font-serif font-bold text-[var(--ink)] block"
-                  >
-                    {activeProduct.name}
-                  </motion.span>
-                </AnimatePresence>
-                <span className="text-xs font-sans text-[var(--ink)]/70 block mt-0.5">
-                  Colourway: {activeProduct.colour}
+                <span className="text-xs font-serif italic text-[var(--acc-on-bone)]">
+                  {currentPillar.quote}
                 </span>
               </div>
-              <motion.div
-                key={activeProduct.swatch}
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.3 }}
-                className="w-8 h-8 rounded-full border border-black/20 shadow-inner shrink-0"
-                style={{ backgroundColor: activeProduct.swatch }}
-                title={activeProduct.colour}
-              />
+
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activePillar}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <span className="text-xl sm:text-2xl font-serif font-bold text-[var(--ink)] block">
+                    {currentPillar.title}
+                  </span>
+                  <p className="text-xs font-sans text-[var(--ink)]/75 mt-1 leading-normal">
+                    {currentPillar.manifesto}
+                  </p>
+                </motion.div>
+              </AnimatePresence>
             </motion.div>
 
-            {/* Point of Attraction CTA Buttons with tactile micro-interactions */}
+            {/* Story & Attraction Actions */}
             <motion.div
               variants={{
-                hidden: { opacity: 0, y: 14 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
+                hidden: { opacity: 0, y: 16 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
               }}
               className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3"
             >
@@ -279,32 +275,33 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                     navigate({ to: '/shop' })
                   }
                 }}
-                className="w-full sm:w-auto uppercase tracking-wider text-xs font-semibold px-6 py-4 cursor-pointer shadow-lg hover:shadow-xl transition-shadow"
+                className="w-full sm:w-auto uppercase tracking-wider text-xs font-semibold px-6 py-4 cursor-pointer shadow-lg"
               >
-                Explore Capsule
+                Witness The Collection
               </Button>
 
               <Link
-                to="/product/$id"
-                params={{ id: activeProduct.id }}
+                to="/story"
                 className="inline-flex items-center justify-center px-4 py-3.5 border border-[var(--hairline)] hover:border-[var(--ink)] text-xs font-mono uppercase tracking-wider text-[var(--ink)] transition-all hover:bg-[rgba(12,11,10,0.04)]"
               >
-                View Piece Story
+                Read Full Story
               </Link>
             </motion.div>
           </div>
 
-          {/* Bottom: Technical Guarantee */}
-          <div className="border-t border-[var(--hairline)] pt-4 flex items-center justify-between text-xs font-mono text-[var(--ink)]/70">
-            <span>260 GSM HEAVYWEIGHT COTTON</span>
-            <span className="text-[var(--acc-on-bone)] font-semibold">
-              LAGOS DISPATCH
+          {/* Bottom: Permanent Tagline Credential */}
+          <div className="border-t border-[var(--hairline)] pt-4 flex items-center justify-between text-xs font-mono text-[var(--ink)]/75">
+            <span className="font-serif italic text-sm text-[var(--ink)]">
+              Destined for riches.
+            </span>
+            <span className="text-[var(--acc-on-bone)] font-semibold uppercase text-[11px] tracking-wider">
+              Lagos Fashion Archive
             </span>
           </div>
         </motion.div>
 
         {/* ============================================================ */}
-        {/* RIGHT PANE (INK ~65% / 7 COLS): THE RUNWAY SPECTACLE STAGE */}
+        {/* RIGHT PANE (INK ~65% / 7 COLS): THE CINEMATIC SPECTACLE */}
         {/* ============================================================ */}
         <div
           ref={stageRef}
@@ -313,20 +310,16 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
           data-tone="ink"
           className="relative lg:col-span-7 flex flex-col justify-between p-6 sm:p-10 lg:p-12 bg-[#0c0b0a] grain-overlay overflow-hidden min-h-[580px] sm:min-h-[680px] lg:min-h-[880px] order-1 lg:order-2"
         >
-          {/* 1. Dramatic Overhead Spotlight Beam (Fades color with garment) */}
-          <motion.div
-            key={activeMeta.colour}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.45 }}
-            transition={{ duration: 0.7 }}
-            className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] sm:w-[850px] h-[600px] pointer-events-none z-0"
+          {/* 1. Dramatic Overhead Spotlight Beam */}
+          <div
+            className="absolute top-0 left-1/2 -translate-x-1/2 w-[620px] sm:w-[900px] h-[640px] pointer-events-none z-0 opacity-45"
             style={{
               background:
-                activeMeta.colour === 'forest-green'
-                  ? 'radial-gradient(ellipse 75% 55% at 50% 0%, rgba(27,56,43,0.4) 0%, rgba(236,230,216,0.12) 35%, transparent 75%)'
-                  : activeMeta.colour === 'white'
-                  ? 'radial-gradient(ellipse 75% 55% at 50% 0%, rgba(236,230,216,0.25) 0%, rgba(229,55,45,0.06) 40%, transparent 75%)'
-                  : 'radial-gradient(ellipse 75% 55% at 50% 0%, rgba(229,55,45,0.18) 0%, rgba(236,230,216,0.08) 40%, transparent 75%)',
+                activePillar === 'mindset'
+                  ? 'radial-gradient(ellipse 75% 55% at 50% 0%, rgba(229,55,45,0.2) 0%, rgba(236,230,216,0.1) 40%, transparent 75%)'
+                  : activePillar === 'ambition'
+                  ? 'radial-gradient(ellipse 75% 55% at 50% 0%, rgba(27,56,43,0.35) 0%, rgba(236,230,216,0.1) 40%, transparent 75%)'
+                  : 'radial-gradient(ellipse 75% 55% at 50% 0%, rgba(236,230,216,0.22) 0%, rgba(229,55,45,0.08) 40%, transparent 75%)',
             }}
           />
 
@@ -335,11 +328,11 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             <div className="w-[380px] sm:w-[580px] h-[380px] sm:h-[580px] rounded-full bg-[radial-gradient(circle,rgba(229,55,45,0.09)_0%,transparent_68%)]" />
           </div>
 
-          {/* 2. Monumental Architectural ROF Logo Ghost with Parallax & Stroke Drawing */}
+          {/* 2. Monumental Architectural R - O - F Wordmark with Parallax */}
           <motion.div
             style={{
-              x: isTouch || prefersReduced ? 0 : ghostShiftX,
-              y: isTouch || prefersReduced ? 0 : ghostShiftY,
+              x: isTouch || prefersReduced ? 0 : lettersShiftX,
+              y: isTouch || prefersReduced ? 0 : lettersShiftY,
             }}
             className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 px-4"
             aria-hidden="true"
@@ -348,42 +341,48 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               viewBox="0 0 280 90"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className="w-full max-w-[680px] text-[var(--bone)] overflow-visible opacity-30"
+              className="w-full max-w-[700px] text-[var(--bone)] overflow-visible opacity-35"
             >
-              {/* 'R' */}
+              {/* 'R' Path: Ambition */}
               <motion.path
                 d="M 20,82 L 20,10 L 64,10 L 84,32 L 64,52 L 20,52 M 56,52 L 86,82"
-                stroke="currentColor"
-                strokeWidth="5"
+                stroke={activePillar === 'ambition' ? 'var(--acc)' : 'currentColor'}
+                strokeWidth={activePillar === 'ambition' ? '6' : '5'}
                 strokeLinecap="square"
-                strokeLinejoin="miter"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 0.5 }}
-                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-              />
-
-              {/* 'O' Diamond Outer */}
-              <motion.polygon
-                points="140,8 178,46 140,84 102,46"
-                stroke="currentColor"
-                strokeWidth="5"
-                strokeLinejoin="miter"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 0.55 }}
-                transition={{ duration: 1.2, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-              />
-
-              {/* 'O' Concentric Red Accent Core - Pulsing with Rage Red */}
-              <motion.polygon
-                points="140,26 160,46 140,66 120,46"
-                stroke="var(--acc)"
-                strokeWidth="3"
                 strokeLinejoin="miter"
                 initial={{ pathLength: 0, opacity: 0 }}
                 animate={{
                   pathLength: 1,
-                  opacity: prefersReduced ? 0.7 : [0.6, 1, 0.6],
-                  scale: prefersReduced ? 1 : [1, 1.04, 1],
+                  opacity: activePillar === 'ambition' ? 0.95 : 0.45,
+                }}
+                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+              />
+
+              {/* 'O' Diamond Outer: Originality */}
+              <motion.polygon
+                points="140,8 178,46 140,84 102,46"
+                stroke={activePillar === 'mindset' ? 'var(--acc)' : 'currentColor'}
+                strokeWidth={activePillar === 'mindset' ? '6' : '5'}
+                strokeLinejoin="miter"
+                initial={{ pathLength: 0, opacity: 0 }}
+                animate={{
+                  pathLength: 1,
+                  opacity: activePillar === 'mindset' ? 0.95 : 0.5,
+                }}
+                transition={{ duration: 1.2, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+              />
+
+              {/* 'O' Concentric Red Accent Core - The Heartbeat of the Brand */}
+              <motion.polygon
+                points="140,26 160,46 140,66 120,46"
+                stroke="var(--acc)"
+                strokeWidth="3.2"
+                strokeLinejoin="miter"
+                initial={{ pathLength: 0, opacity: 0 }}
+                animate={{
+                  pathLength: 1,
+                  opacity: prefersReduced ? 0.8 : [0.65, 1, 0.65],
+                  scale: prefersReduced ? 1 : [1, 1.05, 1],
                 }}
                 transition={{
                   pathLength: { duration: 1, delay: 0.3 },
@@ -392,60 +391,74 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                 }}
               />
 
-              {/* 'F' */}
+              {/* 'F' Path: Greatness */}
               <motion.path
                 d="M 205,82 L 205,10 L 268,10 M 205,46 L 252,46"
-                stroke="currentColor"
-                strokeWidth="5"
+                stroke={activePillar === 'greatness' ? 'var(--acc)' : 'currentColor'}
+                strokeWidth={activePillar === 'greatness' ? '6' : '5'}
                 strokeLinecap="square"
                 strokeLinejoin="miter"
                 initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 0.5 }}
+                animate={{
+                  pathLength: 1,
+                  opacity: activePillar === 'greatness' ? 0.95 : 0.45,
+                }}
                 transition={{ duration: 1.2, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
               />
             </svg>
           </motion.div>
 
-          {/* 3. Top Stage Strip: View Mode Switcher with spring pill */}
+          {/* 3. Top Stage Strip: Interactive Pillar Switcher */}
           <div className="relative z-20 flex items-center justify-between border-b border-[var(--hairline)] pb-3">
             <div className="flex items-center gap-2">
               <DiamondMark size={8} accent filled />
-              <span className="label-caps text-[var(--acc)] tracking-[0.24em] font-medium">
-                3D Kinetic Stage
+              <span className="label-caps text-[var(--bone)] tracking-[0.24em] font-medium">
+                Identity Pillars
               </span>
             </div>
 
-            {/* Silhouette vs Print Toggle */}
+            {/* Pillar Selector Pills */}
             <div className="flex items-center gap-1 bg-[var(--ink)]/85 backdrop-blur-md border border-[var(--hairline)] p-1 rounded-sm shadow-xl">
               <button
                 type="button"
-                onClick={() => setInspectMode('full')}
+                onClick={() => setActivePillar('ambition')}
                 className={cn(
                   'px-3 py-1 text-[10px] font-sans uppercase tracking-[0.2em] transition-all cursor-pointer rounded-xs',
-                  inspectMode === 'full'
+                  activePillar === 'ambition'
                     ? 'bg-[var(--bone)] text-[var(--ink)] font-semibold'
                     : 'text-[var(--muted)] hover:text-[var(--bone)]'
                 )}
               >
-                Full Silhouette
+                R • Ambition
               </button>
               <button
                 type="button"
-                onClick={() => setInspectMode('closeup')}
+                onClick={() => setActivePillar('mindset')}
                 className={cn(
-                  'px-3 py-1 text-[10px] font-sans uppercase tracking-[0.2em] transition-all cursor-pointer rounded-xs flex items-center gap-1.5',
-                  inspectMode === 'closeup'
+                  'px-3 py-1 text-[10px] font-sans uppercase tracking-[0.2em] transition-all cursor-pointer rounded-xs',
+                  activePillar === 'mindset'
                     ? 'bg-[var(--acc)] text-[#fff6ec] font-semibold'
                     : 'text-[var(--muted)] hover:text-[var(--bone)]'
                 )}
               >
-                <Sparkles className="w-2.5 h-2.5" />
-                Inspect Print
+                O • Mindset
+              </button>
+              <button
+                type="button"
+                onClick={() => setActivePillar('greatness')}
+                className={cn(
+                  'px-3 py-1 text-[10px] font-sans uppercase tracking-[0.2em] transition-all cursor-pointer rounded-xs',
+                  activePillar === 'greatness'
+                    ? 'bg-[var(--bone)] text-[var(--ink)] font-semibold'
+                    : 'text-[var(--muted)] hover:text-[var(--bone)]'
+                )}
+              >
+                F • Greatness
               </button>
             </div>
           </div>
 
-          {/* 4. Massive Suspended Heavyweight Garment with Organic Floating Physics */}
+          {/* 4. Massive Suspended Brand Relic (High-Fashion Cutout Stage) */}
           <div
             style={{ perspective: 1200 }}
             className="relative z-10 flex-1 flex flex-col items-center justify-center my-auto py-6"
@@ -477,31 +490,21 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               }
               className="relative z-10 flex flex-col items-center justify-center w-full"
             >
-              {/* Active Garment Cutout with Camera Zoom transition */}
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={`${activeProduct.id}-${inspectMode}`}
-                  initial={{ opacity: 0, scale: 0.92, y: 22 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.96, y: -18 }}
-                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                  className="w-full flex justify-center cursor-pointer"
-                  onClick={() => setInspectMode((m) => (m === 'full' ? 'closeup' : 'full'))}
-                >
-                  <TeeCutout
-                    design={activeMeta.design}
-                    colour={activeMeta.colour}
-                    view={inspectMode}
-                    withDiamondAccent={false}
-                    className={cn(
-                      'w-auto transition-transform duration-500 ease-out drop-shadow-[0_42px_56px_rgba(0,0,0,0.85)]',
-                      inspectMode === 'closeup'
-                        ? 'max-h-[420px] sm:max-h-[520px] scale-110'
-                        : 'max-h-[380px] sm:max-h-[500px] md:max-h-[560px]'
-                    )}
-                  />
-                </motion.div>
-              </AnimatePresence>
+              {/* Suspended Brand Relic Silhouette */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.92, y: 24 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className="w-full flex justify-center"
+              >
+                <TeeCutout
+                  design="cards"
+                  colour="forest-green"
+                  view="full"
+                  withDiamondAccent={false}
+                  className="w-auto max-h-[380px] sm:max-h-[500px] md:max-h-[560px] drop-shadow-[0_42px_56px_rgba(0,0,0,0.85)]"
+                />
+              </motion.div>
 
               {/* Dynamic Ground Contact Shadow */}
               <motion.div
@@ -529,74 +532,17 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                 className="w-64 sm:w-96 h-5 bg-black/90 rounded-full blur-[14px] -mt-1 pointer-events-none"
               />
             </motion.div>
-
-            {/* Prev/Next Stage Navigators with spring hover micro-interactions */}
-            <motion.button
-              type="button"
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.92 }}
-              onClick={handlePrev}
-              aria-label="Previous piece"
-              className="absolute left-0 top-1/2 -translate-y-1/2 p-3 text-[var(--bone)] border border-[var(--hairline)] hover:border-[var(--bone)] bg-[var(--ink)]/80 backdrop-blur-md transition-colors cursor-pointer z-30 shadow-lg"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </motion.button>
-            <motion.button
-              type="button"
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.92 }}
-              onClick={handleNext}
-              aria-label="Next piece"
-              className="absolute right-0 top-1/2 -translate-y-1/2 p-3 text-[var(--bone)] border border-[var(--hairline)] hover:border-[var(--bone)] bg-[var(--ink)]/80 backdrop-blur-md transition-colors cursor-pointer z-30 shadow-lg"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </motion.button>
           </div>
 
-          {/* 5. Bottom Interactive Runway Switcher Tape */}
-          <div className="relative z-20 pt-4 border-t border-[var(--hairline)] flex items-center justify-between gap-3 overflow-x-auto no-scrollbar">
-            <span className="text-[11px] font-mono uppercase tracking-widest text-[var(--acc)] font-bold shrink-0 flex items-center gap-1.5">
-              <span>RUNWAY REEL</span>
-              <span className="text-[var(--hairline)]">/</span>
+          {/* 5. Bottom Brand Creed Tape */}
+          <div className="relative z-20 pt-4 border-t border-[var(--hairline)] flex items-center justify-between text-xs font-mono text-[var(--bone)]/75">
+            <span className="flex items-center gap-2">
+              <span className="text-[var(--acc)] font-bold">R • O • F</span>
+              <span>Ambition. Confidence. Originality.</span>
             </span>
 
-            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
-              {initialProducts.map((p, idx) => {
-                const isCurrent = idx === currentIndex
-                return (
-                  <motion.button
-                    key={p.id}
-                    type="button"
-                    whileHover={{ y: -2 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => {
-                      setCurrentIndex(idx)
-                      setInspectMode('full')
-                    }}
-                    className={cn(
-                      'px-3 py-2 text-xs font-mono uppercase tracking-wider border transition-all cursor-pointer flex items-center gap-2 shrink-0',
-                      isCurrent
-                        ? 'border-[var(--acc)] bg-[var(--ink)] text-[var(--bone)] font-semibold shadow-md'
-                        : 'border-[var(--hairline)] text-[var(--muted)] hover:text-[var(--bone)] hover:border-[var(--bone)]/40'
-                    )}
-                  >
-                    <span className={isCurrent ? 'text-[var(--acc)] font-bold' : ''}>
-                      0{idx + 1}
-                    </span>
-                    <span
-                      className="w-2.5 h-2.5 rounded-full border border-black/30 shrink-0"
-                      style={{ backgroundColor: p.swatch }}
-                    />
-                    <span className="truncate max-w-[100px] sm:max-w-none text-[11px]">
-                      {p.name.replace(' Tee', '')}
-                    </span>
-                  </motion.button>
-                )
-              })}
-            </div>
-
-            <span className="text-xs font-mono text-[var(--bone)] hidden md:inline-block shrink-0">
-              {activeProduct.colour}
+            <span className="hidden sm:inline-block text-[var(--muted)]">
+              Destined for riches.
             </span>
           </div>
         </div>
