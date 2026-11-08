@@ -8,19 +8,24 @@ import '@/styles/base.css'
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 60 * 1000,
+      staleTime: 5 * 60 * 1000, // 5 minutes cache retention
+      gcTime: 15 * 60 * 1000,    // 15 minutes garbage collection threshold
       refetchOnWindowFocus: false,
+      refetchOnReconnect: 'always',
+      retry: 1,
     },
   },
 })
 
-// Create router instance
+// Create router instance with eager preloading and cache optimizations
 const router = createRouter({
   routeTree,
   context: {
     queryClient,
   },
   defaultPreload: 'intent',
+  defaultPreloadDelay: 40,
+  defaultPreloadStaleTime: 30 * 1000, // Preloaded routes remain fresh for 30s
   scrollRestoration: true,
 })
 

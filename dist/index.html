@@ -8,17 +8,23 @@
     <meta name="theme-color" content="#0c0b0a" />
     <meta name="color-scheme" content="dark" />
 
-    <!-- Google Fonts: Instrument Serif + Inter Tight -->
+    <!-- Resource Hints & Eager Preloading -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="modulepreload" href="data:application/octet-stream;base64,aW1wb3J0IFJlYWN0IGZyb20gJ3JlYWN0JwppbXBvcnQgUmVhY3RET00gZnJvbSAncmVhY3QtZG9tL2NsaWVudCcKaW1wb3J0IHsgUXVlcnlDbGllbnQsIFF1ZXJ5Q2xpZW50UHJvdmlkZXIgfSBmcm9tICdAdGFuc3RhY2svcmVhY3QtcXVlcnknCmltcG9ydCB7IFJvdXRlclByb3ZpZGVyLCBjcmVhdGVSb3V0ZXIgfSBmcm9tICdAdGFuc3RhY2svcmVhY3Qtcm91dGVyJwppbXBvcnQgeyByb3V0ZVRyZWUgfSBmcm9tICcuL3JvdXRlVHJlZS5nZW4nCmltcG9ydCAnQC9zdHlsZXMvYmFzZS5jc3MnCgpjb25zdCBxdWVyeUNsaWVudCA9IG5ldyBRdWVyeUNsaWVudCh7CiAgZGVmYXVsdE9wdGlvbnM6IHsKICAgIHF1ZXJpZXM6IHsKICAgICAgc3RhbGVUaW1lOiA1ICogNjAgKiAxMDAwLCAvLyA1IG1pbnV0ZXMgY2FjaGUgcmV0ZW50aW9uCiAgICAgIGdjVGltZTogMTUgKiA2MCAqIDEwMDAsICAgIC8vIDE1IG1pbnV0ZXMgZ2FyYmFnZSBjb2xsZWN0aW9uIHRocmVzaG9sZAogICAgICByZWZldGNoT25XaW5kb3dGb2N1czogZmFsc2UsCiAgICAgIHJlZmV0Y2hPblJlY29ubmVjdDogJ2Fsd2F5cycsCiAgICAgIHJldHJ5OiAxLAogICAgfSwKICB9LAp9KQoKLy8gQ3JlYXRlIHJvdXRlciBpbnN0YW5jZSB3aXRoIGVhZ2VyIHByZWxvYWRpbmcgYW5kIGNhY2hlIG9wdGltaXphdGlvbnMKY29uc3Qgcm91dGVyID0gY3JlYXRlUm91dGVyKHsKICByb3V0ZVRyZWUsCiAgY29udGV4dDogewogICAgcXVlcnlDbGllbnQsCiAgfSwKICBkZWZhdWx0UHJlbG9hZDogJ2ludGVudCcsCiAgZGVmYXVsdFByZWxvYWREZWxheTogNDAsCiAgZGVmYXVsdFByZWxvYWRTdGFsZVRpbWU6IDMwICogMTAwMCwgLy8gUHJlbG9hZGVkIHJvdXRlcyByZW1haW4gZnJlc2ggZm9yIDMwcwogIHNjcm9sbFJlc3RvcmF0aW9uOiB0cnVlLAp9KQoKLy8gUmVnaXN0ZXIgcm91dGVyIGZvciB0eXBlIHNhZmV0eQpkZWNsYXJlIG1vZHVsZSAnQHRhbnN0YWNrL3JlYWN0LXJvdXRlcicgewogIGludGVyZmFjZSBSZWdpc3RlciB7CiAgICByb3V0ZXI6IHR5cGVvZiByb3V0ZXIKICB9Cn0KCmFzeW5jIGZ1bmN0aW9uIHN0YXJ0QXBwKCkgewogIC8vIE9wdGlvbmFsIE1TVyBtb2NraW5nIGxheWVyIGFjdGl2YXRpb24gZm9yIG5ldHdvcmsgc2ltdWxhdGlvbgogIGlmICh0eXBlb2Ygd2luZG93ICE9PSAndW5kZWZpbmVkJyAmJiB3aW5kb3cubG9jYXRpb24uc2VhcmNoLmluY2x1ZGVzKCdtc3c9dHJ1ZScpKSB7CiAgICBjb25zdCB7IHdvcmtlciB9ID0gYXdhaXQgaW1wb3J0KCcuL21vY2tzL2Jyb3dzZXInKQogICAgYXdhaXQgd29ya2VyLnN0YXJ0KHsgb25VbmhhbmRsZWRSZXF1ZXN0OiAnYnlwYXNzJyB9KQogIH0KCiAgUmVhY3RET00uY3JlYXRlUm9vdChkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncm9vdCcpISkucmVuZGVyKAogICAgPFJlYWN0LlN0cmljdE1vZGU+CiAgICAgIDxRdWVyeUNsaWVudFByb3ZpZGVyIGNsaWVudD17cXVlcnlDbGllbnR9PgogICAgICAgIDxSb3V0ZXJQcm92aWRlciByb3V0ZXI9e3JvdXRlcn0gLz4KICAgICAgPC9RdWVyeUNsaWVudFByb3ZpZGVyPgogICAgPC9SZWFjdC5TdHJpY3RNb2RlPgogICkKfQoKc3RhcnRBcHAoKQo=" />
+
+    <!-- Google Fonts: Instrument Serif + Inter Tight with font-display: swap -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" />
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet" />
 
     <!-- Favicon inline SVG diamond -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpolygon points='16,3 29,16 16,29 3,16' fill='%230c0b0a' stroke='%23e5372d' stroke-width='2.5'/%3E%3Cpolygon points='16,9 23,16 16,23 9,16' fill='%23e5372d'/%3E%3C/svg%3E" />
-    <script type="module" crossorigin src="/assets/index-mZskDMmr.js"></script>
-    <link rel="modulepreload" crossorigin href="/assets/vendor-tanstack-crt9RUca.js">
-    <link rel="modulepreload" crossorigin href="/assets/vendor-react-BxiHouw7.js">
-    <link rel="modulepreload" crossorigin href="/assets/vendor-motion-CXpOLSvv.js">
+    <script type="module" crossorigin src="/assets/index-DzwS8HaH.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/vendor-tanstack-C4VzGiwy.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-radix-DPt3TfXZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-motion-Df15cX1d.js">
     <link rel="stylesheet" crossorigin href="/assets/index-DqUlXjZN.css">
   <link rel="manifest" href="/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head>
   <body class="bg-[var(--ink)] text-[var(--bone)] antialiased selection:bg-[var(--acc-on-ink)] selection:text-[#fff6ec] min-h-[100svh] overflow-x-hidden">

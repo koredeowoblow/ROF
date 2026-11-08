@@ -117,6 +117,7 @@ function HomePage() {
                     colour={meta.colour}
                     withDiamondAccent
                     interactiveZoom
+                    priority={idx === 0}
                     className="w-full h-auto max-h-[480px]"
                   />
                 </motion.div>

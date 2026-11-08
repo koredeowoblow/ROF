@@ -40,15 +40,40 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,woff2}'],
+        cleanupOutdatedCaches: true,
         runtimeCaching: [
           {
+            // Google Font Stylesheets
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'google-fonts-stylesheets',
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          {
+            // Google WebFont binaries (.woff2)
+            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'google-fonts-cache',
+              cacheName: 'google-fonts-webfonts',
+              cacheableResponse: { statuses: [0, 200] },
               expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365,
+                maxEntries: 20,
+                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+              },
+            },
+          },
+          {
+            // Product Images and SVG Assets
+            urlPattern: /\.(?:png|jpg|jpeg|svg|webp|ico)$/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'static-image-assets',
+              cacheableResponse: { statuses: [0, 200] },
+              expiration: {
+                maxEntries: 60,
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
               },
             },
           },
@@ -63,12 +88,17 @@ export default defineConfig({
   },
   build: {
     target: 'es2022',
+    cssCodeSplit: true,
+    minify: 'esbuild',
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom'],
-          'vendor-motion': ['motion'],
-          'vendor-tanstack': ['@tanstack/react-query', '@tanstack/react-router'],
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('motion')) return 'vendor-motion'
+            if (id.includes('@tanstack/react-query') || id.includes('@tanstack/react-router')) return 'vendor-tanstack'
+            if (id.includes('@radix-ui')) return 'vendor-radix'
+            if (id.includes('@tanstack/react-table') || id.includes('@tanstack/react-virtual')) return 'vendor-table'
+          }
         },
       },
     },
