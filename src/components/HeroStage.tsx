@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence, useReducedMotion } from 'motion/react'
-import { ArrowRight, Compass, Shield, Flame, Sparkles } from 'lucide-react'
+import { ArrowRight, Compass, Shield, Flame, Sparkles, ChevronDown } from 'lucide-react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { TeeCutout } from '@/components/TeeCutout'
 import { DiamondMark, Logo } from '@/components/Logo'
@@ -15,36 +15,29 @@ type PillarKey = 'ambition' | 'mindset' | 'greatness'
 
 interface PillarInfo {
   letter: string
+  label: string
   title: string
-  subtitle: string
   manifesto: string
-  quote: string
 }
 
 const PILLARS: Record<PillarKey, PillarInfo> = {
   ambition: {
     letter: 'R',
-    title: 'Ambition & Drive',
-    subtitle: 'The Journey to Becoming Somebody',
-    manifesto:
-      'We do not wait for permission. We build through the noise, stay relentless in our craft, and relentlessly pursue what was destined for us.',
-    quote: 'Never settle for less than your potential.',
+    label: 'R • AMBITION',
+    title: 'The Journey to Becoming Somebody',
+    manifesto: 'We do not wait for permission. We build through the noise and pursue what was destined for us.',
   },
   mindset: {
     letter: 'O',
+    label: 'O • THE MINDSET',
     title: 'The Diamond Mindset',
-    subtitle: 'Unbreakable & Original',
-    manifesto:
-      'Pressure does not break us; it refines us. Cut sharp with precision and pride, the diamond is our permanent mark of resilience.',
-    quote: 'Destined for riches.',
+    manifesto: 'Pressure does not break us; it refines us. Cut sharp with precision and worn with unwavering pride.',
   },
   greatness: {
     letter: 'F',
-    title: 'Legacy & Greatness',
-    subtitle: 'Building Something Bigger',
-    manifesto:
-      'Clothing that carries weight, intention, and history. You wear ROF not to blend into the room, but to declare your purpose.',
-    quote: 'Wear it with pride.',
+    label: 'F • GREATNESS',
+    title: 'Building Your Legacy',
+    manifesto: 'Heavyweight intention woven into every fiber. Wear it because it represents something bigger.',
   },
 }
 
@@ -90,23 +83,23 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   const rawMouseX = useMotionValue(0)
   const rawMouseY = useMotionValue(0)
 
-  const springConfig = { damping: 24, stiffness: 160, mass: 0.5 }
+  const springConfig = { damping: 26, stiffness: 150, mass: 0.55 }
   const smoothX = useSpring(rawMouseX, springConfig)
   const smoothY = useSpring(rawMouseY, springConfig)
 
-  // 3D Perspective Transformations for the suspended brand artifact
+  // 3D Perspective Transformations for the center suspended garment
   const garmentRotateX = useTransform(smoothY, [-0.5, 0.5], [8, -8])
   const garmentRotateY = useTransform(smoothX, [-0.5, 0.5], [-12, 12])
-  const garmentTranslateX = useTransform(smoothX, [-0.5, 0.5], [-14, 14])
-  const garmentTranslateY = useTransform(smoothY, [-0.5, 0.5], [-10, 10])
+  const garmentTranslateX = useTransform(smoothX, [-0.5, 0.5], [-16, 16])
+  const garmentTranslateY = useTransform(smoothY, [-0.5, 0.5], [-12, 12])
 
-  // Parallax for Monumental Background Letters
-  const lettersShiftX = useTransform(smoothX, [-0.5, 0.5], [26, -26])
-  const lettersShiftY = useTransform(smoothY, [-0.5, 0.5], [16, -16])
+  // Parallax for Background Monumental Letters
+  const lettersShiftX = useTransform(smoothX, [-0.5, 0.5], [24, -24])
+  const lettersShiftY = useTransform(smoothY, [-0.5, 0.5], [14, -14])
 
   // Dynamic Contact Shadow
   const shadowSkewX = useTransform(smoothX, [-0.5, 0.5], [-14, 14])
-  const shadowScale = useTransform(smoothY, [-0.5, 0.5], [0.94, 1.06])
+  const shadowScale = useTransform(smoothY, [-0.5, 0.5], [0.93, 1.07])
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (isTouch || prefersReduced || !stageRef.current) return
@@ -126,357 +119,236 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
 
   return (
     <section
+      ref={stageRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      data-tone="ink"
       className={cn(
-        'relative w-full border-b border-[var(--hairline)] overflow-hidden select-none',
+        'relative min-h-[96svh] w-full flex flex-col justify-between pt-16 sm:pt-20 pb-0 border-b border-[var(--hairline)] grain-overlay overflow-hidden select-none cursor-default bg-[#0c0b0a]',
         className
       )}
     >
       {/* ============================================================ */}
-      {/* 60-30-10 DUAL PANE STORYTELLING ARCHITECTURE */}
-      {/* LEFT PANE (BONE ~35% / 5 COLS): THE BRAND MANIFESTO */}
-      {/* RIGHT PANE (INK ~65% / 7 COLS): THE MONUMENTAL SPECTACLE STAGE */}
+      {/* 1. ATMOSPHERIC STUDIO ENVIRONMENT & RADIAL COLOR DEPTH */}
       {/* ============================================================ */}
-      <div className="w-full grid grid-cols-1 lg:grid-cols-12 min-h-[92svh]">
-        {/* ============================================================ */}
-        {/* LEFT PANE (BONE ~35% / 5 COLS): STORY, IDENTITY & MANIFESTO */}
-        {/* ============================================================ */}
-        <motion.div
-          data-tone="bone"
-          initial="hidden"
-          animate="visible"
-          variants={{
-            hidden: { opacity: 0 },
-            visible: {
-              opacity: 1,
-              transition: { staggerChildren: 0.12, delayChildren: 0.1 },
-            },
-          }}
-          className="relative lg:col-span-5 flex flex-col justify-between p-6 sm:p-10 lg:p-14 bg-[var(--bone)] text-[var(--ink)] border-b lg:border-b-0 lg:border-r border-[var(--hairline)] order-2 lg:order-1"
-        >
-          {/* Top: Brand Signal & Lagos Time */}
-          <motion.div
-            variants={{
-              hidden: { opacity: 0, y: -12 },
-              visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
-            }}
-            className="flex items-center justify-between border-b border-[var(--hairline)] pb-4 text-xs font-mono"
+      {/* Overhead stage spotlight beam */}
+      <div
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] sm:w-[1100px] h-[720px] pointer-events-none z-0 opacity-40 transition-all duration-700"
+        style={{
+          background:
+            activePillar === 'mindset'
+              ? 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(229,55,45,0.22) 0%, rgba(236,230,216,0.12) 35%, transparent 75%)'
+              : activePillar === 'ambition'
+              ? 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(27,56,43,0.35) 0%, rgba(236,230,216,0.1) 35%, transparent 75%)'
+              : 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(236,230,216,0.22) 0%, rgba(229,55,45,0.08) 35%, transparent 75%)',
+        }}
+      />
+
+      {/* Subtle radial ambient warmth behind center garment */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+        <div className="w-[420px] sm:w-[680px] h-[420px] sm:h-[680px] rounded-full bg-[radial-gradient(circle,rgba(229,55,45,0.08)_0%,transparent_68%)]" />
+      </div>
+
+      {/* ============================================================ */}
+      {/* 2. MONUMENTAL ARCHITECTURAL R - O - F KINETIC BACKDROP */}
+      {/* ============================================================ */}
+      <motion.div
+        style={{
+          x: isTouch || prefersReduced ? 0 : lettersShiftX,
+          y: isTouch || prefersReduced ? 0 : lettersShiftY,
+        }}
+        className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 px-4"
+        aria-hidden="true"
+      >
+        <div className="w-full max-w-[1120px] flex items-center justify-center opacity-30 sm:opacity-35 transition-all duration-300">
+          <svg
+            viewBox="0 0 280 90"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-full h-auto text-[var(--bone)] overflow-visible"
           >
-            <div className="flex items-center gap-2.5">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--acc-on-bone)] opacity-75" />
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[var(--acc-on-bone)]" />
-              </span>
-              <span className="label-caps text-[var(--ink)] font-semibold tracking-[0.24em]">
-                ROF RAGE • Lagos
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2 text-[var(--ink)]/80">
-              <span className="text-[11px] font-mono tracking-wider">
-                LAGOS {lagosTime} WAT
-              </span>
-            </div>
-          </motion.div>
-
-          {/* Center: Monumental Brand Story Manifesto */}
-          <div className="my-auto py-8 sm:py-12 flex flex-col gap-6">
-            {/* The Badge */}
-            <motion.div
-              variants={{
-                hidden: { opacity: 0, x: -16 },
-                visible: { opacity: 1, x: 0, transition: { duration: 0.5 } },
+            {/* Monumental 'R' (Ambition) */}
+            <motion.path
+              d="M 20,82 L 20,10 L 64,10 L 84,32 L 64,52 L 20,52 M 56,52 L 86,82"
+              stroke={activePillar === 'ambition' ? 'var(--acc)' : 'currentColor'}
+              strokeWidth={activePillar === 'ambition' ? '6' : '5'}
+              strokeLinecap="square"
+              strokeLinejoin="miter"
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={{
+                pathLength: 1,
+                opacity: activePillar === 'ambition' ? 0.95 : 0.45,
               }}
-              className="flex items-center gap-2"
-            >
-              <DiamondMark size={9} accent filled />
-              <span className="label-caps text-[var(--acc-on-bone)] tracking-[0.28em] font-bold">
-                THE ROF MINDSET
-              </span>
-            </motion.div>
+              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            />
 
-            {/* Monumental Headline */}
-            <div className="overflow-hidden">
-              <motion.h1
-                variants={{
-                  hidden: { opacity: 0, y: 32 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.75, ease: [0.16, 1, 0.3, 1] } },
-                }}
-                className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-display text-[var(--ink)] leading-[0.92] tracking-tight"
-              >
-                More than clothing.{' '}
-                <span className="italic font-serif text-[var(--acc-on-bone)] block sm:inline">
-                  A mindset.
-                </span>
-              </motion.h1>
-
-              <motion.p
-                variants={{
-                  hidden: { opacity: 0, y: 16 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] } },
-                }}
-                className="mt-4 text-sm sm:text-base font-sans text-[var(--ink)]/85 leading-relaxed max-w-md"
-              >
-                ROF stands for ambition, confidence and originality. It is built for people who stay focused on their goals, never settle for less, and wear it with pride because it represents something bigger than themselves.
-              </motion.p>
-            </div>
-
-            {/* Dynamic Interactive Pillar Story Box */}
-            <motion.div
-              variants={{
-                hidden: { opacity: 0, scale: 0.98 },
-                visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } },
+            {/* Monumental Diamond 'O' Outer Contour (Originality) */}
+            <motion.polygon
+              points="140,8 178,46 140,84 102,46"
+              stroke={activePillar === 'mindset' ? 'var(--acc)' : 'currentColor'}
+              strokeWidth={activePillar === 'mindset' ? '6' : '5'}
+              strokeLinejoin="miter"
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={{
+                pathLength: 1,
+                opacity: activePillar === 'mindset' ? 0.95 : 0.5,
               }}
-              className="border-t border-b border-[var(--hairline)] py-4 flex flex-col gap-2"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono text-[var(--acc-on-bone)] uppercase tracking-wider font-bold">
-                  PILLAR • {currentPillar.letter}
-                </span>
-                <span className="text-xs font-serif italic text-[var(--acc-on-bone)]">
-                  {currentPillar.quote}
-                </span>
-              </div>
+              transition={{ duration: 1.2, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            />
 
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activePillar}
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }}
-                  transition={{ duration: 0.25 }}
+            {/* Concentric Inner Diamond Accent Core - Pulsing Rage Red */}
+            <motion.polygon
+              points="140,26 160,46 140,66 120,46"
+              stroke="var(--acc)"
+              strokeWidth="3.2"
+              strokeLinejoin="miter"
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={{
+                pathLength: 1,
+                opacity: prefersReduced ? 0.8 : [0.6, 1, 0.6],
+                scale: prefersReduced ? 1 : [1, 1.05, 1],
+              }}
+              transition={{
+                pathLength: { duration: 1, delay: 0.3 },
+                opacity: { duration: 3.2, repeat: Infinity, ease: 'easeInOut' },
+                scale: { duration: 3.2, repeat: Infinity, ease: 'easeInOut' },
+              }}
+            />
+
+            {/* Monumental 'F' (Greatness) */}
+            <motion.path
+              d="M 205,82 L 205,10 L 268,10 M 205,46 L 252,46"
+              stroke={activePillar === 'greatness' ? 'var(--acc)' : 'currentColor'}
+              strokeWidth={activePillar === 'greatness' ? '6' : '5'}
+              strokeLinecap="square"
+              strokeLinejoin="miter"
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={{
+                pathLength: 1,
+                opacity: activePillar === 'greatness' ? 0.95 : 0.45,
+              }}
+              transition={{ duration: 1.2, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            />
+          </svg>
+        </div>
+      </motion.div>
+
+      {/* ============================================================ */}
+      {/* 3. TOP TELEMETRY STRIP */}
+      {/* ============================================================ */}
+      <div className="relative z-20 mx-auto w-full max-w-[var(--max-content)] px-4 md:px-8 pt-3">
+        <div className="flex items-center justify-between border-b border-[var(--hairline)] pb-3.5 text-xs">
+          {/* Left: Brand Telemetry */}
+          <div className="flex items-center gap-3">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--acc)] opacity-80" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[var(--acc)]" />
+            </span>
+            <span className="label-caps text-[var(--bone)] tracking-[0.24em] font-semibold">
+              ROF RAGE • Lagos
+            </span>
+            <span className="hidden sm:inline-block text-[var(--hairline)]">/</span>
+            <span className="hidden sm:inline-block font-mono text-xs text-[var(--muted)]">
+              LAT 6.4541° N, LON 3.4246° E
+            </span>
+          </div>
+
+          {/* Center: Interactive Identity Pillars */}
+          <div className="hidden md:flex items-center gap-2 bg-[var(--ink)]/80 backdrop-blur-md border border-[var(--hairline)] p-1 rounded-sm">
+            {(['ambition', 'mindset', 'greatness'] as const).map((key) => {
+              const p = PILLARS[key]
+              const isActive = activePillar === key
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setActivePillar(key)}
+                  className={cn(
+                    'px-3 py-1 text-[11px] font-mono uppercase tracking-[0.2em] transition-all cursor-pointer rounded-xs',
+                    isActive
+                      ? 'bg-[var(--acc)] text-[#fff6ec] font-bold shadow-sm'
+                      : 'text-[var(--muted)] hover:text-[var(--bone)]'
+                  )}
                 >
-                  <span className="text-xl sm:text-2xl font-serif font-bold text-[var(--ink)] block">
-                    {currentPillar.title}
-                  </span>
-                  <p className="text-xs font-sans text-[var(--ink)]/75 mt-1 leading-normal">
-                    {currentPillar.manifesto}
-                  </p>
-                </motion.div>
-              </AnimatePresence>
-            </motion.div>
-
-            {/* Story & Attraction Actions */}
-            <motion.div
-              variants={{
-                hidden: { opacity: 0, y: 16 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-              }}
-              className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3"
-            >
-              <Button
-                variant="primary"
-                size="lg"
-                withArrow
-                onClick={() => {
-                  const target = document.getElementById('collection-chapters')
-                  if (target) {
-                    target.scrollIntoView({ behavior: 'smooth' })
-                  } else {
-                    navigate({ to: '/shop' })
-                  }
-                }}
-                className="w-full sm:w-auto uppercase tracking-wider text-xs font-semibold px-6 py-4 cursor-pointer shadow-lg"
-              >
-                Witness The Collection
-              </Button>
-
-              <Link
-                to="/story"
-                className="inline-flex items-center justify-center px-4 py-3.5 border border-[var(--hairline)] hover:border-[var(--ink)] text-xs font-mono uppercase tracking-wider text-[var(--ink)] transition-all hover:bg-[rgba(12,11,10,0.04)]"
-              >
-                Read Full Story
-              </Link>
-            </motion.div>
+                  {p.label}
+                </button>
+              )
+            })}
           </div>
 
-          {/* Bottom: Permanent Tagline Credential */}
-          <div className="border-t border-[var(--hairline)] pt-4 flex items-center justify-between text-xs font-mono text-[var(--ink)]/75">
-            <span className="font-serif italic text-sm text-[var(--ink)]">
-              Destined for riches.
-            </span>
-            <span className="text-[var(--acc-on-bone)] font-semibold uppercase text-[11px] tracking-wider">
-              Lagos Fashion Archive
-            </span>
+          {/* Right: Live Lagos Time */}
+          <div className="flex items-center gap-2.5 font-mono text-xs text-[var(--bone)]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--acc)]" />
+            <span className="tracking-wider">LAGOS {lagosTime} WAT</span>
           </div>
-        </motion.div>
+        </div>
+      </div>
 
-        {/* ============================================================ */}
-        {/* RIGHT PANE (INK ~65% / 7 COLS): THE CINEMATIC SPECTACLE */}
-        {/* ============================================================ */}
+      {/* ============================================================ */}
+      {/* 4. MAIN CENTRAL SPECTACLE: SUSPENDED ARTIFACT & MANIFESTO */}
+      {/* ============================================================ */}
+      <div className="relative z-10 flex-1 flex flex-col items-center justify-center my-auto py-6 sm:py-8 px-4 md:px-8">
+        {/* Floating Garment Viewport with 3D Physics */}
         <div
-          ref={stageRef}
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseLeave}
-          data-tone="ink"
-          className="relative lg:col-span-7 flex flex-col justify-between p-6 sm:p-10 lg:p-12 bg-[#0c0b0a] grain-overlay overflow-hidden min-h-[580px] sm:min-h-[680px] lg:min-h-[880px] order-1 lg:order-2"
+          style={{ perspective: 1200 }}
+          className="relative w-full max-w-xl flex flex-col items-center justify-center min-h-[360px] sm:min-h-[460px]"
         >
-          {/* 1. Dramatic Overhead Spotlight Beam */}
-          <div
-            className="absolute top-0 left-1/2 -translate-x-1/2 w-[620px] sm:w-[900px] h-[640px] pointer-events-none z-0 opacity-45"
-            style={{
-              background:
-                activePillar === 'mindset'
-                  ? 'radial-gradient(ellipse 75% 55% at 50% 0%, rgba(229,55,45,0.2) 0%, rgba(236,230,216,0.1) 40%, transparent 75%)'
-                  : activePillar === 'ambition'
-                  ? 'radial-gradient(ellipse 75% 55% at 50% 0%, rgba(27,56,43,0.35) 0%, rgba(236,230,216,0.1) 40%, transparent 75%)'
-                  : 'radial-gradient(ellipse 75% 55% at 50% 0%, rgba(236,230,216,0.22) 0%, rgba(229,55,45,0.08) 40%, transparent 75%)',
-            }}
-          />
-
-          {/* Subtle Ambient Red Glow behind Garment */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-            <div className="w-[380px] sm:w-[580px] h-[380px] sm:h-[580px] rounded-full bg-[radial-gradient(circle,rgba(229,55,45,0.09)_0%,transparent_68%)]" />
-          </div>
-
-          {/* 2. Monumental Architectural R - O - F Wordmark with Parallax */}
+          {/* Garment 3D Tilt Wrapper */}
           <motion.div
             style={{
-              x: isTouch || prefersReduced ? 0 : lettersShiftX,
-              y: isTouch || prefersReduced ? 0 : lettersShiftY,
+              rotateX: isTouch || prefersReduced ? 0 : garmentRotateX,
+              rotateY: isTouch || prefersReduced ? 0 : garmentRotateY,
+              x: isTouch || prefersReduced ? 0 : garmentTranslateX,
+              y: isTouch || prefersReduced ? 0 : garmentTranslateY,
+              transformStyle: 'preserve-3d',
             }}
-            className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 px-4"
-            aria-hidden="true"
+            animate={
+              prefersReduced
+                ? undefined
+                : {
+                    y: [0, -15, 0],
+                    rotateZ: [-0.9, 0.9, -0.9],
+                  }
+            }
+            transition={
+              prefersReduced
+                ? undefined
+                : {
+                    duration: 5.5,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                  }
+                }
+            className="relative z-10 flex flex-col items-center justify-center w-full"
           >
-            <svg
-              viewBox="0 0 280 90"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-full max-w-[700px] text-[var(--bone)] overflow-visible opacity-35"
+            {/* The Floating Heavyweight Streetwear Artifact */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 24 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full flex justify-center"
             >
-              {/* 'R' Path: Ambition */}
-              <motion.path
-                d="M 20,82 L 20,10 L 64,10 L 84,32 L 64,52 L 20,52 M 56,52 L 86,82"
-                stroke={activePillar === 'ambition' ? 'var(--acc)' : 'currentColor'}
-                strokeWidth={activePillar === 'ambition' ? '6' : '5'}
-                strokeLinecap="square"
-                strokeLinejoin="miter"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{
-                  pathLength: 1,
-                  opacity: activePillar === 'ambition' ? 0.95 : 0.45,
-                }}
-                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+              <TeeCutout
+                design="cards"
+                colour="forest-green"
+                view="full"
+                withDiamondAccent={false}
+                className="w-auto max-h-[350px] sm:max-h-[460px] md:max-h-[500px] drop-shadow-[0_42px_56px_rgba(0,0,0,0.85)]"
               />
+            </motion.div>
 
-              {/* 'O' Diamond Outer: Originality */}
-              <motion.polygon
-                points="140,8 178,46 140,84 102,46"
-                stroke={activePillar === 'mindset' ? 'var(--acc)' : 'currentColor'}
-                strokeWidth={activePillar === 'mindset' ? '6' : '5'}
-                strokeLinejoin="miter"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{
-                  pathLength: 1,
-                  opacity: activePillar === 'mindset' ? 0.95 : 0.5,
-                }}
-                transition={{ duration: 1.2, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-              />
-
-              {/* 'O' Concentric Red Accent Core - The Heartbeat of the Brand */}
-              <motion.polygon
-                points="140,26 160,46 140,66 120,46"
-                stroke="var(--acc)"
-                strokeWidth="3.2"
-                strokeLinejoin="miter"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{
-                  pathLength: 1,
-                  opacity: prefersReduced ? 0.8 : [0.65, 1, 0.65],
-                  scale: prefersReduced ? 1 : [1, 1.05, 1],
-                }}
-                transition={{
-                  pathLength: { duration: 1, delay: 0.3 },
-                  opacity: { duration: 3.2, repeat: Infinity, ease: 'easeInOut' },
-                  scale: { duration: 3.2, repeat: Infinity, ease: 'easeInOut' },
-                }}
-              />
-
-              {/* 'F' Path: Greatness */}
-              <motion.path
-                d="M 205,82 L 205,10 L 268,10 M 205,46 L 252,46"
-                stroke={activePillar === 'greatness' ? 'var(--acc)' : 'currentColor'}
-                strokeWidth={activePillar === 'greatness' ? '6' : '5'}
-                strokeLinecap="square"
-                strokeLinejoin="miter"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{
-                  pathLength: 1,
-                  opacity: activePillar === 'greatness' ? 0.95 : 0.45,
-                }}
-                transition={{ duration: 1.2, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              />
-            </svg>
-          </motion.div>
-
-          {/* 3. Top Stage Strip: Interactive Pillar Switcher */}
-          <div className="relative z-20 flex items-center justify-between border-b border-[var(--hairline)] pb-3">
-            <div className="flex items-center gap-2">
-              <DiamondMark size={8} accent filled />
-              <span className="label-caps text-[var(--bone)] tracking-[0.24em] font-medium">
-                Identity Pillars
-              </span>
-            </div>
-
-            {/* Pillar Selector Pills */}
-            <div className="flex items-center gap-1 bg-[var(--ink)]/85 backdrop-blur-md border border-[var(--hairline)] p-1 rounded-sm shadow-xl">
-              <button
-                type="button"
-                onClick={() => setActivePillar('ambition')}
-                className={cn(
-                  'px-3 py-1 text-[10px] font-sans uppercase tracking-[0.2em] transition-all cursor-pointer rounded-xs',
-                  activePillar === 'ambition'
-                    ? 'bg-[var(--bone)] text-[var(--ink)] font-semibold'
-                    : 'text-[var(--muted)] hover:text-[var(--bone)]'
-                )}
-              >
-                R • Ambition
-              </button>
-              <button
-                type="button"
-                onClick={() => setActivePillar('mindset')}
-                className={cn(
-                  'px-3 py-1 text-[10px] font-sans uppercase tracking-[0.2em] transition-all cursor-pointer rounded-xs',
-                  activePillar === 'mindset'
-                    ? 'bg-[var(--acc)] text-[#fff6ec] font-semibold'
-                    : 'text-[var(--muted)] hover:text-[var(--bone)]'
-                )}
-              >
-                O • Mindset
-              </button>
-              <button
-                type="button"
-                onClick={() => setActivePillar('greatness')}
-                className={cn(
-                  'px-3 py-1 text-[10px] font-sans uppercase tracking-[0.2em] transition-all cursor-pointer rounded-xs',
-                  activePillar === 'greatness'
-                    ? 'bg-[var(--bone)] text-[var(--ink)] font-semibold'
-                    : 'text-[var(--muted)] hover:text-[var(--bone)]'
-                )}
-              >
-                F • Greatness
-              </button>
-            </div>
-          </div>
-
-          {/* 4. Massive Suspended Brand Relic (High-Fashion Cutout Stage) */}
-          <div
-            style={{ perspective: 1200 }}
-            className="relative z-10 flex-1 flex flex-col items-center justify-center my-auto py-6"
-          >
+            {/* Dynamic Ground Contact Shadow */}
             <motion.div
               style={{
-                rotateX: isTouch || prefersReduced ? 0 : garmentRotateX,
-                rotateY: isTouch || prefersReduced ? 0 : garmentRotateY,
-                x: isTouch || prefersReduced ? 0 : garmentTranslateX,
-                y: isTouch || prefersReduced ? 0 : garmentTranslateY,
-                transformStyle: 'preserve-3d',
+                skewX: isTouch || prefersReduced ? 0 : shadowSkewX,
+                scaleX: isTouch || prefersReduced ? 1 : shadowScale,
               }}
               animate={
                 prefersReduced
                   ? undefined
                   : {
-                      y: [0, -16, 0],
-                      rotateZ: [-1, 1, -1],
+                      scaleX: [1, 0.92, 1],
+                      opacity: [0.7, 0.45, 0.7],
                     }
               }
               transition={
@@ -488,60 +360,111 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                       ease: 'easeInOut',
                     }
               }
-              className="relative z-10 flex flex-col items-center justify-center w-full"
-            >
-              {/* Suspended Brand Relic Silhouette */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.92, y: 24 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="w-full flex justify-center"
-              >
-                <TeeCutout
-                  design="cards"
-                  colour="forest-green"
-                  view="full"
-                  withDiamondAccent={false}
-                  className="w-auto max-h-[380px] sm:max-h-[500px] md:max-h-[560px] drop-shadow-[0_42px_56px_rgba(0,0,0,0.85)]"
-                />
-              </motion.div>
+              className="w-64 sm:w-92 h-5 bg-black/90 rounded-full blur-[14px] -mt-1 pointer-events-none"
+            />
+          </motion.div>
+        </div>
 
-              {/* Dynamic Ground Contact Shadow */}
-              <motion.div
-                style={{
-                  skewX: isTouch || prefersReduced ? 0 : shadowSkewX,
-                  scaleX: isTouch || prefersReduced ? 1 : shadowScale,
-                }}
-                animate={
-                  prefersReduced
-                    ? undefined
-                    : {
-                        scaleX: [1, 0.92, 1],
-                        opacity: [0.7, 0.45, 0.7],
-                      }
-                }
-                transition={
-                  prefersReduced
-                    ? undefined
-                    : {
-                        duration: 5.5,
-                        repeat: Infinity,
-                        ease: 'easeInOut',
-                      }
-                }
-                className="w-64 sm:w-96 h-5 bg-black/90 rounded-full blur-[14px] -mt-1 pointer-events-none"
-              />
-            </motion.div>
+        {/* Central Editorial Narrative & Story Headline */}
+        <div className="relative z-20 w-full max-w-4xl text-center mt-2 sm:mt-4 flex flex-col items-center gap-4">
+          <div className="overflow-hidden py-1">
+            <motion.h1
+              initial={{ y: '110%' }}
+              animate={{ y: 0 }}
+              transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+              className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-display text-[var(--bone)] leading-[0.92] tracking-tight"
+            >
+              More than clothing.{' '}
+              <span className="italic font-serif text-[var(--acc)] block sm:inline">
+                A mindset.
+              </span>
+            </motion.h1>
           </div>
 
-          {/* 5. Bottom Brand Creed Tape */}
-          <div className="relative z-20 pt-4 border-t border-[var(--hairline)] flex items-center justify-between text-xs font-mono text-[var(--bone)]/75">
-            <span className="flex items-center gap-2">
-              <span className="text-[var(--acc)] font-bold">R • O • F</span>
-              <span>Ambition. Confidence. Originality.</span>
-            </span>
+          <motion.p
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            className="text-sm sm:text-base font-sans text-[var(--bone)]/80 max-w-xl leading-relaxed"
+          >
+            ROF stands for ambition, confidence and originality. Built for people who stay focused on their goals, never settle for less, and wear it with pride because it represents something bigger than themselves.
+          </motion.p>
 
-            <span className="hidden sm:inline-block text-[var(--muted)]">
+          {/* Active Pillar Story Manifestation */}
+          <div className="h-10 flex items-center justify-center">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activePillar}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.25 }}
+                className="flex items-center gap-2 text-xs font-mono text-[var(--acc)] uppercase tracking-widest font-semibold"
+              >
+                <DiamondMark size={6} accent filled />
+                <span>{currentPillar.title}</span>
+                <span className="text-[var(--hairline)]">•</span>
+                <span className="text-[var(--bone)]/70 normal-case font-sans">
+                  {currentPillar.manifesto}
+                </span>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Invitation Actions: Story & Collection */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-col sm:flex-row items-center gap-3 pt-2"
+          >
+            <Button
+              variant="primary"
+              size="lg"
+              withArrow
+              onClick={() => {
+                const target = document.getElementById('collection-chapters')
+                if (target) {
+                  target.scrollIntoView({ behavior: 'smooth' })
+                } else {
+                  navigate({ to: '/shop' })
+                }
+              }}
+              className="uppercase tracking-wider text-xs font-semibold px-8 py-4 cursor-pointer shadow-xl"
+            >
+              Witness The Collection
+            </Button>
+
+            <Link
+              to="/story"
+              className="inline-flex items-center justify-center px-6 py-4 border border-[var(--hairline)] hover:border-[var(--bone)] text-xs font-mono uppercase tracking-wider text-[var(--bone)] transition-colors bg-[var(--ink)]/80 backdrop-blur-md"
+            >
+              Read Full Brand Story
+            </Link>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* ============================================================ */}
+      {/* 5. FULL-WIDTH BONE CREDENTIAL TAPE (THE 30% BONE COMPONENT) */}
+      {/* ============================================================ */}
+      <div
+        data-tone="bone"
+        className="relative z-30 bg-[var(--bone)] text-[var(--ink)] border-t border-[var(--hairline)] px-4 md:px-8 py-3.5"
+      >
+        <div className="mx-auto max-w-[var(--max-content)] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono">
+          <div className="flex items-center gap-3 font-semibold">
+            <span className="text-[var(--acc-on-bone)]">R • O • F</span>
+            <span>AMBITION</span>
+            <DiamondMark size={5} accent filled />
+            <span>CONFIDENCE</span>
+            <DiamondMark size={5} accent filled />
+            <span>ORIGINALITY</span>
+          </div>
+
+          <div className="flex items-center gap-4 text-[var(--ink)]/75">
+            <span className="hidden md:inline-block">260 GSM HEAVYWEIGHT DRAPE</span>
+            <span className="font-serif italic text-sm text-[var(--acc-on-bone)] font-bold">
               Destined for riches.
             </span>
           </div>
