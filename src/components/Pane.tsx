@@ -34,3 +34,4 @@ export const Pane = React.forwardRef<HTMLDivElement, PaneProps>(
 )
 
 Pane.displayName = 'Pane'
+

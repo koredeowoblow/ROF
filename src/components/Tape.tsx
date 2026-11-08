@@ -66,3 +66,4 @@ export const Tape: React.FC<TapeProps> = ({
     </div>
   )
 }
+

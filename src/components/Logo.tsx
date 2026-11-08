@@ -193,3 +193,4 @@ export const DiamondMark: React.FC<{
     </svg>
   )
 }
+

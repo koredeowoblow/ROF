@@ -39,3 +39,4 @@ export const Numeral: React.FC<NumeralProps> = ({
     </span>
   )
 }
+

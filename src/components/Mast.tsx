@@ -72,3 +72,4 @@ export const Mast: React.FC<MastProps> = ({
     </div>
   )
 }
+

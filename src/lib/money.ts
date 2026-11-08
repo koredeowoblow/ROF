@@ -17,3 +17,4 @@ export function formatNaira(amount: number): string {
 export function formatNairaNumber(amount: number): string {
   return nairaFormatter.format(amount)
 }
+

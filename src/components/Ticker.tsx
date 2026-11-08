@@ -60,3 +60,4 @@ export const Ticker: React.FC<TickerProps> = ({
     </div>
   )
 }
+
