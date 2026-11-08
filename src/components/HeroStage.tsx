@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence, useReducedMotion } from 'motion/react'
-import { ArrowRight, Compass, Shield, Flame, Sparkles, ChevronDown } from 'lucide-react'
+import { ArrowRight, Compass, Shield, Flame, Sparkles, ChevronDown, CornerDownRight } from 'lucide-react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { DiamondMark, Logo } from '@/components/Logo'
 import { Button } from '@/components/Button'
@@ -14,33 +14,33 @@ type PillarKey = 'ambition' | 'mindset' | 'greatness'
 
 interface PillarInfo {
   letter: string
-  roman: string
-  title: string
+  code: string
   label: string
+  title: string
   creed: string
 }
 
 const PILLARS: Record<PillarKey, PillarInfo> = {
   ambition: {
     letter: 'R',
-    roman: '01',
+    code: '01',
     label: 'AMBITION',
     title: 'The Relentless Drive',
-    creed: 'We do not wait for permission. We build through the noise and relentlessly pursue what was destined for us.',
+    creed: 'We do not wait for permission. We build through the noise and claim what was destined for us.',
   },
   mindset: {
     letter: 'O',
-    roman: '02',
+    code: '02',
     label: 'THE MINDSET',
     title: 'The Diamond Core',
     creed: 'Pressure does not break us; it refines us. Cut sharp with precision, unbroken by circumstance.',
   },
   greatness: {
     letter: 'F',
-    roman: '03',
+    code: '03',
     label: 'GREATNESS',
     title: 'Building Your Legacy',
-    creed: 'Heavyweight intention woven into every action. Made for those building something bigger than themselves.',
+    creed: 'Heavyweight intention woven into every action. Built for those creating something that outlives them.',
   },
 }
 
@@ -50,6 +50,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   const [activePillar, setActivePillar] = useState<PillarKey>('mindset')
   const [isTouch, setIsTouch] = useState(true)
   const [lagosTime, setLagosTime] = useState<string>('12:00:00')
+  const [isHeadlineHovered, setIsHeadlineHovered] = useState(false)
 
   const stageRef = useRef<HTMLDivElement>(null)
 
@@ -86,22 +87,23 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   const rawMouseX = useMotionValue(0)
   const rawMouseY = useMotionValue(0)
 
-  const springConfig = { damping: 26, stiffness: 140, mass: 0.6 }
+  // Smooth spring configuration for fluid street-luxury responsiveness
+  const springConfig = { damping: 28, stiffness: 140, mass: 0.55 }
   const smoothX = useSpring(rawMouseX, springConfig)
   const smoothY = useSpring(rawMouseY, springConfig)
 
   // 3D Perspective Transformations for the kinetic diamond vault
-  const vaultRotateX = useTransform(smoothY, [-0.5, 0.5], [14, -14])
-  const vaultRotateY = useTransform(smoothX, [-0.5, 0.5], [-16, 16])
-  const vaultTranslateX = useTransform(smoothX, [-0.5, 0.5], [-24, 24])
+  const vaultRotateX = useTransform(smoothY, [-0.5, 0.5], [16, -16])
+  const vaultRotateY = useTransform(smoothX, [-0.5, 0.5], [-18, 18])
+  const vaultTranslateX = useTransform(smoothX, [-0.5, 0.5], [-26, 26])
   const vaultTranslateY = useTransform(smoothY, [-0.5, 0.5], [-18, 18])
 
-  // Parallax for Monumental Letters in depth
-  const lettersShiftX = useTransform(smoothX, [-0.5, 0.5], [32, -32])
-  const lettersShiftY = useTransform(smoothY, [-0.5, 0.5], [20, -20])
+  // Parallax for Monumental Background Letters in depth
+  const lettersShiftX = useTransform(smoothX, [-0.5, 0.5], [36, -36])
+  const lettersShiftY = useTransform(smoothY, [-0.5, 0.5], [22, -22])
 
   // Parallax for Diamond rings (counter-rotation)
-  const ringRotate = useTransform(smoothX, [-0.5, 0.5], [-12, 12])
+  const ringRotate = useTransform(smoothX, [-0.5, 0.5], [-16, 16])
 
   // Dynamic Contact Shadow
   const shadowSkewX = useTransform(smoothX, [-0.5, 0.5], [-14, 14])
@@ -135,35 +137,43 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
       )}
     >
       {/* ============================================================ */}
-      {/* 1. ATMOSPHERIC VOLUMETRIC STUDIO LIGHTING */}
+      {/* 1. ATMOSPHERIC STREET VOLUMETRIC LIGHTING & AMBIENT GLOW */}
       {/* ============================================================ */}
-      {/* Overhead dramatic spotlight cone casting onto the diamond core */}
+      {/* Overhead stage beam focusing on the kinetic diamond */}
       <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] sm:w-[1300px] h-[800px] pointer-events-none z-0 opacity-40 transition-all duration-1000"
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] sm:w-[1300px] h-[820px] pointer-events-none z-0 opacity-40 transition-all duration-1000"
         style={{
           background:
             activePillar === 'mindset'
-              ? 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(229,55,45,0.25) 0%, rgba(236,230,216,0.12) 40%, transparent 75%)'
+              ? 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(229,55,45,0.28) 0%, rgba(236,230,216,0.12) 40%, transparent 75%)'
               : activePillar === 'ambition'
-              ? 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(27,56,43,0.4) 0%, rgba(236,230,216,0.1) 40%, transparent 75%)'
-              : 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(236,230,216,0.22) 0%, rgba(229,55,45,0.1) 40%, transparent 75%)',
+              ? 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(27,56,43,0.42) 0%, rgba(236,230,216,0.1) 40%, transparent 75%)'
+              : 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(236,230,216,0.24) 0%, rgba(229,55,45,0.1) 40%, transparent 75%)',
         }}
       />
 
       {/* Deep Ambient Warmth Halo */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-        <div className="w-[450px] sm:w-[750px] h-[450px] sm:h-[750px] rounded-full bg-[radial-gradient(circle,rgba(229,55,45,0.09)_0%,transparent_65%)]" />
+        <div className="w-[450px] sm:w-[800px] h-[450px] sm:h-[800px] rounded-full bg-[radial-gradient(circle,rgba(229,55,45,0.08)_0%,transparent_68%)]" />
+      </div>
+
+      {/* Floating Ambient Atmospheric Micro-Particles (Street Embers) */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden opacity-30">
+        <div className="absolute top-1/4 left-1/5 w-1 h-1 bg-[var(--acc)] rounded-full animate-ping" />
+        <div className="absolute top-1/3 right-1/4 w-1.5 h-1.5 bg-[var(--bone)] rounded-full opacity-60 animate-pulse" />
+        <div className="absolute bottom-1/3 left-1/3 w-1 h-1 bg-[var(--acc)] rounded-full opacity-70 animate-bounce" style={{ animationDuration: '6s' }} />
+        <div className="absolute top-1/2 right-1/5 w-1 h-1 bg-[var(--bone)] rounded-full opacity-40 animate-pulse" style={{ animationDuration: '4s' }} />
       </div>
 
       {/* ============================================================ */}
-      {/* 2. TOP TELEMETRY MASTHEAD */}
+      {/* 2. TOP TELEMETRY MASTHEAD WITH INTERACTIVE PILLARS */}
       {/* ============================================================ */}
       <div className="relative z-20 mx-auto w-full max-w-[var(--max-content)] px-4 md:px-8 pt-2 sm:pt-4">
         <div className="flex items-center justify-between border-b border-[var(--hairline)] pb-3.5 text-xs">
           {/* Brand Telemetry */}
           <div className="flex items-center gap-3">
             <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--acc)] opacity-80" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--acc)] opacity-85" />
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[var(--acc)]" />
             </span>
             <span className="label-caps text-[var(--bone)] tracking-[0.26em] font-semibold">
@@ -175,27 +185,31 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             </span>
           </div>
 
-          {/* Identity Pillars Navigator */}
-          <div className="hidden md:flex items-center gap-1.5 bg-[var(--ink)]/80 backdrop-blur-md border border-[var(--hairline)] p-1 rounded-sm">
+          {/* Identity Pillars Selector with Micro-Interactions */}
+          <div className="hidden md:flex items-center gap-1.5 bg-[var(--ink)]/85 backdrop-blur-md border border-[var(--hairline)] p-1 rounded-sm shadow-xl">
             {(['ambition', 'mindset', 'greatness'] as const).map((key) => {
               const p = PILLARS[key]
               const isActive = activePillar === key
               return (
-                <button
+                <motion.button
                   key={key}
                   type="button"
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.94 }}
                   onClick={() => setActivePillar(key)}
                   className={cn(
-                    'px-3 py-1 text-[11px] font-mono uppercase tracking-[0.2em] transition-all cursor-pointer rounded-xs flex items-center gap-1.5',
+                    'px-3.5 py-1 text-[11px] font-mono uppercase tracking-[0.2em] transition-all cursor-pointer rounded-xs flex items-center gap-1.5',
                     isActive
                       ? 'bg-[var(--acc)] text-[#fff6ec] font-bold shadow-md'
-                      : 'text-[var(--muted)] hover:text-[var(--bone)]'
+                      : 'text-[var(--muted)] hover:text-[var(--bone)] hover:bg-[var(--bone)]/5'
                   )}
                 >
-                  <span>{p.letter}</span>
+                  <span className={isActive ? 'text-[#fff6ec]' : 'text-[var(--acc)]'}>
+                    {p.letter}
+                  </span>
                   <span className="text-[var(--hairline)]">•</span>
-                  <span>{p.label.split(' • ')[1] || p.label}</span>
-                </button>
+                  <span>{p.label}</span>
+                </motion.button>
               )
             })}
           </div>
@@ -209,7 +223,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
       </div>
 
       {/* ============================================================ */}
-      {/* 3. CENTERPIECE: THE KINETIC DIAMOND INSTALLATION (NO CLOTH) */}
+      {/* 3. MAJOR SIGNATURE ANIMATION: KINETIC DIAMOND INSTALLATION */}
       {/* ============================================================ */}
       <div className="relative z-10 flex-1 flex flex-col items-center justify-center my-auto py-8 sm:py-12 px-4 md:px-8">
         {/* Kinetic Vault 3D Viewport */}
@@ -217,7 +231,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
           style={{ perspective: 1200 }}
           className="relative w-full max-w-2xl flex flex-col items-center justify-center min-h-[340px] sm:min-h-[460px]"
         >
-          {/* Monumental Letters 'R' and 'F' flanking the central Diamond */}
+          {/* Monumental Architectural Letters 'R' and 'F' flanking the central Diamond */}
           <motion.div
             style={{
               x: isTouch || prefersReduced ? 0 : lettersShiftX,
@@ -226,7 +240,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             className="absolute inset-0 flex items-center justify-between pointer-events-none z-0 px-2 sm:px-8 opacity-25 sm:opacity-35"
             aria-hidden="true"
           >
-            {/* Monumental 'R' */}
+            {/* Monumental 'R' (Ambition) */}
             <motion.svg
               viewBox="0 0 90 90"
               className="w-24 sm:w-44 md:w-56 h-auto text-[var(--bone)] overflow-visible"
@@ -235,7 +249,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               <motion.path
                 d="M 20,82 L 20,10 L 64,10 L 84,32 L 64,52 L 20,52 M 56,52 L 86,82"
                 stroke={activePillar === 'ambition' ? 'var(--acc)' : 'currentColor'}
-                strokeWidth={activePillar === 'ambition' ? '6' : '4.5'}
+                strokeWidth={activePillar === 'ambition' ? '6.5' : '4.5'}
                 strokeLinecap="square"
                 strokeLinejoin="miter"
                 initial={{ pathLength: 0 }}
@@ -244,7 +258,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               />
             </motion.svg>
 
-            {/* Monumental 'F' */}
+            {/* Monumental 'F' (Greatness) */}
             <motion.svg
               viewBox="0 0 90 90"
               className="w-24 sm:w-44 md:w-56 h-auto text-[var(--bone)] overflow-visible"
@@ -253,7 +267,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               <motion.path
                 d="M 20,82 L 20,10 L 80,10 M 20,46 L 68,46"
                 stroke={activePillar === 'greatness' ? 'var(--acc)' : 'currentColor'}
-                strokeWidth={activePillar === 'greatness' ? '6' : '4.5'}
+                strokeWidth={activePillar === 'greatness' ? '6.5' : '4.5'}
                 strokeLinecap="square"
                 strokeLinejoin="miter"
                 initial={{ pathLength: 0 }}
@@ -263,7 +277,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             </motion.svg>
           </motion.div>
 
-          {/* The Kinetic Diamond Installation (Precision Sacred Geometry) */}
+          {/* The Kinetic Diamond Installation (Multi-Layered Precision Sacred Geometry) */}
           <motion.div
             style={{
               rotateX: isTouch || prefersReduced ? 0 : vaultRotateX,
@@ -276,7 +290,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               prefersReduced
                 ? undefined
                 : {
-                    y: [0, -14, 0],
+                    y: [0, -15, 0],
                   }
             }
             transition={
@@ -290,15 +304,15 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             }
             className="relative z-10 flex flex-col items-center justify-center w-full max-w-[420px] sm:max-w-[480px] h-[340px] sm:h-[440px]"
           >
-            {/* Multi-Layered Rotating Diamond Cage */}
+            {/* SVG Kinetic Diamond Engine */}
             <motion.svg
               viewBox="0 0 400 400"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className="w-full h-full text-[var(--bone)] overflow-visible drop-shadow-[0_24px_48px_rgba(0,0,0,0.8)]"
+              className="w-full h-full text-[var(--bone)] overflow-visible drop-shadow-[0_24px_48px_rgba(0,0,0,0.85)]"
             >
-              {/* Outer Subtle Orbit Ring */}
-              <circle
+              {/* Outer Slow-Orbit Celestial Ring */}
+              <motion.circle
                 cx="200"
                 cy="200"
                 r="185"
@@ -306,6 +320,54 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                 strokeWidth="1"
                 strokeDasharray="4 8"
                 opacity="0.25"
+                animate={prefersReduced ? undefined : { rotate: 360 }}
+                transition={{ duration: 60, repeat: Infinity, ease: 'linear' }}
+                style={{ originX: '200px', originY: '200px' }}
+              />
+
+              {/* Pulsing Radar Diamond Echo Ring 1 */}
+              <motion.polygon
+                points="200,90 310,200 200,310 90,200"
+                stroke="var(--acc)"
+                strokeWidth="1.2"
+                initial={{ opacity: 0, scale: 1 }}
+                animate={
+                  prefersReduced
+                    ? undefined
+                    : {
+                        opacity: [0.6, 0],
+                        scale: [1, 1.6],
+                      }
+                }
+                transition={{
+                  duration: 3.2,
+                  repeat: Infinity,
+                  ease: 'easeOut',
+                }}
+                style={{ originX: '200px', originY: '200px' }}
+              />
+
+              {/* Pulsing Radar Diamond Echo Ring 2 (Staggered) */}
+              <motion.polygon
+                points="200,90 310,200 200,310 90,200"
+                stroke="var(--acc)"
+                strokeWidth="1"
+                initial={{ opacity: 0, scale: 1 }}
+                animate={
+                  prefersReduced
+                    ? undefined
+                    : {
+                        opacity: [0.5, 0],
+                        scale: [1, 1.8],
+                      }
+                }
+                transition={{
+                  duration: 3.2,
+                  delay: 1.6,
+                  repeat: Infinity,
+                  ease: 'easeOut',
+                }}
+                style={{ originX: '200px', originY: '200px' }}
               />
 
               {/* Layer 1: Outermost Diamond Frame */}
@@ -318,7 +380,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                 transition={{ duration: 1.3, ease: [0.16, 1, 0.3, 1] }}
               />
 
-              {/* Layer 2: Intermediate Architectural Diamond (Slightly counter-rotated) */}
+              {/* Layer 2: Intermediate Architectural Diamond Frame */}
               <motion.polygon
                 points="200,55 345,200 200,345 55,200"
                 stroke="currentColor"
@@ -328,7 +390,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                 transition={{ duration: 1.2, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
               />
 
-              {/* Layer 3: Main Bold Diamond Contour */}
+              {/* Layer 3: Main Bold Geometric Diamond Frame */}
               <motion.polygon
                 points="200,90 310,200 200,310 90,200"
                 stroke={activePillar === 'mindset' ? 'var(--acc)' : 'currentColor'}
@@ -346,30 +408,31 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               <motion.polygon
                 points="200,135 265,200 200,265 135,200"
                 stroke="var(--acc)"
-                strokeWidth="3.2"
-                fill="rgba(229, 55, 45, 0.08)"
+                strokeWidth="3.4"
+                fill="rgba(229, 55, 45, 0.12)"
                 strokeLinejoin="miter"
                 initial={{ pathLength: 0, opacity: 0 }}
                 animate={{
                   pathLength: 1,
-                  opacity: prefersReduced ? 0.8 : [0.65, 1, 0.65],
-                  scale: prefersReduced ? 1 : [1, 1.06, 1],
+                  opacity: prefersReduced ? 0.85 : [0.65, 1, 0.65],
+                  scale: prefersReduced ? 1 : [1, 1.07, 1],
                 }}
                 transition={{
                   pathLength: { duration: 1, delay: 0.35 },
-                  opacity: { duration: 3.2, repeat: Infinity, ease: 'easeInOut' },
-                  scale: { duration: 3.2, repeat: Infinity, ease: 'easeInOut' },
+                  opacity: { duration: 2.8, repeat: Infinity, ease: 'easeInOut' },
+                  scale: { duration: 2.8, repeat: Infinity, ease: 'easeInOut' },
                 }}
+                style={{ originX: '200px', originY: '200px' }}
               />
 
-              {/* Innermost Brilliant Diamond Sparkle */}
+              {/* Innermost Brilliant Diamond Sparkle Core */}
               <polygon
                 points="200,170 230,200 200,230 170,200"
                 fill="var(--acc)"
-                opacity="0.9"
+                opacity="0.95"
               />
 
-              {/* Cardinal Alignment Ticks */}
+              {/* Cardinal Precision Crosshair Ticks */}
               <line x1="200" y1="5" x2="200" y2="25" stroke="var(--acc)" strokeWidth="2" />
               <line x1="395" y1="200" x2="375" y2="200" stroke="var(--acc)" strokeWidth="2" />
               <line x1="200" y1="395" x2="200" y2="375" stroke="var(--acc)" strokeWidth="2" />
@@ -413,12 +476,17 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               initial={{ y: '110%' }}
               animate={{ y: 0 }}
               transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-              className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-display text-[var(--bone)] leading-[0.9] tracking-tight"
+              className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-display text-[var(--bone)] leading-[0.9] tracking-tight cursor-default"
             >
               Destined for{' '}
-              <span className="italic font-serif text-[var(--acc)]">
+              <motion.span
+                onMouseEnter={() => setIsHeadlineHovered(true)}
+                onMouseLeave={() => setIsHeadlineHovered(false)}
+                animate={isHeadlineHovered ? { scale: 1.04 } : { scale: 1 }}
+                className="italic font-serif text-[var(--acc)] inline-block transition-transform duration-200"
+              >
                 riches.
-              </span>
+              </motion.span>
             </motion.h1>
           </div>
 
@@ -431,14 +499,14 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             ROF stands for ambition, confidence and originality. It is built for people who stay focused on their goals, never settle for less, and wear it with pride because it represents something bigger than themselves.
           </motion.p>
 
-          {/* Active Pillar Creed */}
+          {/* Active Pillar Creed with Interactive Reveal */}
           <div className="h-10 flex items-center justify-center">
             <AnimatePresence mode="wait">
               <motion.div
                 key={activePillar}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
+                initial={{ opacity: 0, y: 8, filter: 'blur(2px)' }}
+                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, y: -8, filter: 'blur(2px)' }}
                 transition={{ duration: 0.25 }}
                 className="flex items-center gap-2.5 text-xs font-mono text-[var(--acc)] uppercase tracking-widest font-semibold"
               >
@@ -452,36 +520,48 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             </AnimatePresence>
           </div>
 
-          {/* Actions: Exploration & Story (Point of Attraction, Not Sales) */}
+          {/* Actions: Exploration & Story with Tactile Micro-Interactions */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col sm:flex-row items-center gap-3.5 pt-3"
           >
-            <Button
-              variant="primary"
-              size="lg"
-              withArrow
-              onClick={() => {
-                const target = document.getElementById('collection-chapters')
-                if (target) {
-                  target.scrollIntoView({ behavior: 'smooth' })
-                } else {
-                  navigate({ to: '/shop' })
-                }
-              }}
-              className="uppercase tracking-wider text-xs font-semibold px-8 py-4 cursor-pointer shadow-2xl"
+            <motion.div
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.95 }}
+              className="w-full sm:w-auto"
             >
-              Witness The Capsule
-            </Button>
+              <Button
+                variant="primary"
+                size="lg"
+                withArrow
+                onClick={() => {
+                  const target = document.getElementById('collection-chapters')
+                  if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' })
+                  } else {
+                    navigate({ to: '/shop' })
+                  }
+                }}
+                className="w-full sm:w-auto uppercase tracking-wider text-xs font-semibold px-8 py-4 cursor-pointer shadow-2xl hover:shadow-[0_8px_30px_rgba(229,55,45,0.35)] transition-shadow"
+              >
+                Witness The Capsule
+              </Button>
+            </motion.div>
 
-            <Link
-              to="/story"
-              className="inline-flex items-center justify-center px-6 py-4 border border-[var(--hairline)] hover:border-[var(--bone)] text-xs font-mono uppercase tracking-wider text-[var(--bone)] transition-colors bg-[var(--ink)]/80 backdrop-blur-md"
+            <motion.div
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.95 }}
+              className="w-full sm:w-auto"
             >
-              Read Full Brand Story
-            </Link>
+              <Link
+                to="/story"
+                className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-4 border border-[var(--hairline)] hover:border-[var(--bone)] text-xs font-mono uppercase tracking-wider text-[var(--bone)] transition-all bg-[var(--ink)]/80 backdrop-blur-md hover:bg-[var(--bone)]/10"
+              >
+                Read Full Brand Story
+              </Link>
+            </motion.div>
           </motion.div>
         </div>
       </div>
