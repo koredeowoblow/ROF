@@ -3,7 +3,7 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { motion, AnimatePresence } from 'motion/react'
 import { ArrowRight, ShieldCheck, Truck, RefreshCw } from 'lucide-react'
 import { Pane } from '@/components/Pane'
-import { Logo, DiamondMark } from '@/components/Logo'
+import { Logo, DiamondMark, HeroROFLetters } from '@/components/Logo'
 import { Numeral } from '@/components/Numeral'
 import { Button } from '@/components/Button'
 import { Chip } from '@/components/Chip'
@@ -23,6 +23,7 @@ function HomePage() {
   const navigate = useNavigate()
   const addItem = useBagStore((s) => s.addItem)
   const [heroIndex, setHeroIndex] = useState(0)
+  const [replayKey, setReplayKey] = useState(0)
   const [selectedSizes, setSelectedSizes] = useState<Record<string, 'S' | 'M' | 'L' | 'XL' | 'XXL'>>({
     'prod-1': 'L',
     'prod-2': 'M',
@@ -33,8 +34,19 @@ function HomePage() {
 
   const currentHeroPiece = initialProducts[heroIndex]
 
-  // Auto carousel rotation with gentle settle
+  // Re-trigger R, O, F drawing animation
+  const handleReplayAnimation = () => {
+    setReplayKey((k) => k + 1)
+  }
+
+  // Auto carousel rotation with gentle settle (disabled under reduced motion)
   useEffect(() => {
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    if (prefersReducedMotion) return
+
     const timer = setInterval(() => {
       setHeroIndex((prev) => (prev + 1) % initialProducts.length)
     }, 5500)
@@ -70,55 +82,135 @@ function HomePage() {
       {/* ============================================================ */}
       <section
         data-tone="ink"
-        className="relative min-h-[92svh] flex flex-col justify-between pt-24 pb-0 px-4 md:px-8 border-b border-[var(--hairline)] grain-overlay overflow-hidden"
+        className="relative min-h-[94svh] flex flex-col justify-between pt-24 pb-0 px-4 md:px-8 border-b border-[var(--hairline)] grain-overlay overflow-hidden"
       >
-        {/* Animated Ghost Logo background */}
+        {/* Animated Ghost Logo background: visible animated strokes of R, O, F with ambient float */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-          <Logo size="hero" ghost className="opacity-[0.038] scale-125" />
+          <Logo
+            key={`ghost-${replayKey}`}
+            size="hero"
+            ghost
+            className="w-full max-w-[880px] scale-110 sm:scale-125"
+          />
         </div>
 
         {/* Hero Top Mast */}
-        <div className="relative z-10 mx-auto w-full max-w-[var(--max-content)] pt-4 md:pt-8">
+        <div className="relative z-10 mx-auto w-full max-w-[var(--max-content)] pt-4 md:pt-6">
+          {/* Top metadata strip */}
           <div className="flex items-center justify-between border-b border-[var(--hairline)] pb-4 text-xs">
             <div className="flex items-center gap-2">
               <DiamondMark size={8} accent filled />
               <span className="label-caps text-[var(--acc)]">Collection 01</span>
             </div>
-            <div className="label-caps text-[var(--muted)]">Five Pieces • Heavyweight Cut</div>
+            <div className="flex items-center gap-4">
+              <span className="label-caps text-[var(--muted)] hidden sm:inline-block">
+                Five Pieces • Heavyweight Cut
+              </span>
+              <button
+                type="button"
+                onClick={handleReplayAnimation}
+                className="touch-target-48 flex items-center gap-1.5 px-2.5 py-1 text-[10px] tracking-wider uppercase border border-[var(--hairline)] text-[var(--bone)]/80 hover:text-[var(--acc)] hover:border-[var(--acc)] transition-colors rounded-none"
+                aria-label="Replay R, O, F letter drawing animation"
+              >
+                <DiamondMark size={7} accent />
+                <span>Replay R • O • F</span>
+              </button>
+            </div>
           </div>
 
-          <div className="mt-8 md:mt-12 max-w-4xl">
+          {/* Masked Headline Rise Animation */}
+          <div className="mt-6 md:mt-10 max-w-4xl">
             <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-display tracking-tight text-[var(--bone)] leading-[0.96]">
-              {formatAccentText('Destined for *greatness.*')}
+              <div className="overflow-hidden py-1">
+                <motion.span
+                  className="block"
+                  initial={{ y: '115%', opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  Destined for
+                </motion.span>
+              </div>
+              <div className="overflow-hidden py-1">
+                <motion.span
+                  className="block italic text-[var(--acc)] font-serif"
+                  initial={{ y: '115%', opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.9, delay: 0.16, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  greatness.
+                </motion.span>
+              </div>
             </h1>
           </div>
+
+          {/* Prominent Interactive R-O-F Letters Bar */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-6 pt-4 border-t border-[var(--hairline)] flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+          >
+            <div className="flex items-center gap-4">
+              <HeroROFLetters replayKey={replayKey} className="w-52 sm:w-64" />
+            </div>
+            <div className="flex items-center gap-6 text-xs text-[var(--muted)]">
+              <span className="hidden md:inline-block tracking-wider uppercase text-[10px]">
+                Roof of Fame • Built on Ambition
+              </span>
+              <Link
+                to="/story"
+                className="text-[11px] uppercase tracking-wider text-[var(--bone)] hover:text-[var(--acc)] transition-colors flex items-center gap-1.5"
+              >
+                <span>Read the philosophy</span>
+                <ArrowRight className="h-3 w-3" />
+              </Link>
+            </div>
+          </motion.div>
         </div>
 
-        {/* Hero Floating Tee Stage */}
-        <div className="relative z-10 mx-auto w-full max-w-2xl py-6 md:py-12 flex items-center justify-center min-h-[320px] sm:min-h-[420px]">
+        {/* Hero Floating Tee Stage with continuous levitation and breathing shadow */}
+        <div className="relative z-10 mx-auto w-full max-w-2xl py-6 md:py-10 flex flex-col items-center justify-center min-h-[320px] sm:min-h-[420px]">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentHeroPiece.id}
-              initial={{ opacity: 0, scale: 0.94, y: 14 }}
+              initial={{ opacity: 0, scale: 0.94, y: 16 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.96, y: -14 }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full flex justify-center"
+              exit={{ opacity: 0, scale: 0.96, y: -16 }}
+              transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full flex flex-col items-center justify-center"
             >
-              <TeeCutout
-                design={getTeeMeta(currentHeroPiece).design}
-                colour={getTeeMeta(currentHeroPiece).colour}
-                withDiamondAccent
-                className="max-h-[360px] sm:max-h-[460px] w-auto cursor-pointer"
-                interactiveZoom
+              {/* Continuous Gentle Levitation Float */}
+              <motion.div
+                animate={{ y: [0, -12, 0] }}
+                transition={{ duration: 5.2, repeat: Infinity, ease: 'easeInOut' }}
+                className="w-full flex justify-center"
+              >
+                <TeeCutout
+                  design={getTeeMeta(currentHeroPiece).design}
+                  colour={getTeeMeta(currentHeroPiece).colour}
+                  withDiamondAccent
+                  className="max-h-[360px] sm:max-h-[460px] w-auto cursor-pointer"
+                  interactiveZoom
+                />
+              </motion.div>
+
+              {/* Ambient Breathing Drop Shadow under Levitating Tee */}
+              <motion.div
+                animate={{ scaleX: [1, 0.92, 1], opacity: [0.45, 0.26, 0.45] }}
+                transition={{ duration: 5.2, repeat: Infinity, ease: 'easeInOut' }}
+                className="w-48 sm:w-64 h-3 bg-black/40 rounded-full blur-[8px] -mt-3 pointer-events-none"
               />
             </motion.div>
           </AnimatePresence>
         </div>
 
-        {/* Hero Bone Bottom Band */}
-        <div
+        {/* Hero Bone Bottom Band with Slide-Up Entrance */}
+        <motion.div
           data-tone="bone"
+          initial={{ y: 40, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
           className="relative z-20 -mx-4 md:-mx-8 bg-[var(--bone)] text-[var(--ink)] border-t border-[var(--hairline)] px-4 md:px-8 py-4 sm:py-5"
         >
           <div className="mx-auto max-w-[var(--max-content)] flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -168,7 +260,7 @@ function HomePage() {
               </Button>
             </div>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* ============================================================ */}
@@ -177,7 +269,7 @@ function HomePage() {
       <Ticker />
 
       {/* ============================================================ */}
-      {/* 3. FIVE CHAPTERS (One per piece, 3fr / 2fr split) */}
+      {/* 3. FIVE CHAPTERS (One per piece, 3fr / 2fr split with scroll reveals) */}
       {/* ============================================================ */}
       <section className="w-full flex flex-col">
         {initialProducts.map((product, idx) => {
@@ -189,8 +281,12 @@ function HomePage() {
           const selectedSize = selectedSizes[product.id] || 'L'
 
           return (
-            <article
+            <motion.article
               key={product.id}
+              initial={{ opacity: 0, y: 48 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
               className="w-full border-b border-[var(--hairline)] grid grid-cols-1 lg:grid-cols-12 min-h-[580px]"
             >
               {/* Desktop alternating order:
@@ -208,7 +304,12 @@ function HomePage() {
                     : 'lg:col-span-7 lg:border-l border-[var(--hairline)] lg:order-2'
                 }`}
               >
-                <div className="relative w-full max-w-md flex justify-center">
+                {/* Floating Tee with Hover Spring Lift */}
+                <motion.div
+                  whileHover={{ scale: 1.03, y: -6 }}
+                  transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+                  className="relative w-full max-w-md flex justify-center cursor-pointer"
+                >
                   <TeeCutout
                     design={meta.design}
                     colour={meta.colour}
@@ -216,7 +317,7 @@ function HomePage() {
                     interactiveZoom
                     className="w-full h-auto max-h-[480px]"
                   />
-                </div>
+                </motion.div>
               </Pane>
 
               {/* INFO PANE */}
@@ -304,13 +405,13 @@ function HomePage() {
                   </Link>
                 </div>
               </Pane>
-            </article>
+            </motion.article>
           )
         })}
       </section>
 
       {/* ============================================================ */}
-      {/* 4. MANIFESTO SPLIT */}
+      {/* 4. MANIFESTO SPLIT WITH SCROLL REVEALS */}
       {/* ============================================================ */}
       <section className="w-full border-b border-[var(--hairline)] grid grid-cols-1 lg:grid-cols-12 min-h-[480px]">
         {/* Ink Pane (3fr / 7 cols) */}
@@ -319,7 +420,12 @@ function HomePage() {
           withGrain
           className="lg:col-span-7 p-8 sm:p-12 lg:p-16 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-[var(--hairline)]"
         >
-          <div>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          >
             <div className="flex items-center gap-2 mb-4">
               <DiamondMark size={8} accent filled />
               <span className="label-caps text-[var(--acc)]">The Mindset</span>
@@ -327,18 +433,24 @@ function HomePage() {
             <h2 className="text-4xl sm:text-6xl md:text-7xl font-display text-[var(--bone)] leading-[1.04] max-w-xl">
               {formatAccentText('More than clothing. A *mindset.*')}
             </h2>
-          </div>
+          </motion.div>
 
-          {/* Four pillars */}
-          <div className="mt-12 pt-8 border-t border-[var(--hairline)] flex flex-wrap items-center gap-3 text-xs tracking-[0.24em] uppercase text-[var(--muted)]">
-            <span>Ambition</span>
+          {/* Four pillars with staggered reveal */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="mt-12 pt-8 border-t border-[var(--hairline)] flex flex-wrap items-center gap-3 text-xs tracking-[0.24em] uppercase text-[var(--muted)]"
+          >
+            <span className="text-[var(--bone)]">Ambition</span>
             <DiamondMark size={6} accent />
-            <span>Confidence</span>
+            <span className="text-[var(--bone)]">Confidence</span>
             <DiamondMark size={6} accent />
-            <span>Originality</span>
+            <span className="text-[var(--bone)]">Originality</span>
             <DiamondMark size={6} accent />
-            <span>Greatness</span>
-          </div>
+            <span className="text-[var(--bone)]">Greatness</span>
+          </motion.div>
         </Pane>
 
         {/* Bone Pane (2fr / 5 cols) */}
@@ -346,14 +458,25 @@ function HomePage() {
           tone="bone"
           className="lg:col-span-5 p-8 sm:p-12 lg:p-16 flex flex-col justify-between"
         >
-          <div>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+          >
             <span className="label-caps text-[var(--acc-on-bone)]">Conviction</span>
             <p className="mt-4 text-base sm:text-lg text-[var(--ink)] leading-relaxed font-sans font-normal">
               ROF stands for ambition, confidence and originality. It is made for people who stay focused on their goals, never settle for less, and wear it with pride because it represents something bigger than themselves.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3"
+          >
             <Button
               variant="secondary"
               onClick={() => navigate({ to: '/story' })}
@@ -367,12 +490,12 @@ function HomePage() {
             >
               Shop all five
             </Button>
-          </div>
+          </motion.div>
         </Pane>
       </section>
 
       {/* ============================================================ */}
-      {/* 5. SERVICES ROW (Ink, Bone, Ink) */}
+      {/* 5. SERVICES ROW (Ink, Bone, Ink) WITH ENTRANCE ANIMATIONS */}
       {/* ============================================================ */}
       <section className="w-full grid grid-cols-1 md:grid-cols-3 border-b border-[var(--hairline)]">
         {/* Service 1: Delivery (Ink) */}
@@ -381,13 +504,21 @@ function HomePage() {
           withGrain
           className="p-8 sm:p-10 border-b md:border-b-0 md:border-r border-[var(--hairline)] flex flex-col justify-between min-h-[220px]"
         >
-          <div className="space-y-3">
-            <Truck className="h-6 w-6 text-[var(--acc)] stroke-[1.6]" />
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="space-y-3"
+          >
+            <motion.div whileHover={{ scale: 1.15, rotate: -4 }} transition={{ type: 'spring' }} className="inline-block">
+              <Truck className="h-6 w-6 text-[var(--acc)] stroke-[1.6]" />
+            </motion.div>
             <h3 className="font-serif text-2xl text-[var(--bone)]">Nationwide Delivery</h3>
             <p className="text-xs text-[var(--muted)] font-sans leading-relaxed">
               Express dispatch across Lagos and all 36 Nigerian states with real-time SMS tracking.
             </p>
-          </div>
+          </motion.div>
           <Link
             to="/help"
             hash="delivery"
@@ -403,13 +534,21 @@ function HomePage() {
           tone="bone"
           className="p-8 sm:p-10 border-b md:border-b-0 md:border-r border-[var(--hairline)] flex flex-col justify-between min-h-[220px]"
         >
-          <div className="space-y-3">
-            <RefreshCw className="h-6 w-6 text-[var(--acc-on-bone)] stroke-[1.6]" />
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+            className="space-y-3"
+          >
+            <motion.div whileHover={{ scale: 1.15, rotate: 6 }} transition={{ type: 'spring' }} className="inline-block">
+              <RefreshCw className="h-6 w-6 text-[var(--acc-on-bone)] stroke-[1.6]" />
+            </motion.div>
             <h3 className="font-serif text-2xl text-[var(--ink)]">Exchanges</h3>
             <p className="text-xs text-[var(--muted)] font-sans leading-relaxed">
               Fast, hassle-free size exchanges within our return window. Tags intact, unworn pieces.
             </p>
-          </div>
+          </motion.div>
           <Link
             to="/help"
             hash="returns"
@@ -426,13 +565,21 @@ function HomePage() {
           withGrain
           className="p-8 sm:p-10 flex flex-col justify-between min-h-[220px]"
         >
-          <div className="space-y-3">
-            <ShieldCheck className="h-6 w-6 text-[var(--acc)] stroke-[1.6]" />
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.24, ease: [0.16, 1, 0.3, 1] }}
+            className="space-y-3"
+          >
+            <motion.div whileHover={{ scale: 1.15, rotate: -4 }} transition={{ type: 'spring' }} className="inline-block">
+              <ShieldCheck className="h-6 w-6 text-[var(--acc)] stroke-[1.6]" />
+            </motion.div>
             <h3 className="font-serif text-2xl text-[var(--bone)]">Oversized Fit</h3>
             <p className="text-xs text-[var(--muted)] font-sans leading-relaxed">
               Intentionally boxy streetwear silhouettes with dropped shoulders and heavy ribbing.
             </p>
-          </div>
+          </motion.div>
           <Link
             to="/help"
             hash="size-guide"
@@ -446,4 +593,3 @@ function HomePage() {
     </div>
   )
 }
-

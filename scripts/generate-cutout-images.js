@@ -78,3 +78,4 @@ pieces.forEach((p) => {
 })
 
 console.log('Generated cutout vector assets in public/images/')
+
