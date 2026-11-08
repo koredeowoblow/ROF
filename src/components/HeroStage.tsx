@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { motion, useMotionValue, useSpring, useTransform, useReducedMotion } from 'motion/react'
-import { ArrowRight } from 'lucide-react'
+import { motion, useMotionValue, useSpring, useTransform, AnimatePresence, useReducedMotion } from 'motion/react'
+import { ArrowRight, Compass, Shield, Flame, Sparkles, ChevronDown } from 'lucide-react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { DiamondMark, Logo } from '@/components/Logo'
 import { Button } from '@/components/Button'
@@ -10,11 +10,43 @@ interface HeroStageProps {
   className?: string
 }
 
+type PillarKey = 'ambition' | 'confidence' | 'originality'
+
+interface PillarInfo {
+  number: string
+  label: string
+  title: string
+  creed: string
+}
+
+const PILLARS: Record<PillarKey, PillarInfo> = {
+  ambition: {
+    number: '01',
+    label: 'AMBITION',
+    title: 'The Relentless Drive',
+    creed: 'We do not wait for permission. We build through the noise and relentlessly pursue what was destined for us.',
+  },
+  confidence: {
+    number: '02',
+    label: 'CONFIDENCE',
+    title: 'The Diamond Mindset',
+    creed: 'Pressure does not break us; it refines us. Cut sharp with precision and worn with unwavering pride.',
+  },
+  originality: {
+    number: '03',
+    label: 'ORIGINALITY',
+    title: 'Building Your Legacy',
+    creed: 'Heavyweight intention woven into every fiber. Built for those creating something that outlives them.',
+  },
+}
+
 export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   const navigate = useNavigate()
   const prefersReduced = useReducedMotion()
+  const [activePillar, setActivePillar] = useState<PillarKey>('confidence')
   const [lagosTime, setLagosTime] = useState<string>('12:00:00')
   const [isTouch, setIsTouch] = useState(true)
+  const [isHeadlineHovered, setIsHeadlineHovered] = useState(false)
 
   const stageRef = useRef<HTMLDivElement>(null)
 
@@ -51,14 +83,14 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   const rawMouseX = useMotionValue(0)
   const rawMouseY = useMotionValue(0)
 
-  const springConfig = { damping: 32, stiffness: 120, mass: 0.8 }
+  const springConfig = { damping: 30, stiffness: 120, mass: 0.7 }
   const smoothX = useSpring(rawMouseX, springConfig)
   const smoothY = useSpring(rawMouseY, springConfig)
 
   // Subtle architectural parallax in depth
-  const logoShiftX = useTransform(smoothX, [-0.5, 0.5], [14, -14])
+  const logoShiftX = useTransform(smoothX, [-0.5, 0.5], [16, -16])
   const logoShiftY = useTransform(smoothY, [-0.5, 0.5], [10, -10])
-  const haloShiftX = useTransform(smoothX, [-0.5, 0.5], [-20, 20])
+  const haloShiftX = useTransform(smoothX, [-0.5, 0.5], [-22, 22])
   const haloShiftY = useTransform(smoothY, [-0.5, 0.5], [-16, 16])
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -75,6 +107,8 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
     rawMouseY.set(0)
   }
 
+  const currentPillar = PILLARS[activePillar]
+
   return (
     <section
       ref={stageRef}
@@ -87,16 +121,20 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
       )}
     >
       {/* ============================================================ */}
-      {/* 1. CINEMATIC ATMOSPHERE: WARM SOFT STUDIO APEX */}
+      {/* 1. CINEMATIC ATMOSPHERE: VOLUMETRIC STUDIO APEX */}
       {/* ============================================================ */}
       <motion.div
         style={{
           x: isTouch || prefersReduced ? 0 : haloShiftX,
           y: isTouch || prefersReduced ? 0 : haloShiftY,
           background:
-            'radial-gradient(ellipse 65% 50% at 50% 0%, rgba(229,55,45,0.18) 0%, rgba(236,230,216,0.08) 45%, transparent 75%)',
+            activePillar === 'ambition'
+              ? 'radial-gradient(ellipse 65% 50% at 50% 0%, rgba(27,56,43,0.38) 0%, rgba(236,230,216,0.08) 45%, transparent 75%)'
+              : activePillar === 'confidence'
+              ? 'radial-gradient(ellipse 65% 50% at 50% 0%, rgba(229,55,45,0.22) 0%, rgba(236,230,216,0.1) 45%, transparent 75%)'
+              : 'radial-gradient(ellipse 65% 50% at 50% 0%, rgba(236,230,216,0.2) 0%, rgba(229,55,45,0.08) 45%, transparent 75%)',
         }}
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] sm:w-[1200px] h-[700px] pointer-events-none z-0 opacity-40 transition-opacity duration-1000"
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[850px] sm:w-[1300px] h-[750px] pointer-events-none z-0 opacity-45 transition-all duration-1000"
       />
 
       {/* Deep ambient radial warmth */}
@@ -111,26 +149,46 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
         <div className="flex items-center justify-between border-b border-[var(--hairline)] pb-3.5 text-xs">
           {/* Brand Telemetry */}
           <div className="flex items-center gap-3">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--acc)] opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--acc)]" />
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--acc)] opacity-80" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[var(--acc)]" />
             </span>
-            <span className="label-caps text-[var(--bone)] tracking-[0.24em] font-medium">
+            <span className="label-caps text-[var(--bone)] tracking-[0.26em] font-semibold">
               ROF RAGE • ARCHIVE 01
             </span>
             <span className="hidden sm:inline-block text-[var(--hairline)]">/</span>
             <span className="hidden sm:inline-block font-mono text-xs text-[var(--muted)]">
-              LAGOS DISPATCH
+              LAGOS • 6.4541° N, 3.4246° E
             </span>
           </div>
 
-          {/* Core Pillars */}
-          <div className="hidden md:flex items-center gap-6 font-mono text-[11px] text-[var(--muted)] tracking-widest uppercase">
-            <span>Ambition</span>
-            <span className="text-[var(--hairline)]">•</span>
-            <span>Confidence</span>
-            <span className="text-[var(--hairline)]">•</span>
-            <span>Originality</span>
+          {/* Interactive Identity Pillars Selector */}
+          <div className="hidden md:flex items-center gap-1.5 bg-[var(--ink)]/85 backdrop-blur-md border border-[var(--hairline)] p-1 rounded-sm shadow-xl">
+            {(['ambition', 'confidence', 'originality'] as const).map((key) => {
+              const p = PILLARS[key]
+              const isActive = activePillar === key
+              return (
+                <motion.button
+                  key={key}
+                  type="button"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setActivePillar(key)}
+                  className={cn(
+                    'px-3.5 py-1 text-[11px] font-mono uppercase tracking-[0.2em] transition-all cursor-pointer rounded-xs flex items-center gap-1.5',
+                    isActive
+                      ? 'bg-[var(--acc)] text-[#fff6ec] font-bold shadow-md'
+                      : 'text-[var(--muted)] hover:text-[var(--bone)] hover:bg-[var(--bone)]/5'
+                  )}
+                >
+                  <span className={isActive ? 'text-[#fff6ec]' : 'text-[var(--acc)]'}>
+                    {p.number}
+                  </span>
+                  <span className="text-[var(--hairline)]">•</span>
+                  <span>{p.label}</span>
+                </motion.button>
+              )
+            })}
           </div>
 
           {/* Live Lagos Clock */}
@@ -144,43 +202,43 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
       {/* ============================================================ */}
       {/* 3. MONUMENTAL SCULPTURAL WORDMARK (THE ARCHITECTURAL HERO) */}
       {/* ============================================================ */}
-      <div className="relative z-10 flex-1 flex flex-col items-center justify-center my-auto py-8 sm:py-16 px-4 md:px-8">
+      <div className="relative z-10 flex-1 flex flex-col items-center justify-center my-auto py-8 sm:py-14 px-4 md:px-8">
         {/* Kinetic Wordmark Anchor with Restrained Luxury Parallax */}
         <motion.div
           style={{
             x: isTouch || prefersReduced ? 0 : logoShiftX,
             y: isTouch || prefersReduced ? 0 : logoShiftY,
           }}
-          className="relative w-full max-w-[940px] flex items-center justify-center mb-6 sm:mb-10"
+          className="relative w-full max-w-[960px] flex items-center justify-center mb-6 sm:mb-8"
         >
           {/* SVG Animated Wordmark - Stroke-only, exact geometric concentric diamond */}
           <svg
             viewBox="0 0 280 90"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            className="w-full h-auto text-[var(--bone)] overflow-visible drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)]"
+            className="w-full h-auto text-[var(--bone)] overflow-visible drop-shadow-[0_24px_48px_rgba(0,0,0,0.65)]"
             aria-label="ROF logo"
           >
             {/* 'R' */}
             <motion.path
               d="M 20,82 L 20,10 L 64,10 L 84,32 L 64,52 L 20,52 M 56,52 L 86,82"
-              stroke="currentColor"
-              strokeWidth="5"
+              stroke={activePillar === 'ambition' ? 'var(--acc)' : 'currentColor'}
+              strokeWidth={activePillar === 'ambition' ? '5.5' : '4.8'}
               strokeLinecap="square"
               strokeLinejoin="miter"
               initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ pathLength: 1, opacity: 0.9 }}
+              animate={{ pathLength: 1, opacity: activePillar === 'ambition' ? 1 : 0.9 }}
               transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
             />
 
             {/* 'O' Outer Diamond Contour (Center: 140, 46 - Radius: 38) */}
             <motion.polygon
               points="140,8 178,46 140,84 102,46"
-              stroke="currentColor"
-              strokeWidth="5"
+              stroke={activePillar === 'confidence' ? 'var(--acc)' : 'currentColor'}
+              strokeWidth={activePillar === 'confidence' ? '5.5' : '4.8'}
               strokeLinejoin="miter"
               initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ pathLength: 1, opacity: 0.95 }}
+              animate={{ pathLength: 1, opacity: activePillar === 'confidence' ? 1 : 0.95 }}
               transition={{ duration: 1.1, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
             />
 
@@ -189,18 +247,18 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               points="140,26 160,46 140,66 120,46"
               stroke="var(--acc)"
               strokeWidth="2.8"
-              fill="rgba(229,55,45,0.06)"
+              fill="rgba(229,55,45,0.08)"
               strokeLinejoin="miter"
               initial={{ pathLength: 0, opacity: 0 }}
               animate={{
                 pathLength: 1,
                 opacity: prefersReduced ? 0.85 : [0.75, 1, 0.75],
-                scale: prefersReduced ? 1 : [1, 1.03, 1],
+                scale: prefersReduced ? 1 : [1, 1.04, 1],
               }}
               transition={{
                 pathLength: { duration: 0.9, delay: 0.35, ease: [0.16, 1, 0.3, 1] },
-                opacity: { duration: 3.5, repeat: Infinity, ease: 'easeInOut' },
-                scale: { duration: 3.5, repeat: Infinity, ease: 'easeInOut' },
+                opacity: { duration: 3.2, repeat: Infinity, ease: 'easeInOut' },
+                scale: { duration: 3.2, repeat: Infinity, ease: 'easeInOut' },
               }}
               style={{ originX: '140px', originY: '46px' }}
             />
@@ -208,12 +266,12 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             {/* 'F' */}
             <motion.path
               d="M 205,82 L 205,10 L 268,10 M 205,46 L 252,46"
-              stroke="currentColor"
-              strokeWidth="5"
+              stroke={activePillar === 'originality' ? 'var(--acc)' : 'currentColor'}
+              strokeWidth={activePillar === 'originality' ? '5.5' : '4.8'}
               strokeLinecap="square"
               strokeLinejoin="miter"
               initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ pathLength: 1, opacity: 0.9 }}
+              animate={{ pathLength: 1, opacity: activePillar === 'originality' ? 1 : 0.9 }}
               transition={{ duration: 1.1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
             />
           </svg>
@@ -229,12 +287,17 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               initial={{ y: '105%' }}
               animate={{ y: 0 }}
               transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
-              className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-display text-[var(--bone)] leading-[0.9] tracking-tight"
+              className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-display text-[var(--bone)] leading-[0.9] tracking-tight cursor-default"
             >
               Destined for{' '}
-              <span className="italic font-serif text-[var(--acc)] inline-block">
+              <motion.span
+                onMouseEnter={() => setIsHeadlineHovered(true)}
+                onMouseLeave={() => setIsHeadlineHovered(false)}
+                animate={isHeadlineHovered ? { scale: 1.04 } : { scale: 1 }}
+                className="italic font-serif text-[var(--acc)] inline-block transition-transform duration-200"
+              >
                 riches.
-              </span>
+              </motion.span>
             </motion.h1>
           </div>
 
@@ -243,41 +306,74 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-            className="text-sm sm:text-base md:text-lg font-sans text-[var(--bone)]/80 max-w-xl leading-relaxed font-normal"
+            className="text-sm sm:text-base md:text-lg font-sans text-[var(--bone)]/85 max-w-xl leading-relaxed font-normal"
           >
             ROF stands for ambition, confidence and originality. It is built for people who stay focused on their goals, never settle for less, and wear it with pride because it represents something bigger than themselves.
           </motion.p>
+
+          {/* Active Pillar Creed with Interactive Reveal */}
+          <div className="h-9 flex items-center justify-center">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activePillar}
+                initial={{ opacity: 0, y: 6, filter: 'blur(2px)' }}
+                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, y: -6, filter: 'blur(2px)' }}
+                transition={{ duration: 0.25 }}
+                className="flex items-center gap-2.5 text-xs font-mono text-[var(--acc)] uppercase tracking-widest font-semibold"
+              >
+                <DiamondMark size={6} accent filled />
+                <span>{currentPillar.title}</span>
+                <span className="text-[var(--hairline)]">•</span>
+                <span className="text-[var(--bone)]/75 normal-case font-sans">
+                  {currentPillar.creed}
+                </span>
+              </motion.div>
+            </AnimatePresence>
+          </div>
 
           {/* Action Hub: Enter Collection & Story */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col sm:flex-row items-center gap-3 pt-3 w-full sm:w-auto"
+            className="flex flex-col sm:flex-row items-center gap-3 pt-2 w-full sm:w-auto"
           >
-            <Button
-              variant="primary"
-              size="lg"
-              withArrow
-              onClick={() => {
-                const target = document.getElementById('collection-chapters')
-                if (target) {
-                  target.scrollIntoView({ behavior: 'smooth' })
-                } else {
-                  navigate({ to: '/shop' })
-                }
-              }}
-              className="w-full sm:w-auto uppercase tracking-wider text-xs font-semibold px-8 py-4 cursor-pointer shadow-xl hover:shadow-[0_8px_30px_rgba(229,55,45,0.35)] transition-shadow"
+            <motion.div
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.95 }}
+              className="w-full sm:w-auto"
             >
-              Witness The Capsule
-            </Button>
+              <Button
+                variant="primary"
+                size="lg"
+                withArrow
+                onClick={() => {
+                  const target = document.getElementById('collection-chapters')
+                  if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' })
+                  } else {
+                    navigate({ to: '/shop' })
+                  }
+                }}
+                className="w-full sm:w-auto uppercase tracking-wider text-xs font-semibold px-8 py-4 cursor-pointer shadow-xl hover:shadow-[0_8px_30px_rgba(229,55,45,0.35)] transition-shadow"
+              >
+                Witness The Capsule
+              </Button>
+            </motion.div>
 
-            <Link
-              to="/story"
-              className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-4 border border-[var(--hairline)] hover:border-[var(--bone)] text-xs font-mono uppercase tracking-wider text-[var(--bone)] transition-colors bg-[var(--ink)]/80 backdrop-blur-md hover:bg-[var(--bone)]/5"
+            <motion.div
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.95 }}
+              className="w-full sm:w-auto"
             >
-              Read Full Brand Story
-            </Link>
+              <Link
+                to="/story"
+                className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-4 border border-[var(--hairline)] hover:border-[var(--bone)] text-xs font-mono uppercase tracking-wider text-[var(--bone)] transition-colors bg-[var(--ink)]/80 backdrop-blur-md hover:bg-[var(--bone)]/5"
+              >
+                Read Full Brand Story
+              </Link>
+            </motion.div>
           </motion.div>
         </div>
       </div>
