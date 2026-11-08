@@ -5,6 +5,7 @@ import { Footer } from '@/components/Footer'
 import { BagDrawer } from '@/features/bag/BagDrawer'
 import { Button } from '@/components/Button'
 import { DiamondMark, Logo } from '@/components/Logo'
+import { DiamondCursor } from '@/components/DiamondCursor'
 import { formatAccentText } from '@/components/Mast'
 
 export const Route = createRootRoute({
@@ -44,6 +45,7 @@ function RootComponent() {
 
   return (
     <div className="flex min-h-[100svh] flex-col bg-[var(--ink)] text-[var(--bone)]">
+      <DiamondCursor />
       {!isAdmin && <Header />}
 
       <main id="main-content" className="flex-1">

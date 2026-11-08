@@ -68,19 +68,23 @@ function ShopPage() {
 
   const handleColourChange = (colour?: 'black' | 'white' | 'green') => {
     navigate({
-      search: (prev) => ({
-        ...prev,
-        colour: prev.colour === colour ? undefined : colour,
-      }),
+      to: '/shop',
+      search: {
+        colour: activeColour === colour ? undefined : colour,
+        sort: activeSort,
+        q: searchQuery || undefined,
+      },
     })
   }
 
   const handleSortChange = (sort: 'featured' | 'price-low' | 'price-high') => {
     navigate({
-      search: (prev) => ({
-        ...prev,
+      to: '/shop',
+      search: {
+        colour: activeColour,
         sort,
-      }),
+        q: searchQuery || undefined,
+      },
     })
   }
 

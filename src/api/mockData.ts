@@ -1,4 +1,4 @@
-import { Order, ContactMessage, AuditEntry, Discount } from './types'
+import { Order, ContactMessage, AuditEntry, Discount, OrderStatus, OrderHistoryItem } from './types'
 import { initialProducts } from './products'
 
 export const initialOrders: Order[] = [
@@ -281,7 +281,7 @@ export const initialOrders: Order[] = [
       createdAt: new Date(Date.now() - (i + 1) * 86400000 * 1.5).toISOString(),
       history: [
         {
-          status: 'received',
+          status: 'received' as const,
           timestamp: new Date(Date.now() - (i + 1) * 86400000 * 1.5).toISOString(),
         },
       ],
