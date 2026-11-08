@@ -72,3 +72,4 @@ test.describe('ROF RAGE E2E Purchase and Fulfillment Flows', () => {
     await expect(page.locator('h1')).toContainText('Orders')
   })
 })
+

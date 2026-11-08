@@ -49,3 +49,4 @@ export const NIGERIAN_STATES: NigerianState[] = [
   { code: 'YO', name: 'Yobe', isLagos: false },
   { code: 'ZA', name: 'Zamfara', isLagos: false },
 ]
+

@@ -80,8 +80,33 @@ function ProductPage() {
     setTimeout(() => setIsAddedFeedback(false), 2000)
   }
 
+  // Schema.org Product JSON-LD for rich snippets
+  const productJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: product.blurb,
+    brand: {
+      '@type': 'Brand',
+      name: 'ROF RAGE',
+    },
+    offers: {
+      '@type': 'Offer',
+      priceCurrency: 'NGN',
+      price: product.price,
+      availability: 'https://schema.org/InStock',
+      itemCondition: 'https://schema.org/NewCondition',
+    },
+  }
+
   return (
     <div className="flex flex-col w-full">
+      {/* Product JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+
       {/* Breadcrumb Tape */}
       <Tape
         breadcrumbs={[
@@ -419,3 +444,4 @@ function ProductPage() {
     </div>
   )
 }
+

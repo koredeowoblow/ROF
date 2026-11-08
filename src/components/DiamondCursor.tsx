@@ -75,3 +75,4 @@ export const DiamondCursor: React.FC = () => {
     </motion.div>
   )
 }
+

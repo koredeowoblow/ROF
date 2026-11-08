@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "bundle-report": "vite build --mode analyze"
+    "bundle-report": "npm run build && node scripts/check-bundle-budget.js"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.6",

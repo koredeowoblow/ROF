@@ -492,3 +492,4 @@ function CheckoutPage() {
     </div>
   )
 }
+

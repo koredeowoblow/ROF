@@ -22,3 +22,4 @@ describe('Nigerian Naira Currency Formatter', () => {
     expect(formatNairaNumber(30000)).toBe('30,000')
   })
 })
+

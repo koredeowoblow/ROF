@@ -137,3 +137,4 @@ Designed at 360px width first:
 - [x] **Accessibility**: 100 (WCAG 2.2 AA compliant, visible focus rings in accent colour, screen reader landmarks, skip-link)
 - [x] **Best Practices**: 100 (Modern HTTPS, PWA manifest, strict CSP compatible)
 - [x] **SEO**: 100 (Semantic headings, structured Product JSON-LD metadata, OpenGraph tags)
+

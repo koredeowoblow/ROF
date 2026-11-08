@@ -93,3 +93,4 @@ describe('Shopping Bag Store', () => {
     expect(useBagStore.getState().lastRemoved).toBeNull()
   })
 })
+

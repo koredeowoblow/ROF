@@ -28,3 +28,4 @@ class LocalStorageMock {
 }
 
 globalThis.localStorage = new LocalStorageMock() as any
+
