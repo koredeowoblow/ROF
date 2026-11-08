@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { motion, AnimatePresence } from 'motion/react'
 import { ArrowRight, ShieldCheck, Truck, RefreshCw } from 'lucide-react'
 import { Pane } from '@/components/Pane'
-import { Logo, DiamondMark, HeroROFLetters } from '@/components/Logo'
+import { DiamondMark } from '@/components/Logo'
+import { HeroStage } from '@/components/HeroStage'
 import { Numeral } from '@/components/Numeral'
 import { Button } from '@/components/Button'
 import { Chip } from '@/components/Chip'
@@ -22,8 +23,6 @@ export const Route = createFileRoute('/')({
 function HomePage() {
   const navigate = useNavigate()
   const addItem = useBagStore((s) => s.addItem)
-  const [heroIndex, setHeroIndex] = useState(0)
-  const [replayKey, setReplayKey] = useState(0)
   const [selectedSizes, setSelectedSizes] = useState<Record<string, 'S' | 'M' | 'L' | 'XL' | 'XXL'>>({
     'prod-1': 'L',
     'prod-2': 'M',
@@ -31,27 +30,6 @@ function HomePage() {
     'prod-4': 'L',
     'prod-5': 'XL',
   })
-
-  const currentHeroPiece = initialProducts[heroIndex]
-
-  // Re-trigger R, O, F drawing animation
-  const handleReplayAnimation = () => {
-    setReplayKey((k) => k + 1)
-  }
-
-  // Auto carousel rotation with gentle settle (disabled under reduced motion)
-  useEffect(() => {
-    const prefersReducedMotion =
-      typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-    if (prefersReducedMotion) return
-
-    const timer = setInterval(() => {
-      setHeroIndex((prev) => (prev + 1) % initialProducts.length)
-    }, 5500)
-    return () => clearInterval(timer)
-  }, [])
 
   const getTeeMeta = (p: Product): { design: TeeDesign; colour: TeeColour } => {
     const design: TeeDesign = p.name.includes('Cards') ? 'cards' : p.name.includes('Wave') ? 'wave' : 'scribble'
@@ -78,190 +56,9 @@ function HomePage() {
   return (
     <div className="flex flex-col w-full overflow-hidden">
       {/* ============================================================ */}
-      {/* 1. HERO SECTION (Ink) */}
+      {/* 1. CINEMATIC 3D HERO VAULT STAGE */}
       {/* ============================================================ */}
-      <section
-        data-tone="ink"
-        className="relative min-h-[94svh] flex flex-col justify-between pt-24 pb-0 px-4 md:px-8 border-b border-[var(--hairline)] grain-overlay overflow-hidden"
-      >
-        {/* Animated Ghost Logo background: visible animated strokes of R, O, F with ambient float */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-          <Logo
-            key={`ghost-${replayKey}`}
-            size="hero"
-            ghost
-            className="w-full max-w-[880px] scale-110 sm:scale-125"
-          />
-        </div>
-
-        {/* Hero Top Mast */}
-        <div className="relative z-10 mx-auto w-full max-w-[var(--max-content)] pt-4 md:pt-6">
-          {/* Top metadata strip */}
-          <div className="flex items-center justify-between border-b border-[var(--hairline)] pb-4 text-xs">
-            <div className="flex items-center gap-2">
-              <DiamondMark size={8} accent filled />
-              <span className="label-caps text-[var(--acc)]">Collection 01</span>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="label-caps text-[var(--muted)] hidden sm:inline-block">
-                Five Pieces • Heavyweight Cut
-              </span>
-              <button
-                type="button"
-                onClick={handleReplayAnimation}
-                className="touch-target-48 flex items-center gap-1.5 px-2.5 py-1 text-[10px] tracking-wider uppercase border border-[var(--hairline)] text-[var(--bone)]/80 hover:text-[var(--acc)] hover:border-[var(--acc)] transition-colors rounded-none"
-                aria-label="Replay R, O, F letter drawing animation"
-              >
-                <DiamondMark size={7} accent />
-                <span>Replay R • O • F</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Masked Headline Rise Animation */}
-          <div className="mt-6 md:mt-10 max-w-4xl">
-            <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-display tracking-tight text-[var(--bone)] leading-[0.96]">
-              <div className="overflow-hidden py-1">
-                <motion.span
-                  className="block"
-                  initial={{ y: '115%', opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  Destined for
-                </motion.span>
-              </div>
-              <div className="overflow-hidden py-1">
-                <motion.span
-                  className="block italic text-[var(--acc)] font-serif"
-                  initial={{ y: '115%', opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.9, delay: 0.16, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  greatness.
-                </motion.span>
-              </div>
-            </h1>
-          </div>
-
-          {/* Prominent Interactive R-O-F Letters Bar */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-6 pt-4 border-t border-[var(--hairline)] flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-          >
-            <div className="flex items-center gap-4">
-              <HeroROFLetters replayKey={replayKey} className="w-52 sm:w-64" />
-            </div>
-            <div className="flex items-center gap-6 text-xs text-[var(--muted)]">
-              <span className="hidden md:inline-block tracking-wider uppercase text-[10px]">
-                Roof of Fame • Built on Ambition
-              </span>
-              <Link
-                to="/story"
-                className="text-[11px] uppercase tracking-wider text-[var(--bone)] hover:text-[var(--acc)] transition-colors flex items-center gap-1.5"
-              >
-                <span>Read the philosophy</span>
-                <ArrowRight className="h-3 w-3" />
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Hero Floating Tee Stage with continuous levitation and breathing shadow */}
-        <div className="relative z-10 mx-auto w-full max-w-2xl py-6 md:py-10 flex flex-col items-center justify-center min-h-[320px] sm:min-h-[420px]">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentHeroPiece.id}
-              initial={{ opacity: 0, scale: 0.94, y: 16 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.96, y: -16 }}
-              transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full flex flex-col items-center justify-center"
-            >
-              {/* Continuous Gentle Levitation Float */}
-              <motion.div
-                animate={{ y: [0, -12, 0] }}
-                transition={{ duration: 5.2, repeat: Infinity, ease: 'easeInOut' }}
-                className="w-full flex justify-center"
-              >
-                <TeeCutout
-                  design={getTeeMeta(currentHeroPiece).design}
-                  colour={getTeeMeta(currentHeroPiece).colour}
-                  withDiamondAccent
-                  className="max-h-[360px] sm:max-h-[460px] w-auto cursor-pointer"
-                  interactiveZoom
-                />
-              </motion.div>
-
-              {/* Ambient Breathing Drop Shadow under Levitating Tee */}
-              <motion.div
-                animate={{ scaleX: [1, 0.92, 1], opacity: [0.45, 0.26, 0.45] }}
-                transition={{ duration: 5.2, repeat: Infinity, ease: 'easeInOut' }}
-                className="w-48 sm:w-64 h-3 bg-black/40 rounded-full blur-[8px] -mt-3 pointer-events-none"
-              />
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        {/* Hero Bone Bottom Band with Slide-Up Entrance */}
-        <motion.div
-          data-tone="bone"
-          initial={{ y: 40, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="relative z-20 -mx-4 md:-mx-8 bg-[var(--bone)] text-[var(--ink)] border-t border-[var(--hairline)] px-4 md:px-8 py-4 sm:py-5"
-        >
-          <div className="mx-auto max-w-[var(--max-content)] flex flex-col sm:flex-row items-center justify-between gap-4">
-            {/* Left: Piece index & meta */}
-            <div className="flex items-center gap-5 w-full sm:w-auto">
-              <Numeral value={currentHeroPiece.position} size="md" />
-              <div>
-                <span className="label-caps text-[var(--acc-on-bone)]">Current Piece</span>
-                <p className="font-serif text-lg md:text-xl font-medium leading-none text-[var(--ink)]">
-                  {currentHeroPiece.name} ({currentHeroPiece.colour})
-                </p>
-                <p className="text-xs font-sans text-[var(--muted)] mt-0.5">
-                  {formatNaira(currentHeroPiece.price)}
-                </p>
-              </div>
-            </div>
-
-            {/* Center: Progress indicators */}
-            <div className="flex items-center gap-2">
-              {initialProducts.map((p, idx) => (
-                <button
-                  key={p.id}
-                  onClick={() => setHeroIndex(idx)}
-                  aria-label={`Jump to piece ${idx + 1}`}
-                  className="touch-target-48 flex items-center justify-center p-1"
-                >
-                  <span
-                    className={`block h-1 transition-all duration-300 ${
-                      idx === heroIndex
-                        ? 'w-10 bg-[var(--acc-on-bone)]'
-                        : 'w-4 bg-[var(--ink)] opacity-25 hover:opacity-50'
-                    }`}
-                  />
-                </button>
-              ))}
-            </div>
-
-            {/* Right: Primary Call to Action */}
-            <div className="w-full sm:w-auto">
-              <Button
-                variant="primary"
-                withArrow
-                fullWidth
-                onClick={() => navigate({ to: '/shop' })}
-              >
-                Shop the collection
-              </Button>
-            </div>
-          </div>
-        </motion.div>
-      </section>
+      <HeroStage />
 
       {/* ============================================================ */}
       {/* 2. SOLID RED TICKER STRIP */}
