@@ -68,7 +68,7 @@ function HomePage() {
       {/* ============================================================ */}
       {/* 3. FIVE CHAPTERS (One per piece, 3fr / 2fr split with scroll reveals) */}
       {/* ============================================================ */}
-      <section className="w-full flex flex-col">
+      <section id="collection-chapters" className="w-full flex flex-col">
         {initialProducts.map((product, idx) => {
           const meta = getTeeMeta(product)
           const isEven = idx % 2 === 0
