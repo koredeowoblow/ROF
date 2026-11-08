@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { motion, AnimatePresence } from 'motion/react'
 import {
   Search,
   Filter,
@@ -145,20 +146,22 @@ function AdminOrdersPage() {
           />
         </div>
 
-        {/* Status Pill Tabs */}
+        {/* Status Pill Tabs with tactile micro-interactions */}
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
           {['all', 'received', 'confirmed', 'packed', 'out_for_delivery', 'delivered'].map((s) => (
-            <button
+            <motion.button
               key={s}
+              whileTap={{ scale: 0.94 }}
+              transition={{ duration: 0.1 }}
               onClick={() => setSelectedStatus(s)}
-              className={`px-3 py-1.5 text-[11px] uppercase tracking-wider font-sans whitespace-nowrap transition-colors ${
+              className={`px-3 py-1.5 text-[11px] uppercase tracking-wider font-sans whitespace-nowrap transition-colors cursor-pointer ${
                 selectedStatus === s
-                  ? 'bg-[var(--bone)] text-[var(--ink)] font-semibold'
+                  ? 'bg-[var(--bone)] text-[var(--ink)] font-semibold shadow-sm'
                   : 'text-[var(--muted)] hover:text-[var(--bone)] hover:bg-[var(--surface-tint)]'
               }`}
             >
               {s.replace(/_/g, ' ')}
-            </button>
+            </motion.button>
           ))}
         </div>
       </div>

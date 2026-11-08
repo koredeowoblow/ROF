@@ -15,7 +15,7 @@ export interface ButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'>
  * ROF Signature Button
  * - Red primary button inverts on hover
  * - Arrow slides 4px on hover
- * - Press scales to 0.98
+ * - Tactile hover lift (1px) and press scale to 0.98
  * - Touch ripple effect
  * - Accessible 48px minimum height on touch
  */
@@ -29,6 +29,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       className,
       children,
       onClick,
+      disabled,
       ...props
     },
     ref
@@ -36,6 +37,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const [ripple, setRipple] = useState<{ x: number; y: number; id: number } | null>(null)
 
     const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
+      if (disabled) return
       const rect = e.currentTarget.getBoundingClientRect()
       const x = e.clientX - rect.left
       const y = e.clientY - rect.top
@@ -63,7 +65,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <motion.button
         ref={ref}
-        whileTap={{ scale: 0.98 }}
+        disabled={disabled}
+        whileHover={!disabled && variant !== 'link' ? { y: -1 } : undefined}
+        whileTap={!disabled ? { scale: 0.98 } : undefined}
         transition={{ duration: 0.12 }}
         onPointerDown={handlePointerDown}
         onClick={onClick}
@@ -73,6 +77,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           variant !== 'link' && 'rounded-none font-sans',
           variant !== 'link' && sizeClasses[size],
           variantClasses[variant],
+          disabled && 'opacity-40 cursor-not-allowed hover:bg-transparent hover:text-inherit',
           fullWidth && 'w-full',
           className
         )}
@@ -103,4 +108,3 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 )
 
 Button.displayName = 'Button'
-

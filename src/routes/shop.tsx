@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { motion, AnimatePresence } from 'motion/react'
 import { z } from 'zod'
-import { Search, SlidersHorizontal, ArrowUpDown } from 'lucide-react'
+import { Search, SlidersHorizontal, ArrowUpDown, X } from 'lucide-react'
 import { Pane } from '@/components/Pane'
 import { Mast } from '@/components/Mast'
 import { Numeral } from '@/components/Numeral'
@@ -151,7 +152,7 @@ function ShopPage() {
 
             {/* Right: Search Input & Sort Selector */}
             <div className="flex items-center gap-3">
-              {/* Search */}
+              {/* Search with micro clear button */}
               <div className="relative flex-1 sm:w-56">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--muted)]" />
                 <input
@@ -159,12 +160,22 @@ function ShopPage() {
                   placeholder="Search pieces..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full h-9 pl-9 pr-3 text-xs bg-transparent border border-[var(--hairline)] text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--acc-on-bone)]"
+                  className="w-full h-9 pl-9 pr-8 text-xs bg-transparent border border-[var(--hairline)] text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--acc-on-bone)] transition-colors"
                 />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--muted)] hover:text-[var(--ink)] p-0.5 cursor-pointer"
+                    aria-label="Clear search"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                )}
               </div>
 
-              {/* Sort Dropdown / Stepper */}
-              <div className="flex items-center border border-[var(--hairline)] h-9 px-2 bg-transparent text-xs">
+              {/* Sort Dropdown */}
+              <div className="flex items-center border border-[var(--hairline)] h-9 px-2 bg-transparent text-xs hover:border-[var(--ink)] transition-colors">
                 <ArrowUpDown className="h-3 w-3 mr-1 text-[var(--muted)]" />
                 <select
                   value={activeSort}
@@ -187,7 +198,7 @@ function ShopPage() {
             {activeColour && (
               <button
                 onClick={() => handleColourChange(undefined)}
-                className="text-[var(--acc-on-bone)] hover:underline"
+                className="text-[var(--acc-on-bone)] hover:underline cursor-pointer"
               >
                 Clear filter
               </button>
@@ -207,65 +218,74 @@ function ShopPage() {
             </div>
           ) : (
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-              {filteredProducts.map((product) => {
-                const meta = getTeeMeta(product)
-                // Alternate tile grounds so tees read perfectly
-                const tileTone: 'ink' | 'bone' = product.ground
+              <AnimatePresence mode="popLayout">
+                {filteredProducts.map((product) => {
+                  const meta = getTeeMeta(product)
+                  const tileTone: 'ink' | 'bone' = product.ground
 
-                return (
-                  <Link
-                    key={product.id}
-                    to="/product/$id"
-                    params={{ id: product.slug }}
-                    className="group flex flex-col border border-[var(--hairline)] bg-[var(--bone)] overflow-hidden transition-all duration-200 hover:border-[var(--ink)]"
-                  >
-                    {/* Image Tile Pane */}
-                    <div
-                      data-tone={tileTone}
-                      className={`relative aspect-square w-full flex items-center justify-center p-6 sm:p-8 overflow-hidden transition-colors ${
-                        tileTone === 'ink' ? 'bg-[var(--ink)]' : 'bg-[#e2dbcc]'
-                      }`}
+                  return (
+                    <motion.div
+                      key={product.id}
+                      layout
+                      initial={{ opacity: 0, scale: 0.96 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.96 }}
+                      transition={{ duration: 0.25 }}
                     >
-                      {/* Red index number top-left */}
-                      <div className="absolute top-3 left-3 z-10">
-                        <Numeral value={product.position} size="sm" />
-                      </div>
+                      <Link
+                        to="/product/$id"
+                        params={{ id: product.slug }}
+                        className="group flex flex-col border border-[var(--hairline)] bg-[var(--bone)] overflow-hidden transition-all duration-200 hover:border-[var(--ink)] hover:shadow-md cursor-pointer block h-full"
+                      >
+                        {/* Image Tile Pane */}
+                        <div
+                          data-tone={tileTone}
+                          className={`relative aspect-square w-full flex items-center justify-center p-6 sm:p-8 overflow-hidden transition-colors ${
+                            tileTone === 'ink' ? 'bg-[var(--ink)]' : 'bg-[#e2dbcc]'
+                          }`}
+                        >
+                          {/* Red index number top-left */}
+                          <div className="absolute top-3 left-3 z-10 transition-transform duration-200 group-hover:scale-110">
+                            <Numeral value={product.position} size="sm" />
+                          </div>
 
-                      {/* Cut-out tee image */}
-                      <div className="w-full h-full flex items-center justify-center transition-transform duration-300 ease-out group-hover:scale-105">
-                        <TeeCutout
-                          design={meta.design}
-                          colour={meta.colour}
-                          withDiamondAccent={false}
-                          className="w-full h-full"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Metadata Footer */}
-                    <div className="p-4 flex flex-col flex-1 justify-between border-t border-[var(--hairline)]">
-                      <div>
-                        <div className="flex items-center justify-between text-[11px] text-[var(--muted)] font-sans uppercase tracking-wider">
-                          <span>{product.colour}</span>
-                          <span className="font-semibold text-[var(--ink)]">Heavyweight</span>
+                          {/* Cut-out tee image with gentle hover lift */}
+                          <div className="w-full h-full flex items-center justify-center transition-all duration-300 ease-out group-hover:scale-105 group-hover:-translate-y-1">
+                            <TeeCutout
+                              design={meta.design}
+                              colour={meta.colour}
+                              withDiamondAccent={false}
+                              className="w-full h-full"
+                            />
+                          </div>
                         </div>
-                        <h3 className="font-serif text-lg sm:text-xl text-[var(--ink)] mt-1 group-hover:text-[var(--acc-on-bone)] transition-colors leading-snug">
-                          {product.name}
-                        </h3>
-                      </div>
 
-                      <div className="mt-3 pt-3 border-t border-[var(--hairline)]/60 flex items-center justify-between font-sans">
-                        <span className="text-base font-semibold text-[var(--ink)]">
-                          {formatNaira(product.price)}
-                        </span>
-                        <span className="text-xs text-[var(--acc-on-bone)] uppercase font-medium tracking-wider group-hover:translate-x-1 transition-transform">
-                          View →
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
-                )
-              })}
+                        {/* Metadata Footer */}
+                        <div className="p-4 flex flex-col flex-1 justify-between border-t border-[var(--hairline)]">
+                          <div>
+                            <div className="flex items-center justify-between text-[11px] text-[var(--muted)] font-sans uppercase tracking-wider">
+                              <span>{product.colour}</span>
+                              <span className="font-semibold text-[var(--ink)]">Heavyweight</span>
+                            </div>
+                            <h3 className="font-serif text-lg sm:text-xl text-[var(--ink)] mt-1 group-hover:text-[var(--acc-on-bone)] transition-colors leading-snug">
+                              {product.name}
+                            </h3>
+                          </div>
+
+                          <div className="mt-3 pt-3 border-t border-[var(--hairline)]/60 flex items-center justify-between font-sans">
+                            <span className="text-base font-semibold text-[var(--ink)]">
+                              {formatNaira(product.price)}
+                            </span>
+                            <span className="text-xs text-[var(--acc-on-bone)] uppercase font-medium tracking-wider group-hover:translate-x-1.5 transition-transform duration-200 flex items-center gap-1">
+                              View →
+                            </span>
+                          </div>
+                        </div>
+                      </Link>
+                    </motion.div>
+                  )
+                })}
+              </AnimatePresence>
             </div>
           )}
         </div>

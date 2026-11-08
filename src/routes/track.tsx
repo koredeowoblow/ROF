@@ -162,13 +162,13 @@ function TrackOrderPage() {
 
                   return (
                     <div key={step.status} className="relative flex items-start gap-4">
-                      {/* Step Indicator */}
+                      {/* Step Indicator with active pulse */}
                       <span
                         className={`absolute -left-6 h-5 w-5 rounded-full flex items-center justify-center text-[10px] transition-colors ${
                           isDone
                             ? 'bg-[var(--acc-on-bone)] text-[#fff6ec]'
                             : 'bg-[var(--bone)] border border-[var(--hairline)] text-[var(--muted)]'
-                        }`}
+                        } ${isCurrent ? 'ring-4 ring-[var(--acc-on-bone)]/25 animate-pulse' : ''}`}
                       >
                         {isDone ? <CheckCircle2 className="h-3.5 w-3.5" /> : idx + 1}
                       </span>

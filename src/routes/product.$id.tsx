@@ -162,28 +162,34 @@ function ProductPage() {
 
           {/* Bottom View Switcher (Full Piece vs Print Close-up) */}
           <div className="relative z-10 flex items-center justify-center gap-3">
-            <button
+            <motion.button
               type="button"
+              whileHover={{ y: -1 }}
+              whileTap={{ scale: 0.96 }}
+              transition={{ duration: 0.12 }}
               onClick={() => setActiveView('full')}
-              className={`touch-target-48 text-xs uppercase tracking-wider px-4 py-2 border transition-all ${
+              className={`touch-target-48 text-xs uppercase tracking-wider px-4 py-2 border transition-all cursor-pointer ${
                 activeView === 'full'
-                  ? 'border-[var(--fg)] bg-[var(--fg)] text-[var(--bg)] font-semibold'
-                  : 'border-[var(--hairline)] text-[var(--fg)] hover:border-[var(--fg)]'
+                  ? 'border-[var(--fg)] bg-[var(--fg)] text-[var(--bg)] font-semibold shadow-sm'
+                  : 'border-[var(--hairline)] text-[var(--fg)] hover:border-[var(--fg)] hover:bg-[var(--surface-tint)]'
               }`}
             >
               Full Silhouette
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               type="button"
+              whileHover={{ y: -1 }}
+              whileTap={{ scale: 0.96 }}
+              transition={{ duration: 0.12 }}
               onClick={() => setActiveView('closeup')}
-              className={`touch-target-48 text-xs uppercase tracking-wider px-4 py-2 border transition-all ${
+              className={`touch-target-48 text-xs uppercase tracking-wider px-4 py-2 border transition-all cursor-pointer ${
                 activeView === 'closeup'
-                  ? 'border-[var(--fg)] bg-[var(--fg)] text-[var(--bg)] font-semibold'
-                  : 'border-[var(--hairline)] text-[var(--fg)] hover:border-[var(--fg)]'
+                  ? 'border-[var(--fg)] bg-[var(--fg)] text-[var(--bg)] font-semibold shadow-sm'
+                  : 'border-[var(--hairline)] text-[var(--fg)] hover:border-[var(--fg)] hover:bg-[var(--surface-tint)]'
               }`}
             >
               Print Detail
-            </button>
+            </motion.button>
           </div>
         </Pane>
 
@@ -216,33 +222,37 @@ function ProductPage() {
 
               <div className="flex items-center gap-3">
                 {/* Active Colour Swatch */}
-                <div
-                  className="h-8 w-8 border-2 border-[var(--acc)] p-0.5 cursor-default"
+                <motion.div
+                  whileHover={{ scale: 1.08 }}
+                  whileTap={{ scale: 0.94 }}
+                  className="h-8 w-8 border-2 border-[var(--acc)] p-0.5 cursor-default shadow-sm"
                   title={product.colour}
                 >
                   <div
                     className="w-full h-full"
                     style={{ backgroundColor: product.swatch }}
                   />
-                </div>
+                </motion.div>
 
                 {/* Paired Alternate Colourway Link */}
                 {pairedProduct && (
                   <Link
                     to="/product/$id"
                     params={{ id: pairedProduct.slug }}
-                    className="flex items-center gap-2 group"
+                    className="flex items-center gap-2 group cursor-pointer"
                     title={`Switch to ${pairedProduct.colour}`}
                   >
-                    <div
-                      className="h-8 w-8 border border-[var(--hairline)] p-0.5 opacity-70 group-hover:opacity-100 group-hover:border-[var(--fg)] transition-all"
+                    <motion.div
+                      whileHover={{ scale: 1.08 }}
+                      whileTap={{ scale: 0.94 }}
+                      className="h-8 w-8 border border-[var(--hairline)] p-0.5 opacity-75 group-hover:opacity-100 group-hover:border-[var(--fg)] transition-all"
                     >
                       <div
                         className="w-full h-full"
                         style={{ backgroundColor: pairedProduct.swatch }}
                       />
-                    </div>
-                    <span className="text-xs text-[var(--muted)] group-hover:text-[var(--fg)] underline underline-offset-4">
+                    </motion.div>
+                    <span className="text-xs text-[var(--muted)] group-hover:text-[var(--fg)] underline underline-offset-4 transition-colors">
                       View in {pairedProduct.colour}
                     </span>
                   </Link>
@@ -277,30 +287,45 @@ function ProductPage() {
               </div>
             </div>
 
-            {/* Quantity Stepper */}
+            {/* Quantity Stepper with micro-interactions */}
             <div>
               <span className="label-caps text-[var(--muted)] block mb-2">Quantity</span>
-              <div className="inline-flex items-center border border-[var(--hairline)]">
-                <button
+              <div className="inline-flex items-center border border-[var(--hairline)] bg-transparent">
+                <motion.button
                   type="button"
+                  whileTap={{ scale: 0.88 }}
+                  transition={{ duration: 0.1 }}
                   aria-label="Decrease quantity"
                   disabled={quantity <= 1}
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  className="touch-target-48 h-12 w-12 flex items-center justify-center text-[var(--fg)] hover:bg-[var(--surface-tint)] disabled:opacity-30"
+                  className="touch-target-48 h-12 w-12 flex items-center justify-center text-[var(--fg)] hover:bg-[var(--surface-tint)] disabled:opacity-30 cursor-pointer"
                 >
                   <Minus className="h-4 w-4" />
-                </button>
-                <span className="w-12 text-center text-sm font-sans font-semibold text-[var(--fg)]">
-                  {quantity}
-                </span>
-                <button
+                </motion.button>
+                <div className="w-12 text-center overflow-hidden">
+                  <AnimatePresence mode="popLayout" initial={false}>
+                    <motion.span
+                      key={quantity}
+                      initial={{ y: -8, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      exit={{ y: 8, opacity: 0 }}
+                      transition={{ duration: 0.15 }}
+                      className="block text-sm font-sans font-semibold text-[var(--fg)]"
+                    >
+                      {quantity}
+                    </motion.span>
+                  </AnimatePresence>
+                </div>
+                <motion.button
                   type="button"
+                  whileTap={{ scale: 0.88 }}
+                  transition={{ duration: 0.1 }}
                   aria-label="Increase quantity"
                   onClick={() => setQuantity((q) => q + 1)}
-                  className="touch-target-48 h-12 w-12 flex items-center justify-center text-[var(--fg)] hover:bg-[var(--surface-tint)]"
+                  className="touch-target-48 h-12 w-12 flex items-center justify-center text-[var(--fg)] hover:bg-[var(--surface-tint)] cursor-pointer"
                 >
                   <Plus className="h-4 w-4" />
-                </button>
+                </motion.button>
               </div>
             </div>
 
@@ -314,9 +339,13 @@ function ProductPage() {
                 onClick={handleAddToBag}
               >
                 {isAddedFeedback ? (
-                  <span className="flex items-center gap-2">
+                  <motion.span
+                    initial={{ scale: 0.85, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="flex items-center gap-2"
+                  >
                     <Check className="h-5 w-5" /> Added to Bag
-                  </span>
+                  </motion.span>
                 ) : (
                   `Add to Bag • ${formatNaira(product.price * quantity)}`
                 )}
@@ -363,7 +392,12 @@ function ProductPage() {
       {/* ============================================================ */}
       {/* 3. MOBILE STICKY BOTTOM BAR (Thumb Zone with Safe Area) */}
       {/* ============================================================ */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[var(--ink)]/95 backdrop-blur-md border-t border-[var(--hairline)] p-4 pb-[max(1rem,env(safe-area-inset-bottom))] flex items-center justify-between gap-4">
+      <motion.div
+        initial={{ y: 50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[var(--ink)]/95 backdrop-blur-md border-t border-[var(--hairline)] p-4 pb-[max(1rem,env(safe-area-inset-bottom))] flex items-center justify-between gap-4"
+      >
         <div>
           <span className="text-[10px] text-[var(--muted)] uppercase tracking-wider block">
             {product.name} ({selectedSize})
@@ -381,7 +415,7 @@ function ProductPage() {
         >
           {isAddedFeedback ? 'Added' : 'Add to bag'}
         </Button>
-      </div>
+      </motion.div>
 
       {/* ============================================================ */}
       {/* 4. ALSO ON THE RAIL SECTION (Ink) */}

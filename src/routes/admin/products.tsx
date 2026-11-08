@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
+import { motion, AnimatePresence } from 'motion/react'
 import {
   Plus,
   Shirt,
@@ -106,13 +107,21 @@ function AdminProductsPage() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
-      {/* Toast Alert */}
-      {toast && (
-        <div className="fixed top-20 right-8 z-50 p-4 bg-[var(--bone)] text-[var(--ink)] border-2 border-[var(--ink)] shadow-2xl text-xs font-sans font-semibold flex items-center gap-2">
-          <Check className="h-4 w-4 text-[var(--acc-on-bone)]" />
-          <span>{toast}</span>
-        </div>
-      )}
+      {/* Toast Alert with spring entrance */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: -12, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -12, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className="fixed top-20 right-8 z-50 p-4 bg-[var(--bone)] text-[var(--ink)] border-2 border-[var(--ink)] shadow-2xl text-xs font-sans font-semibold flex items-center gap-2"
+          >
+            <Check className="h-4 w-4 text-[var(--acc-on-bone)]" />
+            <span>{toast}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[var(--hairline)]">
@@ -125,22 +134,24 @@ function AdminProductsPage() {
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Grid / Table Toggle */}
+          {/* Grid / Table Toggle with micro-interaction */}
           <div className="flex items-center border border-[var(--hairline)] p-0.5">
-            <button
+            <motion.button
+              whileTap={{ scale: 0.9 }}
               onClick={() => setViewMode('grid')}
-              className={`p-1.5 ${viewMode === 'grid' ? 'bg-[var(--bone)] text-[var(--ink)]' : 'text-[var(--muted)]'}`}
+              className={`p-1.5 cursor-pointer transition-colors ${viewMode === 'grid' ? 'bg-[var(--bone)] text-[var(--ink)]' : 'text-[var(--muted)] hover:text-[var(--bone)]'}`}
               title="Grid View"
             >
               <LayoutGrid className="h-4 w-4" />
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileTap={{ scale: 0.9 }}
               onClick={() => setViewMode('table')}
-              className={`p-1.5 ${viewMode === 'table' ? 'bg-[var(--bone)] text-[var(--ink)]' : 'text-[var(--muted)]'}`}
+              className={`p-1.5 cursor-pointer transition-colors ${viewMode === 'table' ? 'bg-[var(--bone)] text-[var(--ink)]' : 'text-[var(--muted)] hover:text-[var(--bone)]'}`}
               title="Table View"
             >
               <List className="h-4 w-4" />
-            </button>
+            </motion.button>
           </div>
 
           <Button variant="primary" size="sm" onClick={() => handleOpenEditor()}>

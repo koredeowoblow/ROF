@@ -22,11 +22,18 @@ function OrderConfirmationPage() {
   const { id } = useParams({ from: '/order/$id' })
   const order = Route.useLoaderData()
   const [copied, setCopied] = useState(false)
+  const [accountCopied, setAccountCopied] = useState(false)
 
   const handleCopy = () => {
     navigator.clipboard.writeText(id)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  const handleCopyAccount = () => {
+    navigator.clipboard.writeText('0819203912')
+    setAccountCopied(true)
+    setTimeout(() => setAccountCopied(false), 2000)
   }
 
   return (
@@ -79,10 +86,29 @@ function OrderConfirmationPage() {
               <p className="text-xs text-[var(--ink)] leading-relaxed">
                 Please transfer exactly <span className="font-semibold">{formatNaira(order.total)}</span> to the official ROF operations account below. Use your reference <span className="font-mono font-semibold">{id}</span> in the payment narration.
               </p>
-              <div className="p-4 bg-[var(--bone)] border border-[var(--hairline)] space-y-1 text-xs font-mono text-[var(--ink)]">
+              <div className="p-4 bg-[var(--bone)] border border-[var(--hairline)] space-y-1.5 text-xs font-mono text-[var(--ink)]">
                 <div>Bank: <span className="font-semibold">Guaranty Trust Bank (GTBank)</span></div>
                 <div>Account Name: <span className="font-semibold">ROF RAGE CLOTHING LTD</span></div>
-                <div>Account Number: <span className="font-semibold">0819203912</span></div>
+                <div className="flex items-center justify-between pt-1 border-t border-[var(--hairline)]">
+                  <div>Account Number: <strong className="text-sm font-semibold tracking-wider">0819203912</strong></div>
+                  <button
+                    type="button"
+                    onClick={handleCopyAccount}
+                    className="touch-target-48 px-2 py-1 text-[11px] font-sans uppercase font-medium tracking-wider text-[var(--acc-on-bone)] hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    {accountCopied ? (
+                      <>
+                        <Check className="h-3 w-3" />
+                        <span>Copied</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-3 w-3" />
+                        <span>Copy NUBAN</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           )}

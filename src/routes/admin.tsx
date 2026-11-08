@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { createFileRoute, Outlet, Link, useNavigate, useRouterState } from '@tanstack/react-router'
+import { motion, AnimatePresence } from 'motion/react'
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -142,18 +143,23 @@ function AdminLayout() {
             const Icon = item.icon
             const isActive = currentPath === item.href
             return (
-              <Link
+              <motion.div
                 key={item.href}
-                to={item.href}
-                className={`flex items-center gap-3 px-3 py-2.5 text-xs font-sans uppercase tracking-[0.16em] transition-colors ${
-                  isActive
-                    ? 'bg-[var(--bone)] text-[var(--ink)] font-semibold shadow-sm'
-                    : 'text-[var(--bone)]/75 hover:text-[var(--bone)] hover:bg-[var(--surface-tint)]'
-                }`}
+                whileHover={{ x: 3 }}
+                transition={{ duration: 0.12 }}
               >
-                <Icon className={`h-4 w-4 ${isActive ? 'text-[var(--ink)]' : 'text-[var(--acc)]'}`} />
-                <span>{item.label}</span>
-              </Link>
+                <Link
+                  to={item.href}
+                  className={`flex items-center gap-3 px-3 py-2.5 text-xs font-sans uppercase tracking-[0.16em] transition-colors ${
+                    isActive
+                      ? 'bg-[var(--bone)] text-[var(--ink)] font-semibold shadow-sm'
+                      : 'text-[var(--bone)]/75 hover:text-[var(--bone)] hover:bg-[var(--surface-tint)]'
+                  }`}
+                >
+                  <Icon className={`h-4 w-4 ${isActive ? 'text-[var(--ink)]' : 'text-[var(--acc)]'}`} />
+                  <span>{item.label}</span>
+                </Link>
+              </motion.div>
             )
           })}
         </nav>
@@ -228,16 +234,21 @@ function AdminLayout() {
           const Icon = tab.icon
           const isActive = currentPath === tab.href
           return (
-            <Link
+            <motion.div
               key={tab.href}
-              to={tab.href}
-              className={`flex flex-col items-center gap-1 p-2 text-[10px] font-sans uppercase tracking-wider ${
-                isActive ? 'text-[var(--acc)] font-bold' : 'text-[var(--muted)] hover:text-[var(--bone)]'
-              }`}
+              whileTap={{ scale: 0.9 }}
+              transition={{ duration: 0.1 }}
             >
-              <Icon className="h-4 w-4" />
-              <span>{tab.label}</span>
-            </Link>
+              <Link
+                to={tab.href}
+                className={`flex flex-col items-center gap-1 p-2 text-[10px] font-sans uppercase tracking-wider ${
+                  isActive ? 'text-[var(--acc)] font-bold' : 'text-[var(--muted)] hover:text-[var(--bone)]'
+                }`}
+              >
+                <Icon className="h-4 w-4" />
+                <span>{tab.label}</span>
+              </Link>
+            </motion.div>
           )
         })}
       </nav>
@@ -245,58 +256,74 @@ function AdminLayout() {
       {/* ============================================================ */}
       {/* 4. COMMAND PALETTE (CMD+K / CTRL+K) */}
       {/* ============================================================ */}
-      {cmdOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-start justify-center pt-20 px-4">
-          <div className="w-full max-w-xl bg-[var(--ink)] border border-[var(--bone)] shadow-2xl p-4 text-[var(--bone)] space-y-4">
-            <div className="flex items-center justify-between border-b border-[var(--hairline)] pb-3">
-              <div className="flex items-center gap-2 flex-1">
-                <Search className="h-4 w-4 text-[var(--acc)]" />
-                <input
-                  type="text"
-                  autoFocus
-                  placeholder="Type an action or navigate..."
-                  value={cmdQuery}
-                  onChange={(e) => setCmdQuery(e.target.value)}
-                  className="w-full bg-transparent text-sm font-sans focus:outline-none text-[var(--bone)] placeholder:text-[var(--muted)]"
-                />
+      <AnimatePresence>
+        {cmdOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-start justify-center pt-20 px-4"
+          >
+            <motion.div
+              initial={{ scale: 0.97, y: -8, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.97, y: -8, opacity: 0 }}
+              transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full max-w-xl bg-[var(--ink)] border border-[var(--bone)] shadow-2xl p-4 text-[var(--bone)] space-y-4"
+            >
+              <div className="flex items-center justify-between border-b border-[var(--hairline)] pb-3">
+                <div className="flex items-center gap-2 flex-1">
+                  <Search className="h-4 w-4 text-[var(--acc)]" />
+                  <input
+                    type="text"
+                    autoFocus
+                    placeholder="Type an action or navigate..."
+                    value={cmdQuery}
+                    onChange={(e) => setCmdQuery(e.target.value)}
+                    className="w-full bg-transparent text-sm font-sans focus:outline-none text-[var(--bone)] placeholder:text-[var(--muted)]"
+                  />
+                </div>
+                <button
+                  onClick={() => setCmdOpen(false)}
+                  className="text-[var(--muted)] hover:text-[var(--bone)] p-1 cursor-pointer"
+                >
+                  <X className="h-4 w-4" />
+                </button>
               </div>
-              <button
-                onClick={() => setCmdOpen(false)}
-                className="text-[var(--muted)] hover:text-[var(--bone)] p-1"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
 
-            <div className="max-h-72 overflow-y-auto space-y-1">
-              {filteredCommands.length === 0 ? (
-                <p className="p-4 text-xs text-[var(--muted)] text-center font-sans">
-                  No commands matching "{cmdQuery}"
-                </p>
-              ) : (
-                filteredCommands.map((cmd) => (
-                  <button
-                    key={cmd.label}
-                    onClick={() => {
-                      setCmdOpen(false)
-                      cmd.action()
-                    }}
-                    className="w-full text-left p-3 text-xs uppercase tracking-wider font-sans hover:bg-[var(--bone)] hover:text-[var(--ink)] transition-colors flex items-center justify-between group"
-                  >
-                    <span>{cmd.label}</span>
-                    <DiamondMark size={6} accent className="opacity-0 group-hover:opacity-100" />
-                  </button>
-                ))
-              )}
-            </div>
+              <div className="max-h-72 overflow-y-auto space-y-1">
+                {filteredCommands.length === 0 ? (
+                  <p className="p-4 text-xs text-[var(--muted)] text-center font-sans">
+                    No commands matching "{cmdQuery}"
+                  </p>
+                ) : (
+                  filteredCommands.map((cmd) => (
+                    <motion.button
+                      key={cmd.label}
+                      whileHover={{ x: 2 }}
+                      transition={{ duration: 0.1 }}
+                      onClick={() => {
+                        setCmdOpen(false)
+                        cmd.action()
+                      }}
+                      className="w-full text-left p-3 text-xs uppercase tracking-wider font-sans hover:bg-[var(--bone)] hover:text-[var(--ink)] transition-colors flex items-center justify-between group cursor-pointer"
+                    >
+                      <span>{cmd.label}</span>
+                      <DiamondMark size={6} accent className="opacity-0 group-hover:opacity-100" />
+                    </motion.button>
+                  ))
+                )}
+              </div>
 
-            <div className="pt-2 border-t border-[var(--hairline)] text-[10px] text-[var(--muted)] flex justify-between font-mono">
-              <span>Navigate with arrow keys</span>
-              <span>ESC to exit</span>
-            </div>
-          </div>
-        </div>
-      )}
+              <div className="pt-2 border-t border-[var(--hairline)] text-[10px] text-[var(--muted)] flex justify-between font-mono">
+                <span>Navigate with arrow keys</span>
+                <span>ESC to exit</span>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

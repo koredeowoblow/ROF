@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
+import { motion, AnimatePresence } from 'motion/react'
 import { Trash2, Plus, Minus, RotateCcw } from 'lucide-react'
 import { Sheet } from '@/components/Sheet'
 import { Button } from '@/components/Button'
@@ -51,19 +52,27 @@ export const BagDrawer: React.FC = () => {
     >
       <div className="flex flex-col h-full justify-between">
         {/* Undo notification bar */}
-        {lastRemoved && (
-          <div className="mb-4 flex items-center justify-between bg-[var(--bone)] text-[var(--ink)] p-2.5 text-xs font-sans">
-            <span>Removed {lastRemoved.item.name}</span>
-            <button
-              type="button"
-              onClick={undoRemove}
-              className="flex items-center gap-1 font-semibold text-[var(--acc-on-bone)] hover:underline"
+        <AnimatePresence>
+          {lastRemoved && (
+            <motion.div
+              initial={{ opacity: 0, height: 0, y: -6 }}
+              animate={{ opacity: 1, height: 'auto', y: 0 }}
+              exit={{ opacity: 0, height: 0, y: -6 }}
+              transition={{ duration: 0.2 }}
+              className="mb-4 flex items-center justify-between bg-[var(--bone)] text-[var(--ink)] p-2.5 text-xs font-sans overflow-hidden"
             >
-              <RotateCcw className="h-3.5 w-3.5" />
-              Undo
-            </button>
-          </div>
-        )}
+              <span>Removed {lastRemoved.item.name}</span>
+              <button
+                type="button"
+                onClick={undoRemove}
+                className="flex items-center gap-1 font-semibold text-[var(--acc-on-bone)] hover:underline cursor-pointer"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                Undo
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Empty state */}
         {items.length === 0 ? (
@@ -84,72 +93,101 @@ export const BagDrawer: React.FC = () => {
             </Button>
           </div>
         ) : (
-          /* Item List */
+          /* Item List with smooth removal exit micro-interactions */
           <div className="space-y-4 divide-y divide-[var(--hairline)]">
-            {items.map((item) => {
-              const meta = getTeeMeta(item.name, item.colour)
+            <AnimatePresence mode="popLayout">
+              {items.map((item) => {
+                const meta = getTeeMeta(item.name, item.colour)
 
-              return (
-                <div key={`${item.productId}-${item.size}`} className="pt-4 first:pt-0 flex gap-4 items-center">
-                  {/* Thumbnail */}
-                  <div className="relative h-20 w-20 shrink-0 bg-[#161514] border border-[var(--hairline)] flex items-center justify-center p-1 overflow-hidden">
-                    <TeeCutout
-                      design={meta.design}
-                      colour={meta.colour}
-                      withDiamondAccent={false}
-                      className="w-full h-full scale-125"
-                    />
-                  </div>
-
-                  {/* Details */}
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-serif text-base text-[var(--bone)] truncate">
-                      {item.name}
-                    </h4>
-                    <p className="text-xs text-[var(--muted)] font-sans">
-                      {item.colour} • Size {item.size}
-                    </p>
-                    <p className="text-sm font-sans font-medium text-[var(--bone)] mt-1">
-                      {formatNaira(item.unitPrice)}
-                    </p>
-                  </div>
-
-                  {/* Stepper & Remove */}
-                  <div className="flex flex-col items-end gap-2 shrink-0">
-                    <div className="flex items-center border border-[var(--hairline)]">
-                      <button
-                        type="button"
-                        aria-label="Decrease quantity"
-                        onClick={() => updateQty(item.productId, item.size, item.qty - 1)}
-                        className="touch-target-48 h-8 w-8 flex items-center justify-center text-[var(--bone)] hover:bg-[var(--surface-tint)]"
-                      >
-                        <Minus className="h-3 w-3" />
-                      </button>
-                      <span className="w-7 text-center text-xs font-sans font-medium">
-                        {item.qty}
-                      </span>
-                      <button
-                        type="button"
-                        aria-label="Increase quantity"
-                        onClick={() => updateQty(item.productId, item.size, item.qty + 1)}
-                        className="touch-target-48 h-8 w-8 flex items-center justify-center text-[var(--bone)] hover:bg-[var(--surface-tint)]"
-                      >
-                        <Plus className="h-3 w-3" />
-                      </button>
+                return (
+                  <motion.div
+                    key={`${item.productId}-${item.size}`}
+                    layout
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, x: 24, transition: { duration: 0.2 } }}
+                    className="pt-4 first:pt-0 flex gap-4 items-center"
+                  >
+                    {/* Thumbnail */}
+                    <div className="relative h-20 w-20 shrink-0 bg-[#161514] border border-[var(--hairline)] flex items-center justify-center p-1 overflow-hidden group">
+                      <TeeCutout
+                        design={meta.design}
+                        colour={meta.colour}
+                        withDiamondAccent={false}
+                        className="w-full h-full scale-125 transition-transform duration-300 group-hover:scale-135"
+                      />
                     </div>
 
-                    <button
-                      type="button"
-                      aria-label="Remove item"
-                      onClick={() => removeItem(item.productId, item.size)}
-                      className="text-[var(--muted)] hover:text-[var(--acc)] transition-colors p-1"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                </div>
-              )
-            })}
+                    {/* Details */}
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-serif text-base text-[var(--bone)] truncate">
+                        {item.name}
+                      </h4>
+                      <p className="text-xs text-[var(--muted)] font-sans">
+                        {item.colour} • Size {item.size}
+                      </p>
+                      <p className="text-sm font-sans font-medium text-[var(--bone)] mt-1">
+                        {formatNaira(item.unitPrice)}
+                      </p>
+                    </div>
+
+                    {/* Stepper & Remove with tactile micro-interactions */}
+                    <div className="flex flex-col items-end gap-2 shrink-0">
+                      <div className="flex items-center border border-[var(--hairline)] bg-transparent">
+                        <motion.button
+                          type="button"
+                          whileTap={{ scale: 0.88 }}
+                          transition={{ duration: 0.1 }}
+                          aria-label="Decrease quantity"
+                          onClick={() => updateQty(item.productId, item.size, item.qty - 1)}
+                          className="touch-target-48 h-8 w-8 flex items-center justify-center text-[var(--bone)] hover:bg-[var(--surface-tint)] cursor-pointer"
+                        >
+                          <Minus className="h-3 w-3" />
+                        </motion.button>
+
+                        <div className="w-7 text-center overflow-hidden">
+                          <AnimatePresence mode="popLayout" initial={false}>
+                            <motion.span
+                              key={item.qty}
+                              initial={{ y: -8, opacity: 0 }}
+                              animate={{ y: 0, opacity: 1 }}
+                              exit={{ y: 8, opacity: 0 }}
+                              transition={{ duration: 0.15 }}
+                              className="block text-xs font-sans font-medium"
+                            >
+                              {item.qty}
+                            </motion.span>
+                          </AnimatePresence>
+                        </div>
+
+                        <motion.button
+                          type="button"
+                          whileTap={{ scale: 0.88 }}
+                          transition={{ duration: 0.1 }}
+                          aria-label="Increase quantity"
+                          onClick={() => updateQty(item.productId, item.size, item.qty + 1)}
+                          className="touch-target-48 h-8 w-8 flex items-center justify-center text-[var(--bone)] hover:bg-[var(--surface-tint)] cursor-pointer"
+                        >
+                          <Plus className="h-3 w-3" />
+                        </motion.button>
+                      </div>
+
+                      <motion.button
+                        type="button"
+                        whileHover={{ scale: 1.15 }}
+                        whileTap={{ scale: 0.9 }}
+                        transition={{ duration: 0.12 }}
+                        aria-label="Remove item"
+                        onClick={() => removeItem(item.productId, item.size)}
+                        className="text-[var(--muted)] hover:text-[var(--acc)] transition-colors p-1 cursor-pointer"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </motion.button>
+                    </div>
+                  </motion.div>
+                )
+              })}
+            </AnimatePresence>
           </div>
         )}
 
@@ -189,4 +227,3 @@ export const BagDrawer: React.FC = () => {
     </Sheet>
   )
 }
-
