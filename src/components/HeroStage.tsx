@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence, useReducedMotion } from 'motion/react'
-import { Volume2, VolumeX, RotateCw, Sparkles, BookOpen, Check, X, ShieldCheck } from 'lucide-react'
+import { Volume2, VolumeX, RotateCw, Sparkles, BookOpen, Check, X, ShieldCheck, Layers } from 'lucide-react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { DiamondMark } from '@/components/Logo'
 import { Button } from '@/components/Button'
@@ -35,7 +35,7 @@ function getAudioContext(): AudioContext | null {
   }
 }
 
-function playSoothingSound(type: 'card' | 'flip' | 'seal' | 'click' | 'breath', enabled: boolean) {
+function playSoothingSound(type: 'card' | 'flip' | 'seal' | 'click' | 'dice', enabled: boolean) {
   if (!enabled) return
   const ctx = getAudioContext()
   if (!ctx) return
@@ -72,6 +72,19 @@ function playSoothingSound(type: 'card' | 'flip' | 'seal' | 'click' | 'breath', 
       gain.connect(ctx.destination)
       osc.start(now)
       osc.stop(now + 1.4)
+    } else if (type === 'dice') {
+      // Resonant wooden/resin dice impact
+      osc.type = 'sine'
+      osc.frequency.setValueAtTime(460, now)
+      osc.frequency.exponentialRampToValueAtTime(95, now + 0.09)
+
+      gain.gain.setValueAtTime(0.09, now)
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09)
+
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.start(now)
+      osc.stop(now + 0.09)
     } else if (type === 'card') {
       // Soft, organic card sliding over heavy textured cardstock
       osc.type = 'triangle'
@@ -149,7 +162,7 @@ const ROF_CARDS: RofCard[] = [
       'True ambition is quiet. It does not shout in crowded rooms or seek validation from temporary audiences. In Lagos, Paris, or London, the creators of lasting culture wake before dawn with a singularity of purpose. When you put on ROF, you step into that sacred stillness where work speaks for itself.',
     serial: 'ROF-AMB-8821',
     rot: -12,
-    xOffset: -125,
+    xOffset: -130,
   },
   {
     id: 2,
@@ -179,9 +192,18 @@ const ROF_CARDS: RofCard[] = [
       'Fast trends come and dissolve within weeks. Originality is the stubborn decision to build at 260 GSM heavyweight permanence. When you hold an original mindset, you refuse to be a replica. You reach for the roof of fame on your own terms.',
     serial: 'ROF-FAM-7703',
     rot: 12,
-    xOffset: 125,
+    xOffset: 130,
   },
 ]
+
+const DICE_OUTCOMES: Record<number, { title: string; desc: string }> = {
+  1: { title: 'AMBITION IGNITED', desc: 'The relentless drive starts now.' },
+  2: { title: 'PRESSURE ENDURED', desc: 'Resilience solidifies the core.' },
+  3: { title: 'CONFIDENCE REFINED', desc: 'The diamond cuts through doubt.' },
+  4: { title: 'ORIGINALITY WOVEN', desc: 'Distinct from temporary hype.' },
+  5: { title: 'ROOF OF FAME REACHED', desc: 'Heavyweight mindset recognized.' },
+  6: { title: 'DESTINED FOR RICHES', desc: 'The winning roll. Your destiny is secured.' },
+}
 
 export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   const navigate = useNavigate()
@@ -195,6 +217,9 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   const [sealedMindset, setSealedMindset] = useState<string | null>(null)
   const [isSealing, setIsSealing] = useState(false)
   const [showCodex, setShowCodex] = useState(false)
+  const [showSpecs, setShowSpecs] = useState(false)
+  const [diceRolling, setDiceRolling] = useState(false)
+  const [diceNumber, setDiceNumber] = useState<number>(5)
   const [breathPhase, setBreathPhase] = useState<'inhale' | 'exhale'>('inhale')
 
   const stageRef = useRef<HTMLDivElement>(null)
@@ -207,7 +232,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
         setSealedMindset(stored)
       }
     } catch {
-      // Graceful fallback
+      // Storage safe
     }
   }, [])
 
@@ -252,7 +277,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   const rawMouseX = useMotionValue(0)
   const rawMouseY = useMotionValue(0)
 
-  const springConfig = { damping: 32, stiffness: 90, mass: 0.8 }
+  const springConfig = { damping: 30, stiffness: 95, mass: 0.8 }
   const smoothMouseX = useSpring(rawMouseX, springConfig)
   const smoothMouseY = useSpring(rawMouseY, springConfig)
 
@@ -262,6 +287,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   const stageTranslateZ = useTransform(smoothMouseY, [-0.5, 0.5], [-10, 15])
   const spotlightX = useTransform(smoothMouseX, [-0.5, 0.5], [-60, 60])
   const spotlightY = useTransform(smoothMouseY, [-0.5, 0.5], [-50, 50])
+  const holoGleam = useTransform(smoothMouseX, [-0.5, 0.5], [0, 360])
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (isTouch || prefersReduced || !stageRef.current) return
@@ -292,6 +318,20 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
     playSoothingSound('flip', soundEnabled)
   }, [soundEnabled])
 
+  // Handle Dice Roll
+  const handleRollDice = useCallback(() => {
+    if (diceRolling) return
+    setDiceRolling(true)
+    playSoothingSound('dice', soundEnabled)
+    setTimeout(() => {
+      const outcomes = [3, 4, 5, 6, 6]
+      const nextRoll = outcomes[Math.floor(Math.random() * outcomes.length)]
+      setDiceNumber(nextRoll)
+      setDiceRolling(false)
+      playSoothingSound('click', soundEnabled)
+    }, 550)
+  }, [diceRolling, soundEnabled])
+
   // Seal Current Mindset Ritual
   const handleSealMindset = useCallback(() => {
     const card = ROF_CARDS[activeCardIndex]
@@ -311,6 +351,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
 
   const currentCard = ROF_CARDS[activeCardIndex]
   const isCurrentCardSealed = sealedMindset === currentCard.label
+  const currentOutcome = DICE_OUTCOMES[diceNumber]
 
   return (
     <section
@@ -345,7 +386,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
         <div className="w-full h-full rounded-full bg-[radial-gradient(ellipse_at_center,rgba(229,55,45,0.25)_0%,rgba(236,230,216,0.06)_45%,transparent_70%)] blur-3xl" />
       </motion.div>
 
-      {/* Massive Monumental Ghosted Typography (Calm Subconscious Ground) */}
+      {/* Massive Monumental Ghosted Typography */}
       <div className="absolute inset-0 flex flex-col justify-center pointer-events-none z-0 overflow-hidden opacity-[0.03] select-none">
         <div className="text-[14vw] font-display font-bold leading-none tracking-tighter whitespace-nowrap text-[var(--bone)]">
           ROF ◇ AMBITION ◇ CONFIDENCE ◇ ORIGINALITY ◇ DESTINED FOR RICHES
@@ -364,6 +405,29 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
         <span className="hidden sm:inline">LAGOS • 6.4541° N, 3.4246° E</span>
         <span className="text-[var(--acc)]">+</span>
       </div>
+
+      {/* Floating Diamond Embers */}
+      {!prefersReduced && (
+        <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
+          {[
+            { top: '24%', left: '12%', size: 4, delay: 0 },
+            { top: '40%', left: '84%', size: 6, delay: 1.2 },
+            { top: '68%', left: '22%', size: 5, delay: 0.8 },
+            { top: '78%', left: '80%', size: 4, delay: 1.8 },
+          ].map((pt, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0.2, y: 0 }}
+              animate={{ opacity: [0.2, 0.7, 0.2], y: [-8, 8, -8] }}
+              transition={{ duration: 4 + i, repeat: Infinity, ease: 'easeInOut', delay: pt.delay }}
+              style={{ top: pt.top, left: pt.left }}
+              className="absolute text-[var(--acc)] opacity-40"
+            >
+              <DiamondMark size={pt.size} accent filled />
+            </motion.div>
+          ))}
+        </div>
+      )}
 
       {/* ============================================================ */}
       {/* 2. TOP MASTHEAD TELEMETRY */}
@@ -421,8 +485,27 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             })}
           </div>
 
-          {/* Calm Sound & Codex Controls */}
-          <div className="flex items-center gap-2.5 sm:gap-3 font-mono text-xs text-[var(--bone)]">
+          {/* Calm Sound, Specs & Live Clock Controls */}
+          <div className="flex items-center gap-2 sm:gap-3 font-mono text-xs text-[var(--bone)]">
+            {/* Fabric Specs Button */}
+            <button
+              type="button"
+              onClick={() => {
+                setShowSpecs(!showSpecs)
+                playSoothingSound('click', soundEnabled)
+              }}
+              title="Inspect 260 GSM Heavyweight Specs"
+              className={cn(
+                'flex items-center gap-1 px-2.5 py-1 border text-[10px] uppercase tracking-wider cursor-pointer transition-colors rounded-xs',
+                showSpecs
+                  ? 'border-[var(--acc)] bg-[var(--acc)] text-[#fff6ec] font-bold'
+                  : 'border-[var(--hairline)] text-[var(--bone)]/75 hover:text-[var(--bone)] hover:border-[var(--bone)] bg-[var(--ink)]/70'
+              )}
+            >
+              <Layers size={11} />
+              <span className="hidden sm:inline">260 GSM SPECS</span>
+            </button>
+
             {/* Mindset Codex Drawer Button */}
             <button
               type="button"
@@ -434,10 +517,10 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               className="flex items-center gap-1 px-2.5 py-1 border border-[var(--hairline)] hover:border-[var(--bone)] text-[10px] uppercase tracking-wider text-[var(--bone)]/80 hover:text-[var(--bone)] cursor-pointer transition-colors bg-[var(--ink)]/70 rounded-xs"
             >
               <BookOpen size={11} className="text-[var(--acc)]" />
-              <span className="hidden sm:inline">MINDSET CODEX</span>
+              <span className="hidden sm:inline">CODEX</span>
             </button>
 
-            {/* Audio Toggle */}
+            {/* Audio Toggle with Live Acoustic Waveform Visualizer */}
             <button
               type="button"
               onClick={() => {
@@ -446,12 +529,16 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                 playSoothingSound('click', next)
               }}
               title={soundEnabled ? 'Mute soothing audio' : 'Enable soothing audio'}
-              className="flex items-center gap-1 px-2 py-1 border border-[var(--hairline)] hover:border-[var(--bone)]/60 text-[10px] uppercase tracking-wider text-[var(--bone)]/80 hover:text-[var(--bone)] cursor-pointer transition-colors bg-[var(--ink)]/70 rounded-xs"
+              className="flex items-center gap-1.5 px-2 py-1 border border-[var(--hairline)] hover:border-[var(--bone)]/60 text-[10px] uppercase tracking-wider text-[var(--bone)]/80 hover:text-[var(--bone)] cursor-pointer transition-colors bg-[var(--ink)]/70 rounded-xs"
             >
               {soundEnabled ? (
                 <>
-                  <Volume2 size={12} className="text-[var(--acc)]" />
-                  <span className="hidden sm:inline">432Hz ON</span>
+                  <div className="flex items-center gap-0.5 h-3">
+                    <span className="w-0.5 h-2 bg-[var(--acc)] animate-[pulse_1s_ease-in-out_infinite]" />
+                    <span className="w-0.5 h-3 bg-[var(--acc)] animate-[pulse_1.4s_ease-in-out_infinite]" />
+                    <span className="w-0.5 h-1.5 bg-[var(--acc)] animate-[pulse_0.8s_ease-in-out_infinite]" />
+                  </div>
+                  <span className="hidden sm:inline">432Hz</span>
                 </>
               ) : (
                 <>
@@ -471,14 +558,14 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
       </div>
 
       {/* ============================================================ */}
-      {/* 3. CENTERPIECE: THE 3 SOOTHING CARDS OF ROF (R • O • F) */}
+      {/* 3. CENTERPIECE: THE 3 SOOTHING CARDS OF ROF (R • O • F) & RED DIE */}
       {/* ============================================================ */}
-      <div className="relative z-10 flex-1 flex flex-col items-center justify-center my-auto py-4 sm:py-8 px-4 md:px-8">
+      <div className="relative z-10 flex-1 flex flex-col items-center justify-center my-auto py-3 sm:py-6 px-4 md:px-8">
         {/* Mindset Prompt Banner */}
-        <div className="flex items-center gap-2 mb-2 sm:mb-4">
+        <div className="flex items-center gap-2 mb-2 sm:mb-3">
           <span className="h-[1px] w-6 sm:w-10 bg-[var(--acc)]" />
           <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.28em] text-[var(--acc)] font-bold">
-            SELECT & SEAL YOUR MINDSET // R • O • F
+            THE ROF TRINITY // R • O • F
           </span>
           <span className="h-[1px] w-6 sm:w-10 bg-[var(--acc)]" />
         </div>
@@ -486,8 +573,20 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
         {/* 3D Tilted Perspective Canvas */}
         <div
           style={{ perspective: 1200 }}
-          className="relative w-full max-w-[620px] h-[270px] sm:h-[320px] md:h-[360px] flex items-center justify-center mb-3 sm:mb-5"
+          className="relative w-full max-w-[640px] h-[270px] sm:h-[320px] md:h-[360px] flex items-center justify-center mb-2 sm:mb-4"
         >
+          {/* Holographic Authenticity Seal in Corner */}
+          <div className="absolute top-0 right-2 sm:right-6 z-30 pointer-events-none hidden sm:block">
+            <motion.div
+              style={{ rotate: holoGleam }}
+              className="w-16 h-16 rounded-full border border-[var(--hairline)] p-1 flex items-center justify-center bg-gradient-to-tr from-transparent via-[var(--acc)]/10 to-white/10 backdrop-blur-md shadow-lg"
+            >
+              <div className="w-full h-full rounded-full border border-dashed border-[var(--acc)]/40 flex items-center justify-center text-[7px] font-mono uppercase text-center leading-tight text-[var(--bone)]/70">
+                <span>ROF<br />AUTHENTIC</span>
+              </div>
+            </motion.div>
+          </div>
+
           <motion.div
             style={{
               rotateX: isTouch || prefersReduced ? 0 : stageRotateX,
@@ -691,8 +790,8 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
           </motion.div>
         </div>
 
-        {/* Soothing Tactical Mindset Bar: Seal Mindset & Flip */}
-        <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3.5 mb-3 sm:mb-5">
+        {/* Soothing Tactical Mindset Bar: Seal Mindset, Roll Die, Flip */}
+        <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 mb-3 sm:mb-4">
           {/* SEAL THIS MINDSET INTERACTION */}
           <motion.button
             type="button"
@@ -723,6 +822,51 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             </span>
           </motion.button>
 
+          {/* Interactive Red Die Button */}
+          <motion.button
+            type="button"
+            onClick={handleRollDice}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.94 }}
+            className="flex items-center gap-2 px-3.5 py-2 bg-[#c1211a] hover:bg-[#e5372d] text-[#fff6ec] rounded-sm shadow-lg border border-[#8a140f] cursor-pointer transition-colors"
+          >
+            <motion.div
+              animate={
+                diceRolling
+                  ? {
+                      rotateX: [0, 360, 720],
+                      rotateY: [0, 540, 1080],
+                      scale: [1, 1.35, 1],
+                    }
+                  : { rotateX: 0, rotateY: 0, scale: 1 }
+              }
+              transition={{ duration: 0.55, ease: 'easeInOut' }}
+              className="w-4 h-4 bg-[#96120c] rounded-xs border border-[#ffe0dc]/40 flex items-center justify-center p-0.5 shadow-inner"
+            >
+              {diceNumber === 6 ? (
+                <div className="grid grid-cols-2 gap-0.5 w-full h-full p-0.5">
+                  <div className="w-1 h-1 bg-white rounded-full" />
+                  <div className="w-1 h-1 bg-white rounded-full" />
+                  <div className="w-1 h-1 bg-white rounded-full" />
+                  <div className="w-1 h-1 bg-white rounded-full" />
+                  <div className="w-1 h-1 bg-white rounded-full" />
+                  <div className="w-1 h-1 bg-white rounded-full" />
+                </div>
+              ) : (
+                <div className="relative w-full h-full">
+                  <div className="absolute top-0 left-0 w-1 h-1 bg-white rounded-full" />
+                  <div className="absolute top-0 right-0 w-1 h-1 bg-white rounded-full" />
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-1 bg-white rounded-full" />
+                  <div className="absolute bottom-0 left-0 w-1 h-1 bg-white rounded-full" />
+                  <div className="absolute bottom-0 right-0 w-1 h-1 bg-white rounded-full" />
+                </div>
+              )}
+            </motion.div>
+            <span className="font-mono text-[11px] font-bold uppercase tracking-wider">
+              {diceRolling ? 'ROLLING...' : `ROLL [${diceNumber}]`}
+            </span>
+          </motion.button>
+
           {/* Flip Card Button */}
           <motion.button
             type="button"
@@ -739,7 +883,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
         {/* ============================================================ */}
         {/* 4. MONUMENTAL HEADLINE & SOOTHING INNER REFLECTION */}
         {/* ============================================================ */}
-        <div className="relative z-20 w-full max-w-3xl text-center flex flex-col items-center gap-2 sm:gap-3">
+        <div className="relative z-20 w-full max-w-3xl text-center flex flex-col items-center gap-2 sm:gap-2.5">
           {/* Masked Clip-Reveal Monumental Headline */}
           <div className="overflow-hidden py-1">
             <motion.h1
@@ -759,7 +903,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
           </div>
 
           {/* Soothing Mindset Mantra & Reflection */}
-          <div className="min-h-[58px] flex flex-col items-center justify-center max-w-xl px-4">
+          <div className="min-h-[54px] flex flex-col items-center justify-center max-w-xl px-4">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentCard.id}
@@ -767,7 +911,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                 animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                 exit={{ opacity: 0, y: -8, filter: 'blur(3px)' }}
                 transition={{ duration: 0.22 }}
-                className="flex flex-col items-center text-center gap-1.5"
+                className="flex flex-col items-center text-center gap-1"
               >
                 <div className="flex items-center gap-2 text-xs font-mono text-[var(--acc)] uppercase tracking-widest font-bold">
                   <DiamondMark size={6} accent filled />
@@ -781,6 +925,23 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                 <p className="text-xs text-[var(--bone)]/70 font-sans max-w-md">
                   {currentCard.reflection}
                 </p>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Dice Roll Outcome Message */}
+          <div className="h-5 flex items-center justify-center">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={diceNumber}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="text-[10px] font-mono text-[var(--bone)]/70 uppercase tracking-widest flex items-center gap-2"
+              >
+                <span className="text-[var(--acc)]">DESTINY ROLL [{diceNumber}]:</span>
+                <span className="text-[var(--bone)] font-semibold">{currentOutcome.title}</span>
+                <span className="hidden sm:inline text-[var(--muted)]">• {currentOutcome.desc}</span>
               </motion.div>
             </AnimatePresence>
           </div>
@@ -819,7 +980,55 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
       </div>
 
       {/* ============================================================ */}
-      {/* 5. MINDSET CODEX MODAL DRAWER (Soothing Deep-Read Ritual) */}
+      {/* 5. 260 GSM SPECS ARCHITECTURAL OVERLAY */}
+      {/* ============================================================ */}
+      <AnimatePresence>
+        {showSpecs && (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 15 }}
+            transition={{ duration: 0.2 }}
+            className="absolute bottom-16 left-4 right-4 sm:left-8 sm:right-8 z-40 bg-[var(--ink)]/95 backdrop-blur-xl border border-[var(--acc)] p-4 sm:p-5 rounded-md shadow-2xl"
+          >
+            <div className="flex items-center justify-between pb-3 border-b border-[var(--hairline)] text-xs font-mono">
+              <div className="flex items-center gap-2 text-[var(--acc)] font-bold tracking-wider">
+                <Sparkles size={14} />
+                <span>ROF ARCHITECTURAL SPECIFICATIONS // ARCHIVE 01</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowSpecs(false)}
+                className="text-[var(--muted)] hover:text-[var(--bone)] cursor-pointer"
+              >
+                [CLOSE ×]
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-3 font-mono text-xs">
+              <div>
+                <span className="text-[var(--muted)] text-[10px] uppercase block">GARMENT FABRIC</span>
+                <span className="text-[var(--bone)] font-semibold">260 GSM Heavyweight French Terry</span>
+              </div>
+              <div>
+                <span className="text-[var(--muted)] text-[10px] uppercase block">SILHOUETTE</span>
+                <span className="text-[var(--bone)] font-semibold">Oversized Boxy Drop-Shoulder</span>
+              </div>
+              <div>
+                <span className="text-[var(--muted)] text-[10px] uppercase block">FINISH & DYE</span>
+                <span className="text-[var(--bone)] font-semibold">Silicon Enzyme Preshrunk Wash</span>
+              </div>
+              <div>
+                <span className="text-[var(--muted)] text-[10px] uppercase block">LAGOS STUDIO</span>
+                <span className="text-[var(--acc)] font-semibold">6.4541° N, 3.4246° E</span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ============================================================ */}
+      {/* 6. MINDSET CODEX MODAL DRAWER (Soothing Deep-Read Ritual) */}
       {/* ============================================================ */}
       <AnimatePresence>
         {showCodex && (
@@ -892,7 +1101,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
       </AnimatePresence>
 
       {/* ============================================================ */}
-      {/* 6. FULL-WIDTH BONE CREDENTIAL BAND (THE 30% BONE GROUND) */}
+      {/* 7. FULL-WIDTH BONE CREDENTIAL BAND (THE 30% BONE GROUND) */}
       {/* ============================================================ */}
       <div
         data-tone="bone"
