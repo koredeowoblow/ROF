@@ -468,7 +468,7 @@ export const ShopAccordion: React.FC<ShopAccordionProps> = ({ products }) => {
                 type="button"
                 onClick={() => setActiveIndex(idx)}
                 className={cn(
-                  'h-2 rounded-full transition-all cursor-pointer',
+                  'h-2 rounded-full transition-all duration-300 ease-[var(--ease-out-quart)] cursor-pointer',
                   activeIndex === idx
                     ? 'w-6 bg-[var(--acc-on-bone)]'
                     : 'w-2 bg-[var(--hairline)] hover:bg-[var(--muted)]'

@@ -18,3 +18,11 @@ export function formatNairaNumber(amount: number): string {
   return nairaFormatter.format(amount)
 }
 
+/**
+ * Screen-reader accessible currency announcement
+ * e.g. "30,000 Nigerian Naira"
+ */
+export function formatNairaAria(amount: number): string {
+  return `${nairaFormatter.format(amount)} Nigerian Naira`
+}
+

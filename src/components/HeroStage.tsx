@@ -3,6 +3,7 @@ import { motion, useMotionValue, useSpring, useTransform, AnimatePresence, useRe
 import { Volume2, VolumeX, RotateCw, Sparkles, BookOpen, Check, X, ShieldCheck, Layers } from 'lucide-react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { DiamondMark } from '@/components/Logo'
+import { safeStorage } from '@/lib/storage'
 import { Button } from '@/components/Button'
 import { cn } from '@/lib/utils'
 
@@ -323,6 +324,29 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   )
 
   const stageRef = useRef<HTMLDivElement>(null)
+  const rollButtonRef = useRef<HTMLButtonElement>(null)
+  const decreeRef = useRef<HTMLDivElement>(null)
+
+  // Accessible Decree Focus & Escape Handling
+  useEffect(() => {
+    if (showRollOutcome) {
+      const timer = setTimeout(() => {
+        decreeRef.current?.focus()
+      }, 50)
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          setShowRollOutcome(false)
+          rollButtonRef.current?.focus()
+        }
+      }
+      window.addEventListener('keydown', handleKeyDown)
+      return () => {
+        clearTimeout(timer)
+        window.removeEventListener('keydown', handleKeyDown)
+      }
+    }
+  }, [showRollOutcome])
 
   useEffect(() => {
     const handleResize = () => setScreenWidth(window.innerWidth)
@@ -330,15 +354,11 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  // Restore sealed mindset from localStorage
+  // Restore sealed mindset from safeStorage
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem('rof_sealed_mindset')
-      if (stored) {
-        setSealedMindset(stored)
-      }
-    } catch {
-      // Storage safe
+    const stored = safeStorage.getItem('rof_sealed_mindset')
+    if (stored) {
+      setSealedMindset(stored)
     }
   }, [])
 
@@ -423,12 +443,8 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
 
     setTimeout(() => {
       setSealedMindset(card.label)
-      try {
-        localStorage.setItem('rof_sealed_mindset', card.label)
-        window.dispatchEvent(new Event('rof-mindset-update'))
-      } catch {
-        // Storage fail safe
-      }
+      safeStorage.setItem('rof_sealed_mindset', card.label)
+      window.dispatchEvent(new Event('rof-mindset-update'))
       setIsSealing(false)
     }, 600)
   }, [activeCardIndex, soundEnabled])
@@ -759,6 +775,17 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                     {/* Top Specular Sheen */}
                     <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/15 to-white/40 pointer-events-none" />
 
+                    {/* Subtle metallic reflection sweep on active card selection */}
+                    {isSelected && !prefersReduced && (
+                      <motion.div
+                        key={`sheen-${activeCardIndex}`}
+                        initial={{ x: '-150%', opacity: 0 }}
+                        animate={{ x: '180%', opacity: [0, 0.45, 0] }}
+                        transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+                        className="absolute inset-y-0 -inset-x-1/2 w-full bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 pointer-events-none z-20"
+                      />
+                    )}
+
                     {/* Inset Gold Hairline Frame with Corner Diamonds */}
                     <div className="absolute inset-2 sm:inset-2.5 border border-[var(--acc)]/30 rounded-lg pointer-events-none">
                       <div className="absolute top-1 left-1">
@@ -954,14 +981,25 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
         <AnimatePresence>
           {showRollOutcome && !diceRolling && currentOutcome && (
             <motion.div
+              ref={decreeRef}
+              role="region"
+              aria-label="Destiny Revealed Decree"
+              aria-live="polite"
+              tabIndex={-1}
               initial={{ opacity: 0, y: 14, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.96 }}
               transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full max-w-xl mx-auto mb-4 p-4 sm:p-5 bg-[var(--surface-deep)]/95 border-2 border-[var(--acc)] rounded-lg shadow-[0_16px_50px_rgba(0,0,0,0.8),0_0_30px_rgba(240,180,41,0.25)] backdrop-blur-xl relative overflow-hidden text-left"
+              className="w-full max-w-xl mx-auto mb-4 p-4 sm:p-5 bg-[var(--surface-deep)]/95 border-2 border-[var(--acc)] rounded-lg shadow-[0_16px_50px_rgba(0,0,0,0.8),0_0_30px_rgba(240,180,41,0.25)] backdrop-blur-xl relative overflow-hidden text-left outline-none focus-visible:ring-2 focus-visible:ring-[var(--acc)]"
             >
-              {/* Top gold bar glow */}
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[var(--acc)] to-transparent" />
+              {/* Top gold bar glow with kinetic light ray */}
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[var(--acc)]/30 to-transparent overflow-hidden">
+                <motion.div
+                  animate={prefersReduced ? {} : { x: ['-100%', '200%'] }}
+                  transition={{ repeat: Infinity, duration: 2.4, ease: [0.16, 1, 0.3, 1], repeatDelay: 1 }}
+                  className="w-1/2 h-full bg-gradient-to-r from-transparent via-[var(--acc)] to-transparent"
+                />
+              </div>
 
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-2.5">
@@ -981,7 +1019,10 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
 
                 <button
                   type="button"
-                  onClick={() => setShowRollOutcome(false)}
+                  onClick={() => {
+                    setShowRollOutcome(false)
+                    rollButtonRef.current?.focus()
+                  }}
                   className="p-1 text-[var(--muted)] hover:text-[var(--bone)] cursor-pointer"
                   title="Close Decree"
                   aria-label="Close Destiny Decree"
@@ -1004,10 +1045,15 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                   <button
                     type="button"
                     onClick={handleSealMindset}
-                    className="px-3 py-1 bg-[var(--acc)] text-[var(--label-on-acc)] text-[10px] font-mono uppercase tracking-wider font-bold rounded-xs cursor-pointer hover:brightness-110 transition-all flex items-center gap-1 shadow-sm"
+                    className={cn(
+                      'px-3 py-1 text-[10px] font-mono uppercase tracking-wider font-bold rounded-xs cursor-pointer transition-all flex items-center gap-1 shadow-sm',
+                      isCurrentCardSealed
+                        ? 'bg-[var(--surface-lift)] text-[var(--acc)] border border-[var(--acc)]'
+                        : 'bg-[var(--acc)] text-[var(--label-on-acc)] hover:brightness-110'
+                    )}
                   >
                     <Check size={11} strokeWidth={3} />
-                    <span>SEAL DESTINY</span>
+                    <span>{isCurrentCardSealed ? 'DESTINY SEALED ✓' : 'SEAL DESTINY'}</span>
                   </button>
                   <button
                     type="button"
@@ -1026,6 +1072,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
         <div className="flex flex-wrap items-center justify-center gap-3">
           {/* Interactive Destiny Die Button with Dynamic State & Feedback */}
           <motion.button
+            ref={rollButtonRef}
             type="button"
             onClick={handleRollDice}
             whileHover={{ scale: 1.05 }}

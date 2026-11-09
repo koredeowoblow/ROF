@@ -203,7 +203,7 @@ function ContactPage() {
                   />
                 </div>
 
-                <Button type="submit" variant="primary" fullWidth size="lg" disabled={loading}>
+                <Button type="submit" variant="primary" fullWidth size="lg" disabled={loading} aria-busy={loading}>
                   {loading ? 'Transmitting...' : 'Send Message'}
                 </Button>
               </form>

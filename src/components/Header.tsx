@@ -3,6 +3,7 @@ import { Link, useRouterState } from '@tanstack/react-router'
 import { motion, AnimatePresence } from 'motion/react'
 import { Menu, X, ShoppingBag } from 'lucide-react'
 import { Logo, DiamondMark } from './Logo'
+import { safeStorage } from '@/lib/storage'
 import { useBagStore } from '@/features/bag/bagStore'
 import { useScrollDirection } from '@/lib/useScrollDirection'
 import { cn } from '@/lib/utils'
@@ -17,11 +18,7 @@ export const Header: React.FC = () => {
 
   React.useEffect(() => {
     const syncMindset = () => {
-      try {
-        setSealedMindset(localStorage.getItem('rof_sealed_mindset'))
-      } catch {
-        // Storage fail safe
-      }
+      setSealedMindset(safeStorage.getItem('rof_sealed_mindset'))
     }
     syncMindset()
     window.addEventListener('storage', syncMindset)

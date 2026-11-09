@@ -11,7 +11,7 @@ import { Button } from '@/components/Button'
 import { TeeCutout, TeeDesign, TeeColour } from '@/components/TeeCutout'
 import { ShopAccordion } from '@/components/ShopAccordion'
 import { initialProducts } from '@/api/products'
-import { formatNaira } from '@/lib/money'
+import { formatNaira, formatNairaAria } from '@/lib/money'
 import { Product } from '@/api/types'
 import { cn } from '@/lib/utils'
 
@@ -318,7 +318,10 @@ function ShopPage() {
                           </div>
 
                           <div className="mt-4 pt-3 border-t border-[var(--hairline)]/60 flex items-center justify-between font-sans">
-                            <span className="text-base sm:text-lg font-serif font-bold text-[var(--ink)]">
+                            <span
+                              className="text-base sm:text-lg font-serif font-bold text-[var(--ink)]"
+                              aria-label={formatNairaAria(product.price)}
+                            >
                               {formatNaira(product.price)}
                             </span>
                             <span className="text-xs text-[var(--acc-on-bone)] font-mono uppercase font-bold tracking-wider group-hover:translate-x-1.5 transition-transform duration-200 flex items-center gap-1">

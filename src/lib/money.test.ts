@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { formatNaira, formatNairaNumber } from './money'
+import { formatNaira, formatNairaNumber, formatNairaAria } from './money'
 
 describe('Nigerian Naira Currency Formatter', () => {
   it('formats regular whole naira amounts with en-NG grouping', () => {
@@ -20,6 +20,11 @@ describe('Nigerian Naira Currency Formatter', () => {
 
   it('returns clean number string with formatNairaNumber', () => {
     expect(formatNairaNumber(30000)).toBe('30,000')
+  })
+
+  it('returns accessible voiceover string with formatNairaAria', () => {
+    expect(formatNairaAria(30000)).toBe('30,000 Nigerian Naira')
+    expect(formatNairaAria(2500)).toBe('2,500 Nigerian Naira')
   })
 })
 

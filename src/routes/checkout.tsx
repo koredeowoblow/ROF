@@ -422,6 +422,7 @@ function CheckoutPage() {
                 fullWidth
                 withArrow
                 disabled={isSubmitting || items.length === 0}
+                aria-busy={isSubmitting}
               >
                 {isSubmitting ? 'Confirming Order...' : `Place Order • ${formatNaira(total)}`}
               </Button>

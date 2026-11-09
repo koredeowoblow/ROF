@@ -10,7 +10,7 @@ import { Tape } from '@/components/Tape'
 import { DiamondMark } from '@/components/Logo'
 import { TeeCutout, TeeDesign, TeeColour } from '@/components/TeeCutout'
 import { initialProducts } from '@/api/products'
-import { formatNaira } from '@/lib/money'
+import { formatNaira, formatNairaAria } from '@/lib/money'
 import { useBagStore } from '@/features/bag/bagStore'
 import { Product } from '@/api/types'
 import { formatAccentText } from '@/components/Mast'
@@ -211,7 +211,10 @@ function ProductPage() {
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-display text-[var(--fg)] mt-1">
                 {product.name}
               </h1>
-              <p className="mt-2 text-2xl sm:text-3xl font-display font-medium text-[var(--fg)]">
+              <p
+                className="mt-2 text-2xl sm:text-3xl font-display font-medium text-[var(--fg)]"
+                aria-label={formatNairaAria(product.price)}
+              >
                 {formatNaira(product.price)}
               </p>
             </div>

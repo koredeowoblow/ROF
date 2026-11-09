@@ -38,6 +38,11 @@
   /* Max content width */
   --max-content: 1360px;
 
+  /* Motion & Deceleration Easing Curves (Natural Deceleration, Zero Bounce) */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-out-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+
   /* Default tone is Pine Teal */
   --bg: var(--ink);
   --fg: var(--bone);
