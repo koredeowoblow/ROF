@@ -6,7 +6,7 @@ import { api } from '@/api/client'
 import { formatAccentText } from './Mast'
 import { cn } from '@/lib/utils'
 
-export const Footer: React.FC = () => {
+export const Footer: React.FC = React.memo(() => {
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
 
@@ -25,7 +25,7 @@ export const Footer: React.FC = () => {
   }
 
   return (
-    <footer data-tone="ink" className="relative w-full border-t border-[var(--hairline)] bg-[var(--ink)] text-[var(--bone)]">
+    <footer data-tone="ink" className="relative w-full border-t border-[var(--hairline)] bg-[var(--ink)] text-[var(--bone)] content-visibility-auto">
       {/* Top Section: Newsletter Block */}
       <div className="mx-auto max-w-[var(--max-content)] px-4 md:px-8 pt-16 pb-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
@@ -212,5 +212,5 @@ export const Footer: React.FC = () => {
       </div>
     </footer>
   )
-}
+})
 

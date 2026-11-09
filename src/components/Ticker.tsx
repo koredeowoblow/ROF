@@ -23,7 +23,7 @@ const defaultItems = [
  * Driven by GPU-accelerated translate3d for 60fps infinite rotation.
  * Features continuously rotating 360° diamond marks.
  */
-export const Ticker: React.FC<TickerProps> = ({
+export const Ticker: React.FC<TickerProps> = React.memo(({
   items = defaultItems,
   className,
   speed = 'normal',
@@ -67,33 +67,6 @@ export const Ticker: React.FC<TickerProps> = ({
           </div>
         ))}
       </div>
-
-      <style>{`
-        @keyframes rof-ticker-ltr {
-          0% {
-            transform: translate3d(-50%, 0, 0);
-          }
-          100% {
-            transform: translate3d(0%, 0, 0);
-          }
-        }
-
-        @keyframes rof-spin-diamond {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .will-change-transform {
-            animation: none !important;
-            transform: none !important;
-          }
-        }
-      `}</style>
     </div>
   )
-}
+})

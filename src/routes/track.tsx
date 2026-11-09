@@ -79,12 +79,14 @@ function TrackOrderPage() {
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
+                <label htmlFor="track-order-id" className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
                   Order Reference *
                 </label>
                 <input
+                  id="track-order-id"
                   type="text"
                   required
+                  maxLength={50}
                   placeholder="e.g. ROF-849102"
                   value={orderId}
                   onChange={(e) => setOrderId(e.target.value)}
@@ -93,12 +95,15 @@ function TrackOrderPage() {
               </div>
 
               <div>
-                <label className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
+                <label htmlFor="track-contact" className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
                   Phone or Email *
                 </label>
                 <input
+                  id="track-contact"
                   type="text"
                   required
+                  maxLength={120}
+                  autoComplete="email tel"
                   placeholder="e.g. chidi.okafor@gmail.com"
                   value={contact}
                   onChange={(e) => setContact(e.target.value)}
@@ -142,7 +147,7 @@ function TrackOrderPage() {
 
               {/* Waybill / Courier info if out for delivery */}
               {order.courier && (
-                <div className="p-4 bg-[#ded6c3] border border-[var(--hairline)] flex items-center justify-between text-xs font-sans">
+                <div className="p-4 bg-[var(--bone-muted)] border border-[var(--hairline)] flex items-center justify-between text-xs font-sans">
                   <div className="flex items-center gap-2">
                     <Truck className="h-4 w-4 text-[var(--acc-on-bone)]" />
                     <span>Courier: <strong className="text-[var(--ink)]">{order.courier}</strong></span>

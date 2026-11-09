@@ -56,6 +56,11 @@
     outline-offset: 3px;
   }
 
+  /* Clean touch response without gray flash on iOS/Android */
+  button, a, input, select, textarea, [role="button"] {
+    -webkit-tap-highlight-color: transparent;
+  }
+
   /* Headings typography rules */
   h1, h2, h3, h4, .font-display {
     font-family: var(--font-display);
@@ -178,5 +183,38 @@
 .sheen-effect:hover::before {
   left: 150%;
 }
+
+/* Continuous Marigold Ticker Animations */
+@keyframes rof-ticker-ltr {
+  0% {
+    transform: translate3d(-50%, 0, 0);
+  }
+  100% {
+    transform: translate3d(0%, 0, 0);
+  }
+}
+
+@keyframes rof-spin-diamond {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .will-change-transform {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+/* Rendering Performance: Content Visibility for Offscreen Sections */
+.content-visibility-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 640px;
+}
+
 
 

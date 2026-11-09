@@ -168,7 +168,7 @@ function AdminOrdersPage() {
 
       {/* Bulk actions banner when rows are selected */}
       {selectedOrders.length > 0 && (
-        <div className="p-3 bg-[#ded6c3] text-[var(--ink)] border border-[var(--ink)] flex flex-wrap items-center justify-between gap-3 text-xs font-sans">
+        <div className="p-3 bg-[var(--bone-muted)] text-[var(--ink)] border border-[var(--ink)] flex flex-wrap items-center justify-between gap-3 text-xs font-sans">
           <span className="font-semibold">{selectedOrders.length} orders selected</span>
           <div className="flex items-center gap-2">
             <button
@@ -204,7 +204,7 @@ function AdminOrdersPage() {
       {/* ============================================================ */}
       <div className="hidden md:block border border-[var(--hairline)] bg-[var(--ink)] overflow-x-auto">
         <table className="w-full text-left text-xs font-sans">
-          <thead className="bg-[#121110] border-b border-[var(--hairline)] text-[var(--muted)] uppercase tracking-wider">
+          <thead className="bg-[var(--surface-deep)] border-b border-[var(--hairline)] text-[var(--muted)] uppercase tracking-wider">
             <tr>
               <th className="p-3.5 w-10">
                 <input
@@ -336,7 +336,7 @@ function AdminOrdersPage() {
           filteredOrders.map((order) => (
             <div
               key={order.id}
-              className="p-5 border border-[var(--hairline)] bg-[#0a2323] space-y-3"
+              className="p-5 border border-[var(--hairline)] bg-[var(--surface-deep)] space-y-3"
             >
               <div className="flex items-center justify-between">
                 <span className="font-mono font-bold text-base text-[var(--bone)]">{order.id}</span>

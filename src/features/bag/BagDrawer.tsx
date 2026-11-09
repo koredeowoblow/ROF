@@ -109,7 +109,7 @@ export const BagDrawer: React.FC = () => {
                     className="pt-4 first:pt-0 flex gap-4 items-center"
                   >
                     {/* Thumbnail */}
-                    <div className="relative h-20 w-20 shrink-0 bg-[#161514] border border-[var(--hairline)] flex items-center justify-center p-1 overflow-hidden group">
+                    <div className="relative h-20 w-20 shrink-0 bg-[var(--surface-deep)] border border-[var(--hairline)] flex items-center justify-center p-1 overflow-hidden group">
                       <TeeCutout
                         design={meta.design}
                         colour={meta.colour}
@@ -201,7 +201,7 @@ export const BagDrawer: React.FC = () => {
               </div>
               <div className="flex justify-between text-[var(--muted)]">
                 <span>Delivery</span>
-                <span>Calculated at checkout (Lagos ₦2,500 / Interstate ₦4,500)</span>
+                <span>Calculated at checkout (Lagos {formatNaira(2500)} / Interstate {formatNaira(4500)})</span>
               </div>
             </div>
 

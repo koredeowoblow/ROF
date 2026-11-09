@@ -372,7 +372,7 @@ function ProductPage() {
               <div className="grid grid-cols-3 gap-2 py-1">
                 <span className="text-[var(--muted)] uppercase tracking-wider">Dispatch</span>
                 <span className="col-span-2 text-[var(--fg)] font-medium">
-                  Lagos (1-2 days ₦2,500), Interstate (3-5 days ₦4,500)
+                  Lagos (1-2 days {formatNaira(2500)}), Interstate (3-5 days {formatNaira(4500)})
                 </span>
               </div>
             </div>
@@ -453,7 +453,7 @@ function ProductPage() {
                   <div
                     data-tone={tileTone}
                     className={`relative aspect-square w-full flex items-center justify-center p-4 overflow-hidden ${
-                      tileTone === 'ink' ? 'bg-[#141312]' : 'bg-[#e2dbcc]'
+                      tileTone === 'ink' ? 'bg-[var(--surface-deep)]' : 'bg-[var(--bone-muted)]'
                     }`}
                   >
                     <TeeCutout

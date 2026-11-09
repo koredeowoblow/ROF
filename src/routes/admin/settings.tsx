@@ -61,7 +61,7 @@ function AdminSettingsPage() {
                 type="text"
                 readOnly
                 defaultValue="https://rofrage.com/api/v1/payments/paystack/webhook"
-                className="w-full h-10 px-3 bg-[#161514] border border-[var(--hairline)] text-[var(--muted)] font-mono select-all"
+                className="w-full h-10 px-3 bg-[var(--surface-lift)] border border-[var(--hairline)] text-[var(--muted)] font-mono select-all"
               />
             </div>
           </div>
@@ -74,7 +74,7 @@ function AdminSettingsPage() {
             <h2 className="font-serif text-xl text-[var(--bone)]">Staff Roles & Permissions</h2>
           </div>
           <div className="space-y-3">
-            <div className="p-3 border border-[var(--hairline)] bg-[#141312] flex items-center justify-between">
+            <div className="p-3 border border-[var(--hairline)] bg-[var(--surface-deep)] flex items-center justify-between">
               <div>
                 <p className="font-semibold text-[var(--bone)]">Studio Owner</p>
                 <p className="text-[10px] text-[var(--muted)]">owner@rofrage.com • Full administrative control</p>
@@ -84,7 +84,7 @@ function AdminSettingsPage() {
               </span>
             </div>
 
-            <div className="p-3 border border-[var(--hairline)] bg-[#141312] flex items-center justify-between">
+            <div className="p-3 border border-[var(--hairline)] bg-[var(--surface-deep)] flex items-center justify-between">
               <div>
                 <p className="font-semibold text-[var(--bone)]">Dispatch Staff</p>
                 <p className="text-[10px] text-[var(--muted)]">fulfillment@rofrage.com • Orders & Inventory only</p>

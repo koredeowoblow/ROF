@@ -75,7 +75,7 @@ function CheckoutPage() {
       setDiscountMsg('10% Legacy discount applied.')
     } else if (code === 'ROFFAMILY') {
       setAppliedDiscount(5000)
-      setDiscountMsg('₦5,000 ROF Family credit applied.')
+      setDiscountMsg(`${formatNaira(5000)} ROF Family credit applied.`)
     } else {
       setDiscountMsg('Invalid discount code.')
     }
@@ -159,101 +159,142 @@ function CheckoutPage() {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
+                  <label htmlFor="checkout-name" className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
                     Full Name *
                   </label>
                   <input
+                    id="checkout-name"
                     type="text"
                     required
+                    maxLength={100}
                     autoComplete="name"
+                    aria-invalid={!!errors.name}
+                    aria-describedby={errors.name ? "checkout-name-error" : undefined}
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="e.g. Babatunde Adeleke"
                     className="w-full h-12 px-4 text-base font-sans bg-transparent border border-[var(--hairline)] text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--acc-on-bone)]"
                   />
-                  {errors.name && <p className="mt-1 text-xs text-[var(--acc-on-bone)]">{errors.name}</p>}
+                  {errors.name && (
+                    <p id="checkout-name-error" role="alert" className="mt-1 text-xs text-[var(--acc-on-bone)]">
+                      {errors.name}
+                    </p>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
+                    <label htmlFor="checkout-phone" className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
                       Phone Number *
                     </label>
                     <input
+                      id="checkout-phone"
                       type="tel"
                       required
+                      maxLength={25}
                       inputMode="tel"
                       autoComplete="tel"
+                      aria-invalid={!!errors.phone}
+                      aria-describedby={errors.phone ? "checkout-phone-error" : undefined}
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       placeholder="e.g. +234 802 345 6789"
                       className="w-full h-12 px-4 text-base font-sans bg-transparent border border-[var(--hairline)] text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--acc-on-bone)]"
                     />
-                    {errors.phone && <p className="mt-1 text-xs text-[var(--acc-on-bone)]">{errors.phone}</p>}
+                    {errors.phone && (
+                      <p id="checkout-phone-error" role="alert" className="mt-1 text-xs text-[var(--acc-on-bone)]">
+                        {errors.phone}
+                      </p>
+                    )}
                   </div>
 
                   <div>
-                    <label className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
+                    <label htmlFor="checkout-email" className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
                       Email Address *
                     </label>
                     <input
+                      id="checkout-email"
                       type="email"
                       required
+                      maxLength={120}
                       inputMode="email"
                       autoComplete="email"
+                      aria-invalid={!!errors.email}
+                      aria-describedby={errors.email ? "checkout-email-error" : undefined}
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       placeholder="e.g. adeleke@example.ng"
                       className="w-full h-12 px-4 text-base font-sans bg-transparent border border-[var(--hairline)] text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--acc-on-bone)]"
                     />
-                    {errors.email && <p className="mt-1 text-xs text-[var(--acc-on-bone)]">{errors.email}</p>}
+                    {errors.email && (
+                      <p id="checkout-email-error" role="alert" className="mt-1 text-xs text-[var(--acc-on-bone)]">
+                        {errors.email}
+                      </p>
+                    )}
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
+                  <label htmlFor="checkout-address" className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
                     Street Address *
                   </label>
                   <input
+                    id="checkout-address"
                     type="text"
                     required
+                    maxLength={200}
                     autoComplete="street-address"
+                    aria-invalid={!!errors.address}
+                    aria-describedby={errors.address ? "checkout-address-error" : undefined}
                     value={formData.address}
                     onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                     placeholder="House number, street name, apartment or building"
                     className="w-full h-12 px-4 text-base font-sans bg-transparent border border-[var(--hairline)] text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--acc-on-bone)]"
                   />
-                  {errors.address && <p className="mt-1 text-xs text-[var(--acc-on-bone)]">{errors.address}</p>}
+                  {errors.address && (
+                    <p id="checkout-address-error" role="alert" className="mt-1 text-xs text-[var(--acc-on-bone)]">
+                      {errors.address}
+                    </p>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
+                    <label htmlFor="checkout-city" className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
                       City / Area *
                     </label>
                     <input
+                      id="checkout-city"
                       type="text"
                       required
+                      maxLength={80}
+                      aria-invalid={!!errors.city}
+                      aria-describedby={errors.city ? "checkout-city-error" : undefined}
                       value={formData.city}
                       onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                       placeholder="e.g. Lekki, Ikeja, Garki"
                       className="w-full h-12 px-4 text-base font-sans bg-transparent border border-[var(--hairline)] text-[var(--ink)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--acc-on-bone)]"
                     />
-                    {errors.city && <p className="mt-1 text-xs text-[var(--acc-on-bone)]">{errors.city}</p>}
+                    {errors.city && (
+                      <p id="checkout-city-error" role="alert" className="mt-1 text-xs text-[var(--acc-on-bone)]">
+                        {errors.city}
+                      </p>
+                    )}
                   </div>
 
                   <div>
-                    <label className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
+                    <label htmlFor="checkout-state" className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
                       State *
                     </label>
                     <select
+                      id="checkout-state"
                       value={formData.state}
                       onChange={(e) => setFormData({ ...formData, state: e.target.value })}
                       className="w-full h-12 px-4 text-base font-sans bg-[var(--bone)] border border-[var(--hairline)] text-[var(--ink)] focus:outline-none focus:border-[var(--acc-on-bone)] cursor-pointer"
                     >
                       {NIGERIAN_STATES.map((state) => (
                         <option key={state.code} value={state.name}>
-                          {state.name} {state.isLagos ? '(Lagos Dispatch ₦2,500)' : '(Interstate ₦4,500)'}
+                          {state.name} {state.isLagos ? `(Lagos Dispatch ${formatNaira(2500)})` : `(Interstate ${formatNaira(4500)})`}
                         </option>
                       ))}
                     </select>
@@ -261,11 +302,13 @@ function CheckoutPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
+                  <label htmlFor="checkout-notes" className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
                     Special Dispatch Notes (Optional)
                   </label>
                   <input
+                    id="checkout-notes"
                     type="text"
+                    maxLength={250}
                     value={formData.notes || ''}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                     placeholder="Gate code, landmark, or delivery instructions"
@@ -282,7 +325,7 @@ function CheckoutPage() {
                 <span className="text-xs text-[var(--muted)]">• Payment channel</span>
               </div>
 
-              <div className="space-y-3">
+              <div role="radiogroup" aria-label="Settlement payment channel" className="space-y-3">
                 {/* Option 1: Paystack */}
                 <label
                   className={`flex items-start gap-4 p-4 border cursor-pointer transition-colors ${

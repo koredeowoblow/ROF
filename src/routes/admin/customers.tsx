@@ -88,7 +88,7 @@ function AdminCustomersPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-7 border border-[var(--hairline)] bg-[var(--ink)] overflow-x-auto">
           <table className="w-full text-left text-xs font-sans">
-            <thead className="bg-[#121110] border-b border-[var(--hairline)] text-[var(--muted)] uppercase tracking-wider">
+            <thead className="bg-[var(--surface-deep)] border-b border-[var(--hairline)] text-[var(--muted)] uppercase tracking-wider">
               <tr>
                 <th className="p-3.5">Customer</th>
                 <th className="p-3.5">Location</th>
@@ -160,7 +160,7 @@ function AdminCustomersPage() {
                   {selectedCustomer.orders.map((o) => (
                     <div
                       key={o.id}
-                      className="p-3 border border-[var(--hairline)] bg-[#141312] text-xs font-sans flex items-center justify-between"
+                      className="p-3 border border-[var(--hairline)] bg-[var(--surface-deep)] text-xs font-sans flex items-center justify-between"
                     >
                       <div>
                         <p className="font-mono font-bold text-[var(--bone)]">{o.id}</p>

@@ -316,7 +316,7 @@ function AdminOrderDetailPage() {
               <p className="text-[var(--bone)]">{order.customer.city}, {order.customer.state}</p>
             </div>
             {order.notes && (
-              <div className="mt-3 p-3 bg-[#141312] border border-[var(--hairline)]">
+              <div className="mt-3 p-3 bg-[var(--surface-deep)] border border-[var(--hairline)]">
                 <span className="text-[10px] uppercase text-[var(--acc)] block">Customer Delivery Note:</span>
                 <p className="text-xs text-[var(--bone)] mt-0.5">{order.notes}</p>
               </div>

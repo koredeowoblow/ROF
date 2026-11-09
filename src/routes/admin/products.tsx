@@ -173,13 +173,13 @@ function AdminProductsPage() {
             return (
               <div
                 key={p.id}
-                className="border border-[var(--hairline)] bg-[#121110] flex flex-col justify-between overflow-hidden group"
+                className="border border-[var(--hairline)] bg-[var(--surface-deep)] flex flex-col justify-between overflow-hidden group"
               >
                 {/* Tile Preview */}
                 <div
                   data-tone={p.ground}
                   className={`relative aspect-[4/3] flex items-center justify-center p-6 ${
-                    p.ground === 'ink' ? 'bg-[var(--ink)]' : 'bg-[#e2dbcc]'
+                    p.ground === 'ink' ? 'bg-[var(--ink)]' : 'bg-[var(--bone-muted)]'
                   }`}
                 >
                   <div className="absolute top-3 left-3">
@@ -263,7 +263,7 @@ function AdminProductsPage() {
         /* TABLE VIEW */
         <div className="border border-[var(--hairline)] bg-[var(--ink)] overflow-x-auto">
           <table className="w-full text-left text-xs font-sans">
-            <thead className="bg-[#121110] border-b border-[var(--hairline)] text-[var(--muted)] uppercase tracking-wider">
+            <thead className="bg-[var(--surface-deep)] border-b border-[var(--hairline)] text-[var(--muted)] uppercase tracking-wider">
               <tr>
                 <th className="p-3.5">Pos</th>
                 <th className="p-3.5">Piece Name</th>
@@ -449,7 +449,7 @@ function AdminProductsPage() {
                 <div
                   data-tone={editingProduct.ground}
                   className={`aspect-square w-full p-6 border border-[var(--hairline)] flex flex-col justify-between ${
-                    editingProduct.ground === 'ink' ? 'bg-[var(--ink)]' : 'bg-[#e2dbcc]'
+                    editingProduct.ground === 'ink' ? 'bg-[var(--ink)]' : 'bg-[var(--bone-muted)]'
                   }`}
                 >
                   <div className="flex justify-between items-center text-xs">
@@ -472,7 +472,7 @@ function AdminProductsPage() {
                 </div>
 
                 {/* Cut-out Checker Alert */}
-                <div className="p-3 bg-[#161514] border border-[var(--hairline)] text-xs text-[var(--bone)] flex items-start gap-2">
+                <div className="p-3 bg-[var(--surface-lift)] border border-[var(--hairline)] text-xs text-[var(--bone)] flex items-start gap-2">
                   <Check className="h-4 w-4 text-[var(--acc)] shrink-0 mt-0.5" />
                   <span>
                     Cut-out transparency verified. Piece sits cleanly on both Ink and Bone tones with soft layered shadow.

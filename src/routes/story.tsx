@@ -92,7 +92,7 @@ function StoryPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Design 1: Cards */}
-            <div className="p-8 border border-[var(--hairline)] bg-[#0a2323] flex flex-col justify-between min-h-[280px]">
+            <div className="p-8 border border-[var(--hairline)] bg-[var(--surface-deep)] flex flex-col justify-between min-h-[280px]">
               <div>
                 <span className="label-caps text-[var(--acc)]">Design 01</span>
                 <h3 className="font-serif text-2xl sm:text-3xl text-[var(--bone)] mt-2 mb-3">
@@ -110,7 +110,7 @@ function StoryPage() {
             </div>
 
             {/* Design 2: Wave */}
-            <div className="p-8 border border-[var(--hairline)] bg-[#0a2323] flex flex-col justify-between min-h-[280px]">
+            <div className="p-8 border border-[var(--hairline)] bg-[var(--surface-deep)] flex flex-col justify-between min-h-[280px]">
               <div>
                 <span className="label-caps text-[var(--acc)]">Design 02</span>
                 <h3 className="font-serif text-2xl sm:text-3xl text-[var(--bone)] mt-2 mb-3">
@@ -128,7 +128,7 @@ function StoryPage() {
             </div>
 
             {/* Design 3: Scribble */}
-            <div className="p-8 border border-[var(--hairline)] bg-[#0a2323] flex flex-col justify-between min-h-[280px]">
+            <div className="p-8 border border-[var(--hairline)] bg-[var(--surface-deep)] flex flex-col justify-between min-h-[280px]">
               <div>
                 <span className="label-caps text-[var(--acc)]">Design 03</span>
                 <h3 className="font-serif text-2xl sm:text-3xl text-[var(--bone)] mt-2 mb-3">

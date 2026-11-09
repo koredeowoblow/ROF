@@ -80,7 +80,7 @@ function OrderConfirmationPage() {
 
           {/* Bank Transfer Instructions (if applicable) */}
           {order?.payment.method === 'bank_transfer' && (
-            <div className="p-6 bg-[#ded6c3] border border-[var(--ink)] space-y-3">
+            <div className="p-6 bg-[var(--bone-muted)] border border-[var(--ink)] space-y-3">
               <span className="label-caps text-[var(--acc-on-bone)]">Studio Bank Details</span>
               <h3 className="font-serif text-xl text-[var(--ink)]">Complete your direct transfer</h3>
               <p className="text-xs text-[var(--ink)] leading-relaxed">

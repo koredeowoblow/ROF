@@ -281,7 +281,7 @@ function ShopPage() {
                         <div
                           data-tone={tileTone}
                           className={`relative aspect-square w-full flex items-center justify-center p-6 sm:p-8 overflow-hidden transition-colors ${
-                            tileTone === 'ink' ? 'bg-[var(--ink)]' : 'bg-[#e2dbcc]'
+                            tileTone === 'ink' ? 'bg-[var(--ink)]' : 'bg-[var(--bone-muted)]'
                           }`}
                         >
                           {/* Numeral index top-left */}

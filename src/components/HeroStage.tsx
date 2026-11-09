@@ -11,6 +11,69 @@ interface HeroStageProps {
 }
 
 // ---------------------------------------------------------------------------
+// CRISP VECTOR DIE COMPONENT (Sharp at all DPIs with Gold Pips)
+// ---------------------------------------------------------------------------
+const DIE_DOT_COORDS: Record<number, Array<[number, number]>> = {
+  1: [[10, 10]],
+  2: [[6, 6], [14, 14]],
+  3: [[6, 6], [10, 10], [14, 14]],
+  4: [[6, 6], [14, 6], [6, 14], [14, 14]],
+  5: [[6, 6], [14, 6], [10, 10], [6, 14], [14, 14]],
+  6: [[6, 5], [14, 5], [6, 10], [14, 10], [6, 15], [14, 15]],
+}
+
+const DieFace: React.FC<{ value: number }> = ({ value }) => {
+  const dots = DIE_DOT_COORDS[value] || DIE_DOT_COORDS[1]
+  return (
+    <svg viewBox="0 0 20 20" className="w-4 h-4 shrink-0 overflow-visible" aria-hidden="true">
+      <rect
+        x="1.5"
+        y="1.5"
+        width="17"
+        height="17"
+        rx="3.5"
+        fill="var(--surface-deep)"
+        stroke="var(--acc)"
+        strokeWidth="1.25"
+      />
+      {dots.map(([cx, cy], i) => (
+        <circle key={i} cx={cx} cy={cy} r="1.5" fill="var(--acc)" />
+      ))}
+    </svg>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// ISOLATED MEMOIZED LAGOS CLOCK (Prevents parent stage re-renders every 1s)
+// ---------------------------------------------------------------------------
+const LagosClock = React.memo(() => {
+  const [timeStr, setTimeStr] = useState<string>('12:00:00')
+
+  useEffect(() => {
+    const updateTime = () => {
+      try {
+        const time = new Intl.DateTimeFormat('en-GB', {
+          timeZone: 'Africa/Lagos',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false,
+        }).format(new Date())
+        setTimeStr(time)
+      } catch {
+        const d = new Date()
+        setTimeStr(d.toTimeString().split(' ')[0])
+      }
+    }
+    updateTime()
+    const timer = setInterval(updateTime, 1000)
+    return () => clearInterval(timer)
+  }, [])
+
+  return <span className="tracking-wider text-[11px] sm:text-xs">LAGOS {timeStr} WAT</span>
+})
+
+// ---------------------------------------------------------------------------
 // SOOTHING ACOUSTIC WEB AUDIO SYNTHESIZER (Pure 432Hz harmonic resonance)
 // ---------------------------------------------------------------------------
 let globalAudioCtx: AudioContext | null = null
@@ -27,7 +90,7 @@ function getAudioContext(): AudioContext | null {
       }
     }
     if (globalAudioCtx && globalAudioCtx.state === 'suspended') {
-      globalAudioCtx.resume().catch(() => {})
+      globalAudioCtx.resume().catch(() => { })
     }
     return globalAudioCtx
   } catch {
@@ -245,7 +308,6 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
 
   const [activeCardIndex, setActiveCardIndex] = useState<number>(1) // Center 'O' card default
   const [isFlipped, setIsFlipped] = useState<boolean>(false)
-  const [lagosTime, setLagosTime] = useState<string>('12:00:00')
   const [isTouch, setIsTouch] = useState(true)
   const [soundEnabled, setSoundEnabled] = useState(true)
   const [sealedMindset, setSealedMindset] = useState<string | null>(null)
@@ -256,7 +318,6 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   const [diceNumber, setDiceNumber] = useState<number>(6)
   const [hasRolled, setHasRolled] = useState(false)
   const [showRollOutcome, setShowRollOutcome] = useState(false)
-  const [breathPhase, setBreathPhase] = useState<'inhale' | 'exhale'>('inhale')
   const [screenWidth, setScreenWidth] = useState<number>(() =>
     typeof window !== 'undefined' ? window.innerWidth : 1280
   )
@@ -279,36 +340,6 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
     } catch {
       // Storage safe
     }
-  }, [])
-
-  // Live Lagos Studio Clock
-  useEffect(() => {
-    const updateTime = () => {
-      try {
-        const time = new Intl.DateTimeFormat('en-GB', {
-          timeZone: 'Africa/Lagos',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: false,
-        }).format(new Date())
-        setLagosTime(time)
-      } catch {
-        const d = new Date()
-        setLagosTime(d.toTimeString().split(' ')[0])
-      }
-    }
-    updateTime()
-    const timer = setInterval(updateTime, 1000)
-    return () => clearInterval(timer)
-  }, [])
-
-  // Calming 8-second human breath cycle (4s inhale, 4s exhale)
-  useEffect(() => {
-    const breathTimer = setInterval(() => {
-      setBreathPhase((prev) => (prev === 'inhale' ? 'exhale' : 'inhale'))
-    }, 4000)
-    return () => clearInterval(breathTimer)
   }, [])
 
   // Touch device detection
@@ -425,11 +456,11 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
           prefersReduced
             ? { opacity: 0.25 }
             : {
-                scale: breathPhase === 'inhale' ? 1.05 : 0.95,
-                opacity: breathPhase === 'inhale' ? 0.32 : 0.22,
-              }
+              scale: [0.95, 1.05, 0.95],
+              opacity: [0.22, 0.32, 0.22],
+            }
         }
-        transition={{ duration: 4, ease: 'easeInOut' }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
         style={{
           x: isTouch || prefersReduced ? 0 : spotlightX,
           y: isTouch || prefersReduced ? 0 : spotlightY,
@@ -464,14 +495,14 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
         <span className="text-[var(--acc)]">+</span>
       </div>
 
-      {/* Floating Diamond Embers */}
+      {/* Floating Diamond Embers in Peripheral Atmosphere (Away from interactive zones) */}
       {!prefersReduced && (
         <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
           {[
-            { top: '24%', left: '12%', size: 4, delay: 0 },
-            { top: '40%', left: '84%', size: 6, delay: 1.2 },
-            { top: '68%', left: '22%', size: 5, delay: 0.8 },
-            { top: '78%', left: '80%', size: 4, delay: 1.8 },
+            { top: '20%', left: '5%', size: 4, delay: 0 },
+            { top: '32%', left: '94%', size: 5, delay: 1.2 },
+            { top: '56%', left: '4%', size: 5, delay: 0.8 },
+            { top: '68%', left: '95%', size: 4, delay: 1.8 },
           ].map((pt, i) => (
             <motion.div
               key={i}
@@ -479,7 +510,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               animate={{ opacity: [0.2, 0.7, 0.2], y: [-8, 8, -8] }}
               transition={{ duration: 4 + i, repeat: Infinity, ease: 'easeInOut', delay: pt.delay }}
               style={{ top: pt.top, left: pt.left }}
-              className="absolute text-[var(--acc)] opacity-40"
+              className="absolute text-[var(--acc)] opacity-35"
             >
               <DiamondMark size={pt.size} accent filled />
             </motion.div>
@@ -609,10 +640,10 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               )}
             </button>
 
-            {/* Live Clock */}
+            {/* Live Clock (Isolated Micro-Component) */}
             <div className="flex items-center gap-1.5 pl-1 border-l border-[var(--hairline)]">
               <span className="w-1.5 h-1.5 rounded-full bg-[var(--acc)]" />
-              <span className="tracking-wider text-[11px] sm:text-xs">LAGOS {lagosTime} WAT</span>
+              <LagosClock />
             </div>
           </div>
         </div>
@@ -648,20 +679,8 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
         {/* 3D Tilted Perspective Canvas - Monumental on Big Screens */}
         <div
           style={{ perspective: 1200 }}
-          className="relative w-full max-w-[620px] lg:max-w-[900px] xl:max-w-[1100px] h-[250px] sm:h-[300px] md:h-[360px] lg:h-[420px] xl:h-[460px] flex items-center justify-center mb-5 sm:mb-6"
+          className="relative w-full max-w-[640px] md:max-w-[820px] lg:max-w-[1020px] xl:max-w-[1240px] 2xl:max-w-[1420px] h-[260px] sm:h-[320px] md:h-[380px] lg:h-[430px] xl:h-[480px] 2xl:h-[520px] flex items-center justify-center mb-5 sm:mb-6"
         >
-          {/* Holographic Authenticity Seal in Corner */}
-          <div className="absolute top-0 right-2 sm:right-6 lg:right-10 z-30 pointer-events-none hidden sm:block">
-            <motion.div
-              style={{ rotate: holoGleam }}
-              className="w-16 h-16 lg:w-20 lg:h-20 rounded-full border border-[var(--hairline)] p-1 flex items-center justify-center bg-gradient-to-tr from-transparent via-[var(--acc)]/10 to-white/10 backdrop-blur-md shadow-lg"
-            >
-              <div className="w-full h-full rounded-full border border-dashed border-[var(--acc)]/40 flex items-center justify-center text-[7px] lg:text-[8px] font-mono uppercase text-center leading-tight text-[var(--bone)]/70">
-                <span>ROF<br />AUTHENTIC</span>
-              </div>
-            </motion.div>
-          </div>
-
           <motion.div
             style={{
               rotateX: isTouch || prefersReduced ? 0 : stageRotateX,
@@ -679,14 +698,16 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               const isSelected = activeCardIndex === idx
               const spread =
                 screenWidth < 640
-                  ? 78
-                  : screenWidth < 1024
-                  ? 145
-                  : screenWidth < 1440
-                  ? 210
-                  : 245
+                  ? 88
+                  : screenWidth < 768
+                    ? 145
+                    : screenWidth < 1024
+                      ? 195
+                      : screenWidth < 1440
+                        ? 275
+                        : 340
               const xOffsets = [-spread, 0, spread]
-              const baseRot = [-7, 0, 7][idx]
+              const baseRot = [-6, 0, 6][idx]
               const baseY = [6, -10, 6][idx]
               const isCardSealed = sealedMindset === card.label
 
@@ -699,10 +720,10 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                   }}
                   animate={{
                     x: xOffsets[idx],
-                    y: isSelected ? -18 : baseY,
+                    y: isSelected ? -24 : baseY,
                     rotateZ: isSelected ? 0 : baseRot,
                     rotateY: isFlipped ? 180 : 0,
-                    scale: isSelected ? 1.05 : 0.98,
+                    scale: isSelected ? 1.06 : 0.98,
                     zIndex: isSelected ? 30 : idx === 1 ? 20 : 10,
                   }}
                   transition={{
@@ -715,18 +736,18 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                     isTouch
                       ? undefined
                       : {
-                          y: isSelected ? -24 : baseY - 12,
-                          scale: 1.08,
-                          zIndex: 40,
-                          transition: { duration: 0.2 },
-                        }
+                        y: isSelected ? -30 : baseY - 14,
+                        scale: 1.08,
+                        zIndex: 40,
+                        transition: { duration: 0.2 },
+                      }
                   }
                   style={{ transformStyle: 'preserve-3d' }}
                   className={cn(
                     'absolute cursor-pointer select-none rounded-xl lg:rounded-2xl transition-shadow duration-300',
-                    'w-[135px] h-[205px] sm:w-[175px] sm:h-[265px] md:w-[205px] md:h-[310px] lg:w-[230px] lg:h-[345px] xl:w-[250px] xl:h-[375px]',
+                    'w-[140px] h-[215px] sm:w-[185px] sm:h-[280px] md:w-[215px] md:h-[325px] lg:w-[245px] lg:h-[365px] xl:w-[275px] xl:h-[410px] 2xl:w-[295px] 2xl:h-[440px]',
                     isSelected
-                      ? 'ring-2 ring-[var(--acc)] shadow-[0_20px_50px_rgba(240,180,41,0.32),0_8px_20px_rgba(0,0,0,0.6)]'
+                      ? 'ring-2 ring-[var(--acc)] shadow-[0_24px_60px_rgba(240,180,41,0.36),0_8px_24px_rgba(0,0,0,0.6)]'
                       : 'shadow-[0_14px_32px_rgba(0,0,0,0.65)] hover:shadow-[0_18px_40px_rgba(240,180,41,0.22)]'
                   )}
                 >
@@ -1010,43 +1031,26 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.94 }}
             className={cn(
-              "flex items-center gap-2 px-4 py-2.5 rounded-sm shadow-lg border cursor-pointer transition-all",
+              "flex items-center gap-2.5 px-4 py-2.5 min-h-[44px] rounded-sm shadow-lg border cursor-pointer transition-all select-none",
               hasRolled
                 ? "bg-[var(--surface-lift-hover)] hover:brightness-110 text-[var(--bone)] border-[var(--acc)] shadow-[0_4px_20px_rgba(240,180,41,0.25)]"
-                : "bg-[var(--surface-lift)] hover:bg-[var(--surface-lift-hover)] text-[var(--bone)] border-[var(--acc)]/40"
+                : "bg-[var(--surface-lift)] hover:bg-[var(--surface-lift-hover)] text-[var(--bone)] border-[var(--acc)]/50"
             )}
           >
             <motion.div
               animate={
                 diceRolling
                   ? {
-                      rotateX: [0, 360, 720],
-                      rotateY: [0, 540, 1080],
-                      scale: [1, 1.35, 1],
-                    }
+                    rotateX: [0, 360, 720],
+                    rotateY: [0, 540, 1080],
+                    scale: [1, 1.35, 1],
+                  }
                   : { rotateX: 0, rotateY: 0, scale: 1 }
               }
               transition={{ duration: 0.55, ease: 'easeInOut' }}
-              className="w-4 h-4 bg-[#0e2f2f] rounded-xs border border-[var(--acc)]/60 flex items-center justify-center p-0.5 shadow-inner"
+              className="flex items-center justify-center shrink-0"
             >
-              {diceNumber === 6 ? (
-                <div className="grid grid-cols-2 gap-0.5 w-full h-full p-0.5">
-                  <div className="w-1 h-1 bg-[var(--acc)] rounded-full" />
-                  <div className="w-1 h-1 bg-[var(--acc)] rounded-full" />
-                  <div className="w-1 h-1 bg-[var(--acc)] rounded-full" />
-                  <div className="w-1 h-1 bg-[var(--acc)] rounded-full" />
-                  <div className="w-1 h-1 bg-[var(--acc)] rounded-full" />
-                  <div className="w-1 h-1 bg-[var(--acc)] rounded-full" />
-                </div>
-              ) : (
-                <div className="relative w-full h-full">
-                  <div className="absolute top-0 left-0 w-1 h-1 bg-[var(--acc)] rounded-full" />
-                  <div className="absolute top-0 right-0 w-1 h-1 bg-[var(--acc)] rounded-full" />
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-1 bg-[var(--acc)] rounded-full" />
-                  <div className="absolute bottom-0 left-0 w-1 h-1 bg-[var(--acc)] rounded-full" />
-                  <div className="absolute bottom-0 right-0 w-1 h-1 bg-[var(--acc)] rounded-full" />
-                </div>
-              )}
+              <DieFace value={diceNumber} />
             </motion.div>
             <span className="font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
               {diceRolling ? (
@@ -1069,7 +1073,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             onClick={handleToggleFlip}
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.94 }}
-            className="flex items-center gap-1.5 px-4 py-2.5 border border-[var(--hairline)] hover:border-[var(--bone)] text-xs font-mono uppercase tracking-wider text-[var(--bone)] bg-[var(--ink)]/80 backdrop-blur-md rounded-sm cursor-pointer transition-colors"
+            className="flex items-center gap-1.5 px-4 py-2.5 min-h-[44px] border border-[var(--hairline)] hover:border-[var(--bone)] text-xs font-mono uppercase tracking-wider text-[var(--bone)] bg-[var(--ink)]/80 backdrop-blur-md rounded-sm cursor-pointer transition-colors"
           >
             <RotateCw size={13} className={cn('text-[var(--acc)]', isFlipped && 'rotate-180 transition-transform duration-300')} />
             <span>{isFlipped ? 'SHOW FRONT' : 'INSPECT CARDS'}</span>
@@ -1088,7 +1092,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                 navigate({ to: '/shop' })
               }
             }}
-            className="px-6 py-2.5 uppercase tracking-wider text-xs font-semibold cursor-pointer shadow-xl hover:shadow-[0_8px_30px_rgba(240,180,41,0.3)]"
+            className="px-6 py-2.5 min-h-[44px] uppercase tracking-wider text-xs font-semibold cursor-pointer shadow-xl hover:shadow-[0_8px_30px_rgba(240,180,41,0.3)]"
           >
             Witness The Capsule
           </Button>
@@ -1096,7 +1100,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
           {/* Brand Story Link */}
           <Link
             to="/story"
-            className="inline-flex items-center justify-center px-5 py-2.5 border border-[var(--hairline)] hover:border-[var(--bone)] text-xs font-mono uppercase tracking-wider text-[var(--bone)] transition-colors bg-[var(--ink)]/80 backdrop-blur-md hover:bg-[var(--bone)]/5 rounded-xs"
+            className="inline-flex items-center justify-center px-5 py-2.5 min-h-[44px] border border-[var(--hairline)] hover:border-[var(--bone)] text-xs font-mono uppercase tracking-wider text-[var(--bone)] transition-colors bg-[var(--ink)]/80 backdrop-blur-md hover:bg-[var(--bone)]/5 rounded-xs"
           >
             Brand Story
           </Link>

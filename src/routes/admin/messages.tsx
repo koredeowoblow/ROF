@@ -115,7 +115,7 @@ function AdminMessagesPage() {
               </div>
 
               {/* Message Body */}
-              <div className="p-4 bg-[#141312] border border-[var(--hairline)] text-sm font-sans text-[var(--bone)] leading-relaxed">
+              <div className="p-4 bg-[var(--surface-deep)] border border-[var(--hairline)] text-sm font-sans text-[var(--bone)] leading-relaxed">
                 "{selectedMessage.message}"
               </div>
 

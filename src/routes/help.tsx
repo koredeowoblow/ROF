@@ -77,7 +77,7 @@ function HelpPage() {
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                <div className="p-4 border border-[var(--hairline)] bg-[#ded6c3]/60 space-y-1">
+                <div className="p-4 border border-[var(--hairline)] bg-[var(--bone-muted)]/60 space-y-1">
                   <span className="label-caps text-[var(--acc-on-bone)]">Lagos Delivery</span>
                   <p className="font-serif text-2xl text-[var(--ink)]">
                     {formatNaira(content.delivery.lagosFee.value)}
@@ -85,7 +85,7 @@ function HelpPage() {
                   <p className="text-xs text-[var(--muted)]">1 to 2 business days via express courier</p>
                 </div>
 
-                <div className="p-4 border border-[var(--hairline)] bg-[#ded6c3]/60 space-y-1">
+                <div className="p-4 border border-[var(--hairline)] bg-[var(--bone-muted)]/60 space-y-1">
                   <span className="label-caps text-[var(--acc-on-bone)]">Interstate Delivery</span>
                   <p className="font-serif text-2xl text-[var(--ink)]">
                     {formatNaira(content.delivery.interstateFee.value)}
@@ -104,7 +104,7 @@ function HelpPage() {
               <p className="text-sm text-[var(--ink)] font-sans leading-relaxed">
                 {content.delivery.exchangePolicy.value}
               </p>
-              <div className="p-4 bg-[#ded6c3]/40 border-l-2 border-[var(--acc-on-bone)] text-xs text-[var(--ink)] space-y-1">
+              <div className="p-4 bg-[var(--bone-muted)]/40 border-l-2 border-[var(--acc-on-bone)] text-xs text-[var(--ink)] space-y-1">
                 <p className="font-semibold">Exchange Conditions:</p>
                 <ul className="list-disc list-inside space-y-0.5 text-[var(--muted)]">
                   <li>Garment unworn and unwashed with original hangtags attached</li>
@@ -127,7 +127,7 @@ function HelpPage() {
               {/* Responsive Size Table */}
               <div className="overflow-x-auto border border-[var(--hairline)] mt-4">
                 <table className="w-full text-left text-xs font-sans">
-                  <thead className="bg-[#ded6c3] border-b border-[var(--hairline)] text-[var(--ink)] uppercase tracking-wider">
+                  <thead className="bg-[var(--bone-muted)] border-b border-[var(--hairline)] text-[var(--ink)] uppercase tracking-wider">
                     <tr>
                       <th className="p-3">Size</th>
                       <th className="p-3">Chest Width (cm)</th>
@@ -137,7 +137,7 @@ function HelpPage() {
                   </thead>
                   <tbody className="divide-y divide-[var(--hairline)] text-[var(--ink)]">
                     {content.help.sizeGuide.measurements.map((row) => (
-                      <tr key={row.size} className="hover:bg-[#ded6c3]/30 transition-colors">
+                      <tr key={row.size} className="hover:bg-[var(--bone-muted)]/30 transition-colors">
                         <td className="p-3 font-bold">{row.size}</td>
                         <td className="p-3">{row.chestCm} cm</td>
                         <td className="p-3">{row.lengthCm} cm</td>

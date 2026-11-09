@@ -20,7 +20,7 @@ interface TeeCutoutProps {
  * Oversized boxy streetwear silhouette, dropped shoulders, thick ribbed collar,
  * layered soft contact shadow, and authentic prints.
  */
-export const TeeCutout: React.FC<TeeCutoutProps> = ({
+export const TeeCutout: React.FC<TeeCutoutProps> = React.memo(({
   design,
   colour,
   view = 'full',
@@ -396,5 +396,5 @@ export const TeeCutout: React.FC<TeeCutoutProps> = ({
       </motion.svg>
     </div>
   )
-}
+})
 

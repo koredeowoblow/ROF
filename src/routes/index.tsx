@@ -167,7 +167,10 @@ function HomePage() {
               key={product.id}
               id={`hook-0${idx + 1}`}
               as="article"
-              className="w-full border-b border-[var(--hairline)] grid grid-cols-1 lg:grid-cols-12 min-h-[580px]"
+              className={cn(
+                "w-full border-b border-[var(--hairline)] grid grid-cols-1 lg:grid-cols-12 min-h-[580px]",
+                idx > 0 && "content-visibility-auto"
+              )}
             >
               {/* Desktop alternating order:
                   Even: Tee pane left (7 cols, 3fr), Info pane right (5 cols, 2fr)

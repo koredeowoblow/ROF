@@ -190,7 +190,7 @@ function AdminOverviewPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-sans">
           {/* New unconfirmed orders */}
-          <div className="p-4 border border-[var(--hairline)] bg-[#141312] space-y-2">
+          <div className="p-4 border border-[var(--hairline)] bg-[var(--surface-deep)] space-y-2">
             <span className="text-[var(--muted)] uppercase tracking-wider block">New Orders Awaiting Confirmation</span>
             <p className="font-serif text-2xl text-[var(--bone)]">
               {data.needsAction.newOrders.length} orders
@@ -201,7 +201,7 @@ function AdminOverviewPage() {
           </div>
 
           {/* Low Stock Alerts */}
-          <div className="p-4 border border-[var(--hairline)] bg-[#141312] space-y-2">
+          <div className="p-4 border border-[var(--hairline)] bg-[var(--surface-deep)] space-y-2">
             <span className="text-[var(--muted)] uppercase tracking-wider block">Low Stock Sizes (&lt; 10 left)</span>
             <p className="font-serif text-2xl text-[var(--acc)]">
               {data.needsAction.lowStock.length} variants
@@ -212,7 +212,7 @@ function AdminOverviewPage() {
           </div>
 
           {/* Unanswered messages */}
-          <div className="p-4 border border-[var(--hairline)] bg-[#141312] space-y-2">
+          <div className="p-4 border border-[var(--hairline)] bg-[var(--surface-deep)] space-y-2">
             <span className="text-[var(--muted)] uppercase tracking-wider block">Unanswered Studio Messages</span>
             <p className="font-serif text-2xl text-[var(--bone)]">
               {data.needsAction.unreadMessages.length} inquiries
@@ -286,7 +286,7 @@ function AdminOverviewPage() {
 
           <div className="space-y-4">
             {data.topPieces.map((p: any, idx: number) => (
-              <div key={idx} className="flex items-center justify-between p-3 border border-[var(--hairline)] bg-[#141312]">
+              <div key={idx} className="flex items-center justify-between p-3 border border-[var(--hairline)] bg-[var(--surface-deep)]">
                 <div className="flex items-center gap-3">
                   <Numeral value={idx + 1} size="sm" />
                   <div>

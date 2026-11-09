@@ -121,7 +121,7 @@ function ContactPage() {
             <h3 className="font-serif text-3xl text-[var(--ink)] mt-2 mb-6">Send an inquiry</h3>
 
             {submitted ? (
-              <div className="p-8 bg-[#ded6c3] border-2 border-[var(--ink)] space-y-3">
+              <div className="p-8 bg-[var(--bone-muted)] border-2 border-[var(--ink)] space-y-3">
                 <div className="flex items-center gap-2 text-[var(--acc-on-bone)]">
                   <Check className="h-5 w-5" />
                   <span className="font-semibold text-sm">Message Delivered</span>
@@ -136,12 +136,15 @@ function ContactPage() {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
+                  <label htmlFor="contact-name" className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
                     Your Name *
                   </label>
                   <input
+                    id="contact-name"
                     type="text"
                     required
+                    maxLength={100}
+                    autoComplete="name"
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
                     placeholder="Full name"
@@ -150,12 +153,16 @@ function ContactPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
+                  <label htmlFor="contact-email" className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
                     Email Address *
                   </label>
                   <input
+                    id="contact-email"
                     type="email"
                     required
+                    maxLength={120}
+                    inputMode="email"
+                    autoComplete="email"
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
                     placeholder="Email address"
@@ -164,11 +171,15 @@ function ContactPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
+                  <label htmlFor="contact-phone" className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
                     Phone (Optional)
                   </label>
                   <input
+                    id="contact-phone"
                     type="tel"
+                    maxLength={25}
+                    inputMode="tel"
+                    autoComplete="tel"
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
                     placeholder="+234..."
@@ -177,12 +188,14 @@ function ContactPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
+                  <label htmlFor="contact-message" className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
                     Message *
                   </label>
                   <textarea
+                    id="contact-message"
                     required
                     rows={4}
+                    maxLength={2000}
                     value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
                     placeholder="What would you like to ask or discuss?"

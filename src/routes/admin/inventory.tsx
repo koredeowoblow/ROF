@@ -56,7 +56,7 @@ function AdminInventoryPage() {
       {/* Inventory Matrix Table */}
       <div className="border border-[var(--hairline)] bg-[var(--ink)] overflow-x-auto">
         <table className="w-full text-left text-xs font-sans">
-          <thead className="bg-[#121110] border-b border-[var(--hairline)] text-[var(--muted)] uppercase tracking-wider">
+          <thead className="bg-[var(--surface-deep)] border-b border-[var(--hairline)] text-[var(--muted)] uppercase tracking-wider">
             <tr>
               <th className="p-3.5">Piece</th>
               <th className="p-3.5">Colour</th>
