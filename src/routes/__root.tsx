@@ -9,6 +9,7 @@ import { Button } from '@/components/Button'
 import { DiamondMark } from '@/components/Logo'
 import { DiamondCursor } from '@/components/DiamondCursor'
 import { formatAccentText } from '@/components/Mast'
+import { PageLoader, RouteProgressBar } from '@/components/PageLoader'
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -107,6 +108,12 @@ function RootComponent() {
 
   return (
     <div className="flex min-h-[100svh] flex-col bg-[var(--ink)] text-[var(--bone)]">
+      {/* Editorial Entrance Page Loader */}
+      <PageLoader />
+
+      {/* Top Routing Progress Beam */}
+      <RouteProgressBar activeKey={router.location.pathname} />
+
       {/* Offline Alert Banner */}
       {isOffline && (
         <div
@@ -125,10 +132,10 @@ function RootComponent() {
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={router.location.pathname}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: 12, filter: 'blur(4px)' }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, y: -12, filter: 'blur(4px)' }}
+            transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
             className="w-full h-full"
           >
             <Outlet />

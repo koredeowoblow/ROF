@@ -2,16 +2,18 @@ import React, { useState, useMemo } from 'react'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { motion, AnimatePresence } from 'motion/react'
 import { z } from 'zod'
-import { Search, SlidersHorizontal, ArrowUpDown, X } from 'lucide-react'
+import { Search, SlidersHorizontal, ArrowUpDown, X, LayoutGrid, Columns3 } from 'lucide-react'
 import { Pane } from '@/components/Pane'
 import { Mast } from '@/components/Mast'
 import { Numeral } from '@/components/Numeral'
 import { Chip } from '@/components/Chip'
 import { Button } from '@/components/Button'
 import { TeeCutout, TeeDesign, TeeColour } from '@/components/TeeCutout'
+import { ShopAccordion } from '@/components/ShopAccordion'
 import { initialProducts } from '@/api/products'
 import { formatNaira } from '@/lib/money'
 import { Product } from '@/api/types'
+import { cn } from '@/lib/utils'
 
 const ShopSearchSchema = z.object({
   colour: z.enum(['black', 'white', 'green']).optional(),
@@ -33,6 +35,7 @@ function ShopPage() {
   const navigate = useNavigate()
 
   const [searchQuery, setSearchQuery] = useState(searchParams.q || '')
+  const [viewMode, setViewMode] = useState<'accordion' | 'grid'>('accordion')
   const activeColour = searchParams.colour
   const activeSort = searchParams.sort || 'featured'
 
@@ -187,13 +190,48 @@ function ShopPage() {
                   <option value="price-high">Price: High to Low</option>
                 </select>
               </div>
+
+              {/* View Mode Toggle: Accordion vs Grid */}
+              <div className="flex items-center border border-[var(--hairline)] p-0.5 rounded-xs bg-[var(--bone)]">
+                <button
+                  type="button"
+                  onClick={() => setViewMode('accordion')}
+                  title="Swipeable Accordion Lookbook"
+                  className={cn(
+                    'flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono uppercase tracking-wider rounded-xs transition-colors cursor-pointer',
+                    viewMode === 'accordion'
+                      ? 'bg-[var(--ink)] text-[var(--bone)] font-bold shadow-sm'
+                      : 'text-[var(--muted)] hover:text-[var(--ink)]'
+                  )}
+                >
+                  <Columns3 className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Accordion</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode('grid')}
+                  title="Catalogue Grid"
+                  className={cn(
+                    'flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono uppercase tracking-wider rounded-xs transition-colors cursor-pointer',
+                    viewMode === 'grid'
+                      ? 'bg-[var(--ink)] text-[var(--bone)] font-bold shadow-sm'
+                      : 'text-[var(--muted)] hover:text-[var(--ink)]'
+                  )}
+                >
+                  <LayoutGrid className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Grid</span>
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* Results Count */}
+          {/* Results Count & Layout Feedback */}
           <div className="mt-6 mb-4 text-xs font-sans text-[var(--muted)] uppercase tracking-wider flex justify-between items-center">
             <span>
-              Showing {filteredProducts.length} of {initialProducts.length} pieces
+              Showing {filteredProducts.length} of {initialProducts.length} pieces •{' '}
+              <span className="text-[var(--acc-on-bone)] font-semibold">
+                {viewMode === 'accordion' ? 'Swipeable Accordion Lookbook' : 'Catalogue Grid'}
+              </span>
             </span>
             {activeColour && (
               <button
@@ -205,7 +243,7 @@ function ShopPage() {
             )}
           </div>
 
-          {/* Product Grid: 2 columns mobile, 4 columns desktop */}
+          {/* Main Showcase: Swipe Accordion or Product Grid */}
           {filteredProducts.length === 0 ? (
             <div className="py-20 text-center space-y-3">
               <p className="font-serif text-3xl text-[var(--ink)]">No pieces matched your search.</p>
@@ -216,6 +254,8 @@ function ShopPage() {
                 Reset all filters
               </Button>
             </div>
+          ) : viewMode === 'accordion' ? (
+            <ShopAccordion products={filteredProducts} />
           ) : (
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
               <AnimatePresence mode="popLayout">
