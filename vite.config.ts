@@ -98,7 +98,10 @@ export default defineConfig({
             if (id.includes('@tanstack/react-query') || id.includes('@tanstack/react-router')) return 'vendor-tanstack'
             if (id.includes('@radix-ui')) return 'vendor-radix'
             if (id.includes('@tanstack/react-table') || id.includes('@tanstack/react-virtual')) return 'vendor-table'
+            if (id.includes('lucide-react')) return 'vendor-lucide'
+            if (id.includes('zod')) return 'vendor-zod'
           }
+          if (id.includes('/src/routes/admin/')) return 'route-admin'
         },
       },
     },

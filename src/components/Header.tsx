@@ -20,15 +20,15 @@ export const Header: React.FC = () => {
       try {
         setSealedMindset(localStorage.getItem('rof_sealed_mindset'))
       } catch {
-        // Fallback
+        // Storage fail safe
       }
     }
     syncMindset()
     window.addEventListener('storage', syncMindset)
-    const interval = setInterval(syncMindset, 2000)
+    window.addEventListener('rof-mindset-update', syncMindset)
     return () => {
       window.removeEventListener('storage', syncMindset)
-      clearInterval(interval)
+      window.removeEventListener('rof-mindset-update', syncMindset)
     }
   }, [])
 
@@ -82,35 +82,60 @@ export const Header: React.FC = () => {
             )}
           </div>
 
-          {/* Desktop Center: Navigation */}
+          {/* Desktop Center: Navigation with Active Indicator */}
           <nav
             aria-label="Main navigation"
-            className="hidden md:flex items-center gap-8 text-xs uppercase font-medium tracking-[0.22em]"
+            className="hidden md:flex items-center gap-7 lg:gap-9 text-xs uppercase font-medium tracking-[0.24em]"
           >
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
-                className="text-[var(--bone)]/75 hover:text-[var(--bone)] transition-colors relative py-1 hover:after:w-full after:w-0 after:h-[1px] after:bg-[var(--acc)] after:absolute after:bottom-0 after:left-0 after:transition-all"
+                className="text-[var(--bone)]/70 hover:text-[var(--bone)] transition-colors relative py-1 flex items-center gap-1 group"
                 activeProps={{
-                  className: 'text-[var(--bone)] after:w-full after:bg-[var(--acc)]',
+                  className: 'text-[var(--bone)] font-semibold',
                 }}
               >
-                {link.label}
+                {({ isActive }) => (
+                  <>
+                    {isActive && (
+                      <motion.span
+                        layoutId="activeNavDiamond"
+                        className="inline-flex text-[var(--acc)] mr-0.5"
+                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                      >
+                        <DiamondMark size={5} accent filled />
+                      </motion.span>
+                    )}
+                    <span>{link.label}</span>
+                    <span
+                      className={cn(
+                        'absolute bottom-0 left-0 h-[1.5px] bg-[var(--acc)] transition-all duration-300',
+                        isActive ? 'w-full' : 'w-0 group-hover:w-full'
+                      )}
+                    />
+                  </>
+                )}
               </Link>
             ))}
           </nav>
 
-          {/* Right: Bag Trigger & Mobile Menu Toggle */}
-          <div className="flex items-center gap-3 md:gap-4">
+          {/* Right: Telemetry & Bag Trigger & Mobile Menu Toggle */}
+          <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
+            {/* Quick Live Lagos Status Pill (Desktop only) */}
+            <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 border border-[var(--hairline)] bg-[var(--bone)]/5 text-[10px] font-mono uppercase tracking-wider text-[var(--bone)]/70 rounded-xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>STUDIO ONLINE</span>
+            </div>
+
             {/* Bag Button */}
             <button
               type="button"
               onClick={() => setBagOpen(!bagOpen)}
               aria-label={`Shopping bag with ${totalPieces} items`}
-              className="touch-target-48 relative flex items-center gap-2 px-3 py-2 text-[var(--bone)] hover:text-[var(--acc)] transition-colors"
+              className="touch-target-48 relative flex items-center gap-2 px-3 py-2 text-[var(--bone)] hover:text-[var(--acc)] transition-colors border border-[var(--hairline)] hover:border-[var(--acc)]/60 rounded-xs bg-[var(--ink)]/80 cursor-pointer"
             >
-              <ShoppingBag className="h-5 w-5 stroke-[1.8]" />
+              <ShoppingBag className="h-4 w-4 stroke-[1.8] text-[var(--acc)]" />
               <span className="hidden sm:inline-block text-xs uppercase tracking-wider font-medium">
                 Bag
               </span>
@@ -124,7 +149,7 @@ export const Header: React.FC = () => {
                     animate={{ scale: 1, y: 0, opacity: 1 }}
                     exit={{ scale: 0.5, opacity: 0 }}
                     transition={{ type: 'spring', stiffness: 500, damping: 25 }}
-                    className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--acc)] px-1.5 text-[10px] font-bold text-[var(--label-on-acc)]"
+                    className="flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--acc)] px-1 text-[9px] font-bold text-[var(--label-on-acc)]"
                   >
                     {totalPieces}
                   </motion.span>
@@ -138,9 +163,9 @@ export const Header: React.FC = () => {
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label={menuOpen ? 'Close menu' : 'Open navigation menu'}
               aria-expanded={menuOpen}
-              className="touch-target-48 md:hidden flex h-11 w-11 items-center justify-center text-[var(--bone)] hover:text-[var(--acc)]"
+              className="touch-target-48 md:hidden flex h-10 w-10 items-center justify-center text-[var(--bone)] hover:text-[var(--acc)] border border-[var(--hairline)] rounded-xs cursor-pointer"
             >
-              {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
         </div>

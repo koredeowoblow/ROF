@@ -1,4 +1,4 @@
-import{a as Qt,r as a,j as w,R as Z}from"./vendor-tanstack-C4VzGiwy.js";var ve={exports:{}},T={};/**
+import{a as Qt,r as a,j as w,R as Z}from"./vendor-tanstack-B5DnLN5c.js";var ve={exports:{}},T={};/**
  * @license React
  * react-dom.production.js
  *

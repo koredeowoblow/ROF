@@ -86,6 +86,13 @@ export const Ticker: React.FC<TickerProps> = ({
             transform: rotate(360deg);
           }
         }
+
+        @media (prefers-reduced-motion: reduce) {
+          .will-change-transform {
+            animation: none !important;
+            transform: none !important;
+          }
+        }
       `}</style>
     </div>
   )

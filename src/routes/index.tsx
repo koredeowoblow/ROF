@@ -28,25 +28,25 @@ const CITY_DELIVERY_DATA = {
   lagos: {
     city: 'Lagos State',
     estimate: 'Same-day or next-day express',
-    price: '₦2,500',
+    price: formatNaira(2500),
     courier: 'Dedicated Studio Courier',
   },
   abuja: {
     city: 'Abuja FCT',
     estimate: '24 to 48 hours doorstep dispatch',
-    price: '₦4,000',
+    price: formatNaira(4000),
     courier: 'GIGL Priority Air',
   },
   ph: {
     city: 'Port Harcourt',
     estimate: '48 hours doorstep dispatch',
-    price: '₦4,500',
+    price: formatNaira(4500),
     courier: 'Sendbox Express Flight',
   },
   nationwide: {
     city: 'All Other 33 States',
     estimate: '2 to 4 working days delivery',
-    price: '₦4,500',
+    price: formatNaira(4500),
     courier: 'DHL / GIGL Nationwide',
   },
 } as const
@@ -125,6 +125,9 @@ function HomePage() {
       image: product.images[0],
     })
     setAddedId(product.id)
+    setTimeout(() => {
+      useBagStore.getState().setIsOpen(true)
+    }, 350)
     setTimeout(() => {
       setAddedId((prev) => (prev === product.id ? null : prev))
     }, 1800)
@@ -484,6 +487,9 @@ function HomePage() {
       {/* 5. SERVICES ROW (Ink, Bone, Ink) WITH DIRECTIONAL ANIMATIONS */}
       {/* ============================================================ */}
       <ScrollSection id="hook-07-services" className="w-full grid grid-cols-1 md:grid-cols-3 border-b border-[var(--hairline)]">
+        {/* Accessible Landmark Heading */}
+        <h2 className="sr-only">ROF Studio Guarantees & Express Dispatch Across Nigeria</h2>
+
         {/* Top Hook Strip for Services */}
         <div className="col-span-full py-3.5 px-6 sm:px-10 border-b border-[var(--hairline)] flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-[var(--surface-tint)]">
           <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-xs border border-[var(--acc)]/40 bg-[var(--acc)]/10 text-[var(--acc)] text-[10px] font-mono font-bold tracking-widest uppercase self-start sm:self-auto">

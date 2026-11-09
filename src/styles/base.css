@@ -133,3 +133,50 @@
   scrollbar-width: none;
 }
 
+/* Luxury Streetwear Design Accents */
+.luxury-glass {
+  background: rgba(14, 47, 47, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(236, 227, 203, 0.14);
+}
+
+.gold-glow {
+  box-shadow: 0 0 30px rgba(240, 180, 41, 0.22);
+}
+
+.gold-glow-hover {
+  transition: box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+}
+.gold-glow-hover:hover {
+  box-shadow: 0 8px 30px rgba(240, 180, 41, 0.25);
+  border-color: rgba(240, 180, 41, 0.6);
+}
+
+/* Haute-Couture Metallic Button Sheen */
+.sheen-effect {
+  position: relative;
+  overflow: hidden;
+}
+.sheen-effect::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transform: skewX(-25deg);
+  transition: all 0.65s ease;
+  pointer-events: none;
+}
+.sheen-effect:hover::before {
+  left: 150%;
+}
+
+

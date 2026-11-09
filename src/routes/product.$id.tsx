@@ -77,6 +77,9 @@ function ProductPage() {
       quantity
     )
     setIsAddedFeedback(true)
+    setTimeout(() => {
+      useBagStore.getState().setIsOpen(true)
+    }, 350)
     setTimeout(() => setIsAddedFeedback(false), 2000)
   }
 

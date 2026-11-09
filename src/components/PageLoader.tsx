@@ -56,7 +56,7 @@ export const PageLoader: React.FC<PageLoaderProps> = ({ currentPath }) => {
               ease: [0.16, 1, 0.3, 1],
             },
           }}
-          className="fixed inset-0 w-screen h-screen z-[9999] flex items-center justify-center bg-[#0e2f2f] text-[var(--bone)] select-none grain-overlay pointer-events-auto overflow-hidden"
+          className="fixed inset-0 w-screen h-screen z-[9999] flex items-center justify-center bg-[var(--ink)] text-[var(--bone)] select-none grain-overlay pointer-events-auto overflow-hidden"
           style={{ willChange: 'opacity' }}
         >
           {/* ============================================================ */}
@@ -262,7 +262,7 @@ export const PageLoader: React.FC<PageLoaderProps> = ({ currentPath }) => {
               </h2>
 
               {/* ROOF • OF • FRAME Badge */}
-              <div className="flex items-center gap-3 text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.28em] text-[var(--bone)]/85 bg-[#0a2323]/90 backdrop-blur-md px-4 py-1.5 rounded-full border border-[var(--acc)]/40 shadow-lg">
+              <div className="flex items-center gap-3 text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.28em] text-[var(--bone)]/85 bg-[var(--surface-deep)]/90 backdrop-blur-md px-4 py-1.5 rounded-full border border-[var(--acc)]/40 shadow-lg">
                 <span className="text-[var(--bone)] font-semibold">ROOF</span>
                 <span className="text-[var(--acc)]">◆</span>
                 <span className="text-[var(--acc)] font-bold">OF</span>

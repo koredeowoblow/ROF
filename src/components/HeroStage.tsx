@@ -394,6 +394,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
       setSealedMindset(card.label)
       try {
         localStorage.setItem('rof_sealed_mindset', card.label)
+        window.dispatchEvent(new Event('rof-mindset-update'))
       } catch {
         // Storage fail safe
       }
@@ -542,8 +543,8 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             })}
           </div>
 
-          {/* Calm Sound, Specs & Live Clock Controls */}
-          <div className="flex items-center gap-2 sm:gap-3 font-mono text-xs text-[var(--bone)]">
+          {/* Calm Sound, Specs & Live Clock Controls with Accessible Touch Targets */}
+          <div className="flex items-center gap-1.5 sm:gap-3 font-mono text-xs text-[var(--bone)]">
             {/* Fabric Specs Button */}
             <button
               type="button"
@@ -552,8 +553,9 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                 playSoothingSound('click', soundEnabled)
               }}
               title="Inspect 260 GSM Heavyweight Specs"
+              aria-label="Inspect 260 GSM Heavyweight Fabric Specs"
               className={cn(
-                'flex items-center gap-1 px-2.5 py-1 border text-[10px] uppercase tracking-wider cursor-pointer transition-colors rounded-xs',
+                'flex items-center gap-1 px-3 sm:px-2.5 py-2 sm:py-1 min-h-[44px] sm:min-h-0 border text-[10px] uppercase tracking-wider cursor-pointer transition-colors rounded-xs',
                 showSpecs
                   ? 'border-[var(--acc)] bg-[var(--acc)] text-[var(--label-on-acc)] font-bold'
                   : 'border-[var(--hairline)] text-[var(--bone)]/75 hover:text-[var(--bone)] hover:border-[var(--bone)] bg-[var(--ink)]/70'
@@ -571,7 +573,8 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                 playSoothingSound('click', soundEnabled)
               }}
               title="Open The ROF Mindset Codex"
-              className="flex items-center gap-1 px-2.5 py-1 border border-[var(--hairline)] hover:border-[var(--bone)] text-[10px] uppercase tracking-wider text-[var(--bone)]/80 hover:text-[var(--bone)] cursor-pointer transition-colors bg-[var(--ink)]/70 rounded-xs"
+              aria-label="Open The ROF Mindset Codex"
+              className="flex items-center gap-1 px-3 sm:px-2.5 py-2 sm:py-1 min-h-[44px] sm:min-h-0 border border-[var(--hairline)] hover:border-[var(--bone)] text-[10px] uppercase tracking-wider text-[var(--bone)]/80 hover:text-[var(--bone)] cursor-pointer transition-colors bg-[var(--ink)]/70 rounded-xs"
             >
               <BookOpen size={11} className="text-[var(--acc)]" />
               <span className="hidden sm:inline">CODEX</span>
@@ -586,7 +589,8 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                 playSoothingSound('click', next)
               }}
               title={soundEnabled ? 'Mute soothing audio' : 'Enable soothing audio'}
-              className="flex items-center gap-1.5 px-2 py-1 border border-[var(--hairline)] hover:border-[var(--bone)]/60 text-[10px] uppercase tracking-wider text-[var(--bone)]/80 hover:text-[var(--bone)] cursor-pointer transition-colors bg-[var(--ink)]/70 rounded-xs"
+              aria-label={soundEnabled ? 'Mute 432Hz ambient sound' : 'Enable 432Hz ambient sound'}
+              className="flex items-center gap-1.5 px-3 sm:px-2 py-2 sm:py-1 min-h-[44px] sm:min-h-0 border border-[var(--hairline)] hover:border-[var(--bone)]/60 text-[10px] uppercase tracking-wider text-[var(--bone)]/80 hover:text-[var(--bone)] cursor-pointer transition-colors bg-[var(--ink)]/70 rounded-xs"
             >
               {soundEnabled ? (
                 <>
@@ -729,7 +733,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                   {/* FRONT FACE OF CARD (HAUTE-COUTURE STREETWEAR TAROT) */}
                   <div
                     style={{ backfaceVisibility: 'hidden' }}
-                    className="absolute inset-0 rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-5 flex flex-col justify-between bg-[#f4ede0] text-[var(--ink)] border border-[var(--acc)]/30 overflow-hidden"
+                    className="absolute inset-0 rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-5 flex flex-col justify-between bg-[var(--bone-surface)] text-[var(--ink)] border border-[var(--acc)]/30 overflow-hidden"
                   >
                     {/* Top Specular Sheen */}
                     <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/15 to-white/40 pointer-events-none" />
@@ -892,7 +896,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                       backfaceVisibility: 'hidden',
                       transform: 'rotateY(180deg)',
                     }}
-                    className="absolute inset-0 rounded-xl lg:rounded-2xl p-3.5 sm:p-5 flex flex-col justify-between bg-[#0a2323] text-[var(--bone)] border border-[var(--acc)] overflow-hidden shadow-2xl"
+                    className="absolute inset-0 rounded-xl lg:rounded-2xl p-3.5 sm:p-5 flex flex-col justify-between bg-[var(--surface-deep)] text-[var(--bone)] border border-[var(--acc)] overflow-hidden shadow-2xl"
                   >
                     <div className="absolute inset-2 border border-[var(--bone)]/20 rounded-lg flex items-center justify-center overflow-hidden">
                       <div className="absolute inset-0 opacity-15 bg-[radial-gradient(circle_at_center,var(--acc)_0%,transparent_70%)]" />
@@ -933,7 +937,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.96 }}
               transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full max-w-xl mx-auto mb-4 p-4 sm:p-5 bg-[#0a2424]/95 border-2 border-[var(--acc)] rounded-lg shadow-[0_16px_50px_rgba(0,0,0,0.8),0_0_30px_rgba(240,180,41,0.25)] backdrop-blur-xl relative overflow-hidden text-left"
+              className="w-full max-w-xl mx-auto mb-4 p-4 sm:p-5 bg-[var(--surface-deep)]/95 border-2 border-[var(--acc)] rounded-lg shadow-[0_16px_50px_rgba(0,0,0,0.8),0_0_30px_rgba(240,180,41,0.25)] backdrop-blur-xl relative overflow-hidden text-left"
             >
               {/* Top gold bar glow */}
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[var(--acc)] to-transparent" />
@@ -959,6 +963,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                   onClick={() => setShowRollOutcome(false)}
                   className="p-1 text-[var(--muted)] hover:text-[var(--bone)] cursor-pointer"
                   title="Close Decree"
+                  aria-label="Close Destiny Decree"
                 >
                   <X size={16} />
                 </button>
@@ -1007,8 +1012,8 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             className={cn(
               "flex items-center gap-2 px-4 py-2.5 rounded-sm shadow-lg border cursor-pointer transition-all",
               hasRolled
-                ? "bg-[#184d4d] hover:bg-[#1e5f5f] text-[var(--bone)] border-[var(--acc)] shadow-[0_4px_20px_rgba(240,180,41,0.25)]"
-                : "bg-[#133d3d] hover:bg-[#184d4d] text-[var(--bone)] border-[var(--acc)]/40"
+                ? "bg-[var(--surface-lift-hover)] hover:brightness-110 text-[var(--bone)] border-[var(--acc)] shadow-[0_4px_20px_rgba(240,180,41,0.25)]"
+                : "bg-[var(--surface-lift)] hover:bg-[var(--surface-lift-hover)] text-[var(--bone)] border-[var(--acc)]/40"
             )}
           >
             <motion.div
@@ -1155,6 +1160,9 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            role="dialog"
+            aria-modal="true"
+            aria-label="The ROF Mindset Codex"
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-lg select-text"
           >
             <motion.div
@@ -1162,7 +1170,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.94, y: 20 }}
               transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-              className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto bg-[#0a2323] border border-[var(--hairline)] rounded-lg p-6 sm:p-8 text-[var(--bone)] shadow-2xl"
+              className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto bg-[var(--surface-deep)] border border-[var(--hairline)] rounded-lg p-6 sm:p-8 text-[var(--bone)] shadow-2xl"
             >
               {/* Header */}
               <div className="flex items-center justify-between pb-4 border-b border-[var(--hairline)]">
@@ -1175,6 +1183,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                 <button
                   type="button"
                   onClick={() => setShowCodex(false)}
+                  aria-label="Close Mindset Codex"
                   className="p-1 hover:text-[var(--acc)] cursor-pointer text-[var(--muted)]"
                 >
                   <X size={18} />

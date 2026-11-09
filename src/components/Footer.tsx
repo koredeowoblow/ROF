@@ -41,12 +41,17 @@ export const Footer: React.FC = () => {
 
           <div className="lg:col-span-6">
             <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3 mt-2">
+              <label htmlFor="footer-newsletter-email" className="sr-only">
+                Enter your email address
+              </label>
               <input
+                id="footer-newsletter-email"
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
+                aria-label="Enter your email address"
                 inputMode="email"
                 autoComplete="email"
                 className="h-12 flex-1 px-4 text-sm font-sans bg-transparent border border-[var(--hairline)] text-[var(--bone)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--acc)] transition-colors"
@@ -157,6 +162,36 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
         </div>
+
+        {/* Payment Methods & Concierge Guarantee */}
+        <div className="mt-12 pt-8 border-t border-[var(--hairline)] flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-mono text-[var(--muted)]">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[10px] uppercase tracking-wider text-[var(--bone)]/60">
+              SECURE ENCRYPTED CHECKOUT:
+            </span>
+            <span className="px-2 py-0.5 border border-[var(--hairline)] rounded-xs text-[10px] uppercase text-[var(--bone)]/80 bg-[var(--bone)]/5">
+              PAYSTACK
+            </span>
+            <span className="px-2 py-0.5 border border-[var(--hairline)] rounded-xs text-[10px] uppercase text-[var(--bone)]/80 bg-[var(--bone)]/5">
+              FLUTTERWAVE
+            </span>
+            <span className="px-2 py-0.5 border border-[var(--hairline)] rounded-xs text-[10px] uppercase text-[var(--bone)]/80 bg-[var(--bone)]/5">
+              MASTERCARD / VISA
+            </span>
+            <span className="px-2 py-0.5 border border-[var(--hairline)] rounded-xs text-[10px] uppercase text-[var(--bone)]/80 bg-[var(--bone)]/5">
+              APPLE PAY
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="flex items-center gap-2 px-3 py-1.5 border border-[var(--hairline)] hover:border-[var(--acc)] text-[10px] uppercase tracking-widest text-[var(--bone)]/80 hover:text-[var(--acc)] rounded-xs transition-colors cursor-pointer bg-[var(--ink)]"
+          >
+            <DiamondMark size={6} accent filled />
+            <span>BACK TO TOP ↑</span>
+          </button>
+        </div>
       </div>
 
       {/* Signature Bone Bottom Strip */}
@@ -164,14 +199,14 @@ export const Footer: React.FC = () => {
         data-tone="bone"
         className="w-full bg-[var(--bone)] text-[var(--ink)] py-3 px-4 md:px-8 border-t border-[var(--hairline)]"
       >
-        <div className="mx-auto flex max-w-[var(--max-content)] items-center justify-between text-xs tracking-[0.2em] uppercase font-sans">
+        <div className="mx-auto flex max-w-[var(--max-content)] flex-col sm:flex-row items-center justify-between gap-2 text-xs tracking-[0.2em] uppercase font-sans">
           <div className="flex items-center gap-3">
             <DiamondMark size={8} accent filled />
             <span className="font-semibold">Destined for riches</span>
             <DiamondMark size={8} accent filled />
           </div>
-          <div className="text-[11px] opacity-75">
-            ROF RAGE • Lagos, Nigeria
+          <div className="text-[11px] opacity-75 font-mono">
+            ROF RAGE • ARCHITECTURAL STREETWEAR • LAGOS, NIGERIA
           </div>
         </div>
       </div>

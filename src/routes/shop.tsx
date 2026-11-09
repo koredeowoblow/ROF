@@ -275,7 +275,7 @@ function ShopPage() {
                       <Link
                         to="/product/$id"
                         params={{ id: product.slug }}
-                        className="group flex flex-col border border-[var(--hairline)] bg-[var(--bone)] overflow-hidden transition-all duration-200 hover:border-[var(--ink)] hover:shadow-md cursor-pointer block h-full"
+                        className="group flex flex-col border border-[var(--hairline)] bg-[var(--bone)] overflow-hidden transition-all duration-300 hover:border-[var(--ink)] hover:shadow-xl cursor-pointer block h-full rounded-xs"
                       >
                         {/* Image Tile Pane */}
                         <div
@@ -284,13 +284,18 @@ function ShopPage() {
                             tileTone === 'ink' ? 'bg-[var(--ink)]' : 'bg-[#e2dbcc]'
                           }`}
                         >
-                          {/* Red index number top-left */}
+                          {/* Numeral index top-left */}
                           <div className="absolute top-3 left-3 z-10 transition-transform duration-200 group-hover:scale-110">
                             <Numeral value={product.position} size="sm" />
                           </div>
 
-                          {/* Cut-out tee image with gentle hover lift */}
-                          <div className="w-full h-full flex items-center justify-center transition-all duration-300 ease-out group-hover:scale-105 group-hover:-translate-y-1">
+                          {/* 260 GSM Specs badge top-right */}
+                          <div className="absolute top-3 right-3 z-10 px-2 py-0.5 border border-[var(--hairline)] rounded-xs bg-[var(--bg)]/80 text-[9px] font-mono uppercase tracking-wider text-[var(--fg)] backdrop-blur-xs">
+                            260 GSM
+                          </div>
+
+                          {/* Cut-out tee image with gentle organic hover lift */}
+                          <div className="w-full h-full flex items-center justify-center transition-all duration-300 ease-out group-hover:scale-108 group-hover:-translate-y-1.5 drop-shadow-[0_12px_24px_rgba(0,0,0,0.3)] group-hover:drop-shadow-[0_20px_35px_rgba(0,0,0,0.45)]">
                             <TeeCutout
                               design={meta.design}
                               colour={meta.colour}
@@ -301,23 +306,24 @@ function ShopPage() {
                         </div>
 
                         {/* Metadata Footer */}
-                        <div className="p-4 flex flex-col flex-1 justify-between border-t border-[var(--hairline)]">
+                        <div className="p-4 sm:p-5 flex flex-col flex-1 justify-between border-t border-[var(--hairline)] bg-[var(--bone)]">
                           <div>
-                            <div className="flex items-center justify-between text-[11px] text-[var(--muted)] font-sans uppercase tracking-wider">
+                            <div className="flex items-center justify-between text-[11px] text-[var(--muted)] font-mono uppercase tracking-wider">
                               <span>{product.colour}</span>
-                              <span className="font-semibold text-[var(--ink)]">Heavyweight</span>
+                              <span className="font-semibold text-[var(--ink)]">OVERSIZED BOXY</span>
                             </div>
-                            <h3 className="font-serif text-lg sm:text-xl text-[var(--ink)] mt-1 group-hover:text-[var(--acc-on-bone)] transition-colors leading-snug">
+                            <h3 className="font-serif text-lg sm:text-xl text-[var(--ink)] mt-1.5 group-hover:text-[var(--acc-on-bone)] transition-colors leading-snug">
                               {product.name}
                             </h3>
                           </div>
 
-                          <div className="mt-3 pt-3 border-t border-[var(--hairline)]/60 flex items-center justify-between font-sans">
-                            <span className="text-base font-semibold text-[var(--ink)]">
+                          <div className="mt-4 pt-3 border-t border-[var(--hairline)]/60 flex items-center justify-between font-sans">
+                            <span className="text-base sm:text-lg font-serif font-bold text-[var(--ink)]">
                               {formatNaira(product.price)}
                             </span>
-                            <span className="text-xs text-[var(--acc-on-bone)] uppercase font-medium tracking-wider group-hover:translate-x-1.5 transition-transform duration-200 flex items-center gap-1">
-                              View →
+                            <span className="text-xs text-[var(--acc-on-bone)] font-mono uppercase font-bold tracking-wider group-hover:translate-x-1.5 transition-transform duration-200 flex items-center gap-1">
+                              <span>EXPLORE</span>
+                              <span>→</span>
                             </span>
                           </div>
                         </div>

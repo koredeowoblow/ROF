@@ -42,10 +42,17 @@
   --bg: var(--ink);
   --fg: var(--bone);
   --acc: var(--acc-on-ink);
-  --muted: rgba(236, 227, 203, 0.65);
-  --faint: rgba(236, 227, 203, 0.40);
+  --muted: rgba(236, 227, 203, 0.68);
+  --faint: rgba(236, 227, 203, 0.48);
   --hairline: rgba(236, 227, 203, 0.16);
   --surface-tint: rgba(236, 227, 203, 0.05);
+
+  /* Semantic Elevated Surfaces (Normalized Design Tokens) */
+  --surface-deep: #0a2323;
+  --surface-lift: #133d3d;
+  --surface-lift-hover: #184d4d;
+  --bone-surface: #f4ede0;
+  --bone-muted: #e4ddce;
 }
 
 /* Tone bindings: components read ONLY --fg, --bg, --acc, --muted, --hairline */

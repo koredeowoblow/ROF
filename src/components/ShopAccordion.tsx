@@ -189,7 +189,7 @@ export const ShopAccordion: React.FC<ShopAccordionProps> = ({ products }) => {
                     data-tone={tileTone}
                     className={cn(
                       'col-span-7 h-full flex flex-col items-center justify-center p-8 relative overflow-hidden',
-                      tileTone === 'ink' ? 'bg-[var(--ink)]' : 'bg-[#e4ddce]'
+                      tileTone === 'ink' ? 'bg-[var(--ink)]' : 'bg-[var(--bone-muted)]'
                     )}
                   >
                     {/* Top Index & Fabric Spec */}
@@ -353,7 +353,7 @@ export const ShopAccordion: React.FC<ShopAccordionProps> = ({ products }) => {
                 data-tone={activeProduct.ground}
                 className={cn(
                   'relative aspect-square w-full flex items-center justify-center p-8 overflow-hidden',
-                  activeProduct.ground === 'ink' ? 'bg-[var(--ink)]' : 'bg-[#e4ddce]'
+                  activeProduct.ground === 'ink' ? 'bg-[var(--ink)]' : 'bg-[var(--bone-muted)]'
                 )}
               >
                 <div className="absolute top-4 left-4 z-10">
