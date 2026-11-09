@@ -9,18 +9,19 @@ interface TickerProps {
 }
 
 const defaultItems = [
-  'Destined for greatness',
   'ROF RAGE',
-  'Destined for riches',
+  'A luxury fashion brand made for the street',
+  'Ready-to-wear apparel',
   'Collection 01',
-  'Built for legacy',
-  'Ambition and original craft',
+  'Destined for riches',
+  'Three architectural heavyweight tees',
+  'Haute streetwear',
 ]
 
 /**
- * Continuous Rotating Marigold Ticker Strip
- * Continuously scrolls infinitely across the screen with 360° rotating gold diamonds.
- * Driven by hardware-accelerated CSS animations for guaranteed 60fps rotation.
+ * Calm Cream Continuous Ticker Strip
+ * Continuously scrolls infinitely across the screen with rotating gold diamonds.
+ * Calm aged cream ground beneath hero stage.
  */
 export const Ticker: React.FC<TickerProps> = React.memo(({
   items = defaultItems,
@@ -34,7 +35,7 @@ export const Ticker: React.FC<TickerProps> = React.memo(({
   return (
     <div
       className={cn(
-        'relative w-full overflow-hidden bg-[var(--acc-on-ink)] text-[var(--ink)] py-3 select-none border-y border-[var(--ink)] cursor-default',
+        'relative w-full overflow-hidden bg-[var(--bone)] text-[var(--ink)] py-3 select-none border-y border-[var(--ink)]/15 cursor-default',
         className
       )}
       role="region"

@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
-import { motion, useMotionValue, useSpring, useTransform, useReducedMotion, AnimatePresence } from 'motion/react'
+import { motion, useMotionValue, useSpring, useTransform, useReducedMotion } from 'motion/react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { DiamondMark } from '@/components/Logo'
 import { Button } from '@/components/Button'
 import { cn } from '@/lib/utils'
 import { getIsPageLoaderActive } from '@/components/PageLoader'
 import { useBagStore } from '@/features/bag/bagStore'
-import { Check, ShoppingBag, ArrowDown, Sparkles } from 'lucide-react'
+import { Check, ShoppingBag } from 'lucide-react'
 
 interface HeroStageProps {
   className?: string
@@ -15,9 +15,9 @@ interface HeroStageProps {
 // ---------------------------------------------------------------------------
 // 20-CARD DECK CONSTANTS & REUSABLE CARD BACK COMPONENT
 // ---------------------------------------------------------------------------
-// Monumental luxury scale: larger, more impactful, showroom presence
+// Imposing, monumental high-fashion runway proportions
 const CARD_SIZE_CLASSES =
-  'w-[155px] h-[240px] sm:w-[200px] sm:h-[305px] md:w-[240px] md:h-[365px] lg:w-[275px] lg:h-[415px] xl:w-[305px] xl:h-[455px] 2xl:w-[330px] 2xl:h-[490px]'
+  'w-[180px] h-[280px] sm:w-[230px] sm:h-[350px] md:w-[265px] md:h-[400px] lg:w-[295px] lg:h-[445px] xl:w-[330px] xl:h-[490px] 2xl:w-[360px] 2xl:h-[530px]'
 
 // 17 foundation cards forming the 20-card pile with the 3 trinity cards
 const DECK_FOUNDATION_CARDS = Array.from({ length: 17 }, (_, i) => ({
@@ -32,27 +32,50 @@ const CardBackFace: React.FC<{ serial?: string }> = ({ serial = 'ROF-ARCHIVE-01'
       backfaceVisibility: 'hidden',
       transform: 'rotateY(180deg)',
     }}
-    className="absolute inset-0 rounded-xl lg:rounded-2xl p-4 sm:p-6 flex flex-col justify-between bg-[var(--surface-deep)] text-[var(--bone)] border-2 border-[var(--acc)]/80 overflow-hidden shadow-2xl pointer-events-none select-none"
+    className="absolute inset-0 rounded-xl lg:rounded-2xl p-3 sm:p-5 flex flex-col justify-between bg-[var(--surface-deep)] text-[var(--bone)] border-2 border-[var(--acc)]/75 overflow-hidden shadow-2xl pointer-events-none select-none"
   >
-    {/* Archival Gold Textured Core */}
-    <div className="absolute inset-2 sm:inset-3 border border-[var(--bone)]/25 rounded-lg flex items-center justify-center overflow-hidden">
+    {/* Stitched Luxury Atelier Border */}
+    <div className="absolute inset-2 sm:inset-3 border border-dashed border-[var(--bone)]/30 rounded-lg flex flex-col justify-between p-2.5 sm:p-4 overflow-hidden">
+      {/* Background radial gold glow */}
       <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,var(--acc)_0%,transparent_70%)]" />
 
-      <svg viewBox="0 0 120 120" className="w-28 h-28 sm:w-36 sm:h-36 text-[var(--bone)]/30">
-        <polygon points="60,8 112,60 60,112 8,60" stroke="currentColor" strokeWidth="1" fill="none" />
-        <polygon points="60,20 100,60 60,100 20,60" stroke="currentColor" strokeWidth="1" fill="none" />
-        <polygon points="60,32 88,60 60,88 32,60" stroke="var(--acc)" strokeWidth="1.5" fill="rgba(240,180,41,0.22)" />
-        <polygon points="60,44 76,60 60,76 44,60" stroke="var(--acc)" strokeWidth="1" fill="none" />
-      </svg>
+      {/* Top Header of Garment Tag */}
+      <div className="relative z-10 flex items-center justify-between text-[8px] sm:text-[9px] font-mono text-[var(--bone)]/70 uppercase tracking-widest border-b border-[var(--bone)]/20 pb-1">
+        <span className="text-[var(--acc)] font-bold">ROF RAGE</span>
+        <span>ATELIER ARCHIVE</span>
+      </div>
 
-      <span className="absolute font-serif text-3xl sm:text-4xl font-bold text-[var(--bone)] tracking-widest drop-shadow-md">
-        ROF
-      </span>
-    </div>
+      {/* Center Crest: Diamond Emblem + Unmistakable Fashion House Branding */}
+      <div className="relative z-10 flex flex-col items-center justify-center text-center my-auto">
+        <div className="relative mb-1.5 sm:mb-2">
+          <svg viewBox="0 0 100 100" className="w-16 h-16 sm:w-20 sm:h-20 text-[var(--acc)]">
+            <polygon points="50,6 94,50 50,94 6,50" stroke="currentColor" strokeWidth="1.5" fill="none" />
+            <polygon points="50,18 82,50 50,82 18,50" stroke="var(--bone)" strokeWidth="1" fill="rgba(236,227,203,0.06)" />
+            <polygon points="50,30 70,50 50,70 30,50" stroke="currentColor" strokeWidth="1.5" fill="rgba(240,180,41,0.22)" />
+          </svg>
+          <span className="absolute inset-0 flex items-center justify-center font-serif text-lg sm:text-xl font-bold text-[var(--bone)] tracking-widest">
+            ROF
+          </span>
+        </div>
 
-    <div className="relative z-10 w-full flex items-center justify-between text-[8px] sm:text-[9px] font-mono text-[var(--bone)]/70 pt-1">
-      <span className="tracking-wider">CERTIFIED ARCHIVE</span>
-      <span className="text-[var(--acc)] font-bold">{serial}</span>
+        <span className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.24em] text-[var(--bone)] font-bold">
+          A LUXURY FASHION BRAND
+        </span>
+        <span className="font-mono text-[8px] sm:text-[9px] uppercase tracking-[0.2em] text-[var(--acc)] mt-0.5 font-semibold">
+          MADE FOR THE STREET
+        </span>
+        <span className="font-mono text-[7px] sm:text-[8px] uppercase tracking-[0.16em] text-[var(--bone)]/70 mt-1">
+          COLLECTION 01 • READY-TO-WEAR
+        </span>
+      </div>
+
+      {/* Bottom Atelier Details & Care Icons */}
+      <div className="relative z-10 pt-1.5 border-t border-[var(--bone)]/20">
+        <div className="flex items-center justify-between text-[7px] sm:text-[8px] font-mono text-[var(--bone)]/70">
+          <span>{serial}</span>
+          <span className="text-[var(--acc)] italic font-serif">Destined for riches.</span>
+        </div>
+      </div>
     </div>
   </div>
 )
@@ -100,7 +123,7 @@ const ROF_CARDS: RofCard[] = [
     garmentPrice: 30000,
     garmentSlug: 'destined-cards-tee',
     cutDesc: 'Five cracked playing cards spelling ROF RAGE with high-gloss red dice graphic',
-    moodColor: 'rgba(27, 56, 43, 0.35)',
+    moodColor: 'rgba(27, 56, 43, 0.40)',
   },
   {
     id: 2,
@@ -120,7 +143,7 @@ const ROF_CARDS: RofCard[] = [
     garmentPrice: 25000,
     garmentSlug: 'rage-wave-tee-white',
     cutDesc: 'Warped ROF RAGE chest wordmark in red and mint with lilac brand tag',
-    moodColor: 'rgba(236, 227, 203, 0.18)',
+    moodColor: 'rgba(236, 227, 203, 0.22)',
   },
   {
     id: 3,
@@ -140,7 +163,7 @@ const ROF_CARDS: RofCard[] = [
     garmentPrice: 28000,
     garmentSlug: 'rage-scribble-tee-black',
     cutDesc: 'Burnt orange continuous line artwork contained in architectural frame',
-    moodColor: 'rgba(240, 180, 41, 0.15)',
+    moodColor: 'rgba(240, 180, 41, 0.18)',
   },
 ]
 
@@ -163,8 +186,19 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
 
   const stageRef = useRef<HTMLDivElement>(null)
   const isShufflingRef = useRef(false)
+  const sequenceTimersRef = useRef<NodeJS.Timeout[]>([])
+
+  // Skip shuffle directly to dealt if user taps, clicks, or scrolls
+  const skipToDealt = useCallback(() => {
+    if (deckPhase === 'dealt') return
+    sequenceTimersRef.current.forEach((t) => clearTimeout(t))
+    sequenceTimersRef.current = []
+    setDeckPhase('dealt')
+    isShufflingRef.current = false
+  }, [deckPhase])
 
   // 20-Card Realistic Ritual: Plenty Faced Backward -> Gathered -> Shuffled (Split, Riffle, Bridge) -> R • O • F Deal
+  // Optimized to a snappy ~3.4s cinematic cadence so garments land with maximum runway impact
   const handleShuffleDeck = useCallback(() => {
     if (isShufflingRef.current) return
     isShufflingRef.current = true
@@ -177,54 +211,35 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
     // Step 1: 20 cards face-down in wide table ribbon spread
     setDeckPhase('spread')
 
+    sequenceTimersRef.current.forEach((t) => clearTimeout(t))
+    sequenceTimersRef.current = []
+
     // Step 2: Croupier scoops cards inward to gather into center deck
-    const t1 = setTimeout(() => {
-      setDeckPhase('gathering')
-    }, 900)
-
+    const t1 = setTimeout(() => setDeckPhase('gathering'), 400)
     // Step 3: Deck cuts and lifts into 2 distinct angled packets (left & right)
-    const t2 = setTimeout(() => {
-      setDeckPhase('splitting')
-    }, 1850)
-
+    const t2 = setTimeout(() => setDeckPhase('splitting'), 900)
     // Step 4: Rapid alternating 3D thumb riffle interleave
-    const t3 = setTimeout(() => {
-      setDeckPhase('riffling')
-    }, 2550)
-
+    const t3 = setTimeout(() => setDeckPhase('riffling'), 1450)
     // Step 5: The arched bridge waterfall cascade snap
-    const t4 = setTimeout(() => {
-      setDeckPhase('bridge')
-    }, 3650)
-
+    const t4 = setTimeout(() => setDeckPhase('bridge'), 2050)
     // Step 6: Deck edges squared flush with crisp table taps
-    const t5 = setTimeout(() => {
-      setDeckPhase('squaring')
-    }, 4200)
-
+    const t5 = setTimeout(() => setDeckPhase('squaring'), 2550)
     // Step 7: Dealer pitches top 3 cards R - O - F flipping face-up into trinity
-    const t6 = setTimeout(() => {
-      setDeckPhase('dealing')
-    }, 4700)
-
+    const t6 = setTimeout(() => setDeckPhase('dealing'), 2900)
     // Step 8: Settled into final hero layout matching reference image
     const t7 = setTimeout(() => {
       setDeckPhase('dealt')
       isShufflingRef.current = false
-    }, 5850)
+    }, 3400)
+
+    sequenceTimersRef.current = [t1, t2, t3, t4, t5, t6, t7]
 
     return () => {
-      clearTimeout(t1)
-      clearTimeout(t2)
-      clearTimeout(t3)
-      clearTimeout(t4)
-      clearTimeout(t5)
-      clearTimeout(t6)
-      clearTimeout(t7)
+      sequenceTimersRef.current.forEach((t) => clearTimeout(t))
     }
   }, [])
 
-  // Initial cinematic sequence: 20 cards faced backward plenty -> gathered -> shuffled -> R • O • F
+  // Initial cinematic sequence: 20 cards faced backward -> gathered -> shuffled -> R • O • F
   useEffect(() => {
     let timer: NodeJS.Timeout
     let started = false
@@ -232,10 +247,10 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
     const triggerAutoSequence = () => {
       if (started) return
       started = true
-      // Display the wide ribbon spread of 20 cards faced backward for 850ms so user takes it in, then gather & shuffle
+      // Display the wide ribbon spread of 20 cards faced backward for 400ms so user takes it in, then gather & shuffle
       timer = setTimeout(() => {
         handleShuffleDeck()
-      }, 850)
+      }, 400)
     }
 
     if (!getIsPageLoaderActive()) {
@@ -249,7 +264,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
 
     const fallbackTimer = setTimeout(() => {
       triggerAutoSequence()
-    }, 1300)
+    }, 900)
 
     return () => {
       window.removeEventListener('rof:page-loader-done', handleLoaderDone)
@@ -300,6 +315,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   useEffect(() => {
     return () => {
       Object.values(flipTimersRef.current).forEach((timer) => clearTimeout(timer))
+      sequenceTimersRef.current.forEach((t) => clearTimeout(t))
     }
   }, [])
 
@@ -376,14 +392,14 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   // Spatial calculations for 20-card deck pile & 3 trinity cards
   const spread =
     screenWidth < 640
-      ? 100
+      ? 110
       : screenWidth < 768
-        ? 165
+        ? 170
         : screenWidth < 1024
-          ? 220
+          ? 225
           : screenWidth < 1440
-            ? 310
-            : 380
+            ? 315
+            : 385
   const xOffsets = [-spread, 0, spread]
   const baseRot = [-6, 0, 6]
   const baseY = [8, -12, 8]
@@ -604,6 +620,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   return (
     <section
       ref={stageRef}
+      onClick={skipToDealt}
       onMouseMove={handleStageMouseMove}
       onMouseLeave={handleStageMouseLeave}
       aria-label="ROF Haute Streetwear Stage"
@@ -646,6 +663,10 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
       {/* Editorial Side Markers (Ultra-wide screens) */}
       <div className="hidden 2xl:flex flex-col gap-4 absolute left-12 top-1/2 -translate-y-1/2 text-left font-mono text-[10px] text-[var(--bone)]/50 tracking-widest z-20 pointer-events-none">
         <div>
+          <span className="block text-[var(--acc)] font-bold text-[9px] mb-0.5 tracking-wider">BRAND TYPE</span>
+          <span className="text-[var(--bone)]/90 font-semibold">CLOTHING & FASHION</span>
+        </div>
+        <div>
           <span className="block text-[var(--acc)] font-bold text-[9px] mb-0.5 tracking-wider">GENRE</span>
           <span className="text-[var(--bone)]/85">HAUTE STREETWEAR</span>
         </div>
@@ -685,13 +706,13 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--acc)] opacity-70" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--acc)]" />
             </span>
-            <span className="label-caps text-[var(--bone)] tracking-[0.24em] font-semibold text-[11px] sm:text-xs">
-              ROF RAGE • CAPSULE 01
+            <span className="label-caps text-[var(--bone)] tracking-[0.22em] font-bold text-[10px] sm:text-xs">
+              ROF RAGE // A LUXURY FASHION BRAND MADE FOR THE STREET
             </span>
           </div>
 
-          {/* 3 ROF Pillars & Silhouettes Bar */}
-          <div className="hidden sm:flex items-center gap-1.5 bg-[var(--ink)]/90 backdrop-blur-md border border-[var(--hairline)] p-1 rounded-sm shadow-xl">
+          {/* Runway Lookbook Selector */}
+          <div className="hidden lg:flex items-center gap-1.5 bg-[var(--surface-deep)]/95 backdrop-blur-md border border-[var(--acc)]/40 p-1 rounded-sm shadow-xl">
             {ROF_CARDS.map((card, idx) => {
               const isActive = activeCardIndex === idx
 
@@ -699,16 +720,20 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                 <button
                   key={card.id}
                   type="button"
-                  onClick={() => handleSelectCard(idx)}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    skipToDealt()
+                    handleSelectCard(idx)
+                  }}
                   className={cn(
-                    'px-3.5 py-1 text-[11px] font-mono uppercase tracking-[0.16em] transition-all cursor-pointer rounded-xs flex items-center gap-1.5',
+                    'px-3.5 py-1 text-[10px] font-mono uppercase tracking-[0.18em] transition-all cursor-pointer rounded-xs flex items-center gap-2',
                     isActive
                       ? 'bg-[var(--acc)] text-[var(--label-on-acc)] font-bold shadow-md'
-                      : 'text-[var(--muted)] hover:text-[var(--bone)] hover:bg-[var(--bone)]/5'
+                      : 'text-[var(--bone)]/75 hover:text-[var(--bone)] hover:bg-[var(--bone)]/10'
                   )}
                 >
-                  <span className={isActive ? 'text-[var(--label-on-acc)]' : 'text-[var(--acc)]'}>
-                    [{card.letter}]
+                  <span className={isActive ? 'text-[var(--label-on-acc)] font-black' : 'text-[var(--acc)] font-bold'}>
+                    LOOK 0{idx + 1}
                   </span>
                   <span>{card.garmentName}</span>
                 </button>
@@ -717,8 +742,8 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
           </div>
 
           {/* Haute Streetwear subtle indicator */}
-          <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-[var(--bone)]/60">
-            HAUTE STREETWEAR
+          <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-[var(--acc)] font-semibold">
+            READY-TO-WEAR APPAREL
           </div>
         </div>
       </div>
@@ -727,15 +752,15 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
       {/* 3. CENTERPIECE: UNCLUTTERED MONUMENTAL HERO */}
       {/* ============================================================ */}
       <div className="relative z-10 flex-1 flex flex-col items-center justify-center my-auto py-2 sm:py-3 px-4 md:px-8 text-center">
-        {/* Editorial Fashion Capsule Badge (Definitive Brand Statement) */}
+        {/* Editorial Fashion Classification Badge (Definitive Brand Statement) */}
         <motion.div
           initial={{ opacity: 0, y: -6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 mb-2.5 sm:mb-3 rounded-full border border-[var(--acc)]/40 bg-[var(--surface-deep)]/90 text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.22em] text-[var(--acc)] shadow-lg backdrop-blur-md"
+          className="inline-flex items-center gap-2 px-4 py-1.5 mb-2.5 sm:mb-3 rounded-full border border-[var(--acc)] bg-[var(--surface-deep)]/90 text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.24em] text-[var(--acc)] shadow-lg backdrop-blur-md font-bold"
         >
           <DiamondMark size={4} accent filled />
-          <span>A luxury fashion brand made for the street</span>
+          <span>ROF RAGE // A LUXURY FASHION BRAND MADE FOR THE STREET</span>
         </motion.div>
 
         {/* Masked Clip-Reveal Monumental Headline */}
@@ -756,10 +781,19 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
           </motion.h1>
         </div>
 
-        {/* Minimalist Subtitle with Fashion Focus */}
-        <p className="font-mono text-[10px] sm:text-xs text-[var(--bone)]/70 uppercase tracking-[0.26em] mb-2 sm:mb-3">
-          THREE ARCHITECTURAL SILHOUETTES • AMBITION • CONFIDENCE • ORIGINALITY
+        {/* Clear Fashion Subtitle */}
+        <p className="font-serif italic text-base sm:text-lg lg:text-xl text-[var(--bone)]/90 max-w-xl mx-auto mb-1 leading-snug">
+          A luxury fashion brand made for the street.
         </p>
+
+        {/* Fashion Collection Specs Banner */}
+        <div className="flex flex-wrap items-center justify-center gap-2 text-[9px] sm:text-[10px] font-mono uppercase tracking-[0.2em] text-[var(--acc)] mb-3">
+          <span>COLLECTION 01</span>
+          <span>•</span>
+          <span>THREE ARCHITECTURAL HEAVYWEIGHT TEES</span>
+          <span>•</span>
+          <span>READY-TO-WEAR</span>
+        </div>
 
         {/* 3D Tilted Perspective Canvas */}
         <div
@@ -834,10 +868,12 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               return (
                 <motion.div
                   key={card.id}
-                  onClick={() => {
-                    if (deckPhase === 'dealt') {
-                      handleSelectCard(idx)
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    if (deckPhase !== 'dealt') {
+                      skipToDealt()
                     }
+                    handleSelectCard(idx)
                   }}
                   onDoubleClick={(e) => {
                     if (deckPhase === 'dealt') {
@@ -913,10 +949,10 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                       : 'shadow-[0_16px_36px_rgba(0,0,0,0.68)] hover:shadow-[0_22px_45px_rgba(240,180,41,0.25)]'
                   )}
                 >
-                  {/* FRONT FACE OF CARD (HAUTE-COUTURE STREETWEAR TAROT) */}
+                  {/* FRONT FACE OF CARD (HAUTE-COUTURE STREETWEAR LOOKBOOK PLATE) */}
                   <div
                     style={{ backfaceVisibility: 'hidden' }}
-                    className="absolute inset-0 rounded-xl lg:rounded-2xl p-2.5 sm:p-4 lg:p-5 flex flex-col justify-between bg-[var(--bone-surface)] text-[var(--ink)] border border-[var(--acc)]/35 overflow-hidden shadow-inner"
+                    className="absolute inset-0 rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-5 flex flex-col justify-between bg-[var(--bone-surface)] text-[var(--ink)] border border-[var(--acc)]/35 overflow-hidden shadow-inner"
                   >
                     {/* Top Specular Sheen */}
                     <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-white/45 pointer-events-none" />
@@ -948,104 +984,78 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                       </div>
                     </div>
 
-                    {/* Top Header Row with Index Pip & Price */}
+                    {/* Top Header Row with Look Index & Garment Price */}
                     <div className="relative z-10 flex items-start justify-between w-full">
-                      {/* Top-Left Card Corner Pip */}
-                      <div className="flex flex-col items-center leading-none text-left">
-                        <span
-                          className={cn(
-                            'font-serif text-xl sm:text-2xl lg:text-3xl font-bold',
-                            card.letter === 'O' ? 'text-[var(--acc-on-bone)]' : 'text-[var(--ink)]'
-                          )}
-                        >
-                          {card.letter}
+                      {/* Top-Left: Look Index */}
+                      <div className="flex flex-col items-start leading-none text-left">
+                        <span className="font-serif text-lg sm:text-xl lg:text-2xl font-bold text-[var(--ink)]">
+                          LOOK 0{card.id}
                         </span>
-                        <DiamondMark
-                          size={5}
-                          accent={card.letter === 'O'}
-                          filled
-                          className="mt-0.5 opacity-90"
-                        />
-                        <span className="font-mono text-[7px] text-[var(--muted)] font-bold mt-0.5">
-                          {card.roman}
+                        <span className="font-mono text-[7px] sm:text-[8px] uppercase tracking-wider text-[var(--acc-on-bone)] font-bold mt-0.5">
+                          READY-TO-WEAR
                         </span>
                       </div>
 
-                      {/* Top Center Capsule Tag */}
-                      <span className="font-mono text-[7px] sm:text-[8px] uppercase tracking-[0.22em] text-[var(--ink)]/55 font-bold mt-0.5">
-                        CAPSULE 01
+                      {/* Top Center: ROF RAGE Tag */}
+                      <span className="hidden sm:inline-block font-mono text-[7px] sm:text-[8px] uppercase tracking-[0.24em] text-[var(--ink)]/55 font-bold mt-0.5">
+                        ROF RAGE
                       </span>
 
-                      {/* Top Right Price Tag */}
+                      {/* Top Right: Garment Price */}
                       <div className="flex flex-col items-end leading-none text-right">
-                        <span className="font-sans text-[9px] sm:text-[10px] font-bold text-[var(--acc-on-bone)]">
+                        <span className="font-sans text-xs sm:text-sm lg:text-base font-bold text-[var(--acc-on-bone)]">
                           ₦{card.garmentPrice.toLocaleString('en-NG')}
                         </span>
-                        <span className="font-mono text-[6px] sm:text-[7px] uppercase tracking-wider text-[var(--ink)]/45 mt-0.5 font-semibold">
-                          PIECE 0{card.id}
+                        <span className="font-mono text-[6px] sm:text-[7px] uppercase tracking-wider text-[var(--ink)]/50 mt-0.5 font-semibold">
+                          COLLECTION 01
                         </span>
                       </div>
                     </div>
 
                     {/* Center Monumental Garment Showcase with 3D Pop Elevation */}
-                    <div className="relative z-10 flex-1 flex flex-col items-center justify-center my-auto w-full overflow-visible">
-                      {/* Subtle Geometric Watermark Behind Garment */}
-                      <div className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
-                        {card.letter === 'R' ? (
-                          <svg viewBox="0 0 100 100" className="w-28 h-28 text-[var(--ink)]">
-                            <polygon points="50,12 88,78 12,78" stroke="currentColor" strokeWidth="2" fill="none" />
-                            <polygon points="50,26 78,74 22,74" stroke="currentColor" strokeWidth="1" fill="none" />
-                          </svg>
-                        ) : card.letter === 'O' ? (
-                          <svg viewBox="0 0 100 100" className="w-28 h-28 text-[var(--acc-on-bone)]">
-                            <polygon points="50,8 92,50 50,92 8,50" stroke="currentColor" strokeWidth="2.5" fill="none" />
-                            <polygon points="50,22 78,50 50,78 22,50" stroke="currentColor" strokeWidth="1.5" fill="none" />
-                          </svg>
-                        ) : (
-                          <svg viewBox="0 0 100 100" className="w-28 h-28 text-[var(--ink)]">
-                            <rect x="14" y="14" width="72" height="72" stroke="currentColor" strokeWidth="2" fill="none" />
-                            <rect x="28" y="28" width="44" height="44" stroke="currentColor" strokeWidth="1" fill="none" />
-                          </svg>
-                        )}
+                    <div className="relative z-10 flex-1 flex flex-col items-center justify-center my-auto w-full overflow-visible py-1 sm:py-2">
+                      {/* Ambient Radial Soft Glow Behind Garment */}
+                      <div className="absolute inset-0 flex items-center justify-center opacity-30 pointer-events-none">
+                        <div className="w-32 h-32 sm:w-44 sm:h-44 rounded-full bg-[radial-gradient(circle_at_center,rgba(240,180,41,0.25)_0%,transparent_70%)]" />
                       </div>
 
                       {/* REAL LUXURY GARMENT CUT-OUT (MONUMENTAL FASHION IMPACT) */}
                       <motion.div
                         whileHover={{ scale: 1.08, y: -4 }}
                         transition={{ duration: 0.25 }}
-                        className="relative z-10 w-full flex items-center justify-center py-1 sm:py-2"
+                        className="relative z-10 w-full h-full flex items-center justify-center"
                       >
                         <img
                           src={card.garmentImage}
                           alt={card.garmentName}
-                          width={320}
-                          height={320}
+                          width={360}
+                          height={360}
                           loading="eager"
                           decoding="async"
-                          className="w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 lg:w-52 lg:h-52 object-contain pointer-events-none filter drop-shadow-[0_14px_28px_rgba(0,0,0,0.32)]"
+                          className="w-full h-auto max-h-[160px] sm:max-h-[210px] md:max-h-[250px] lg:max-h-[295px] xl:max-h-[330px] 2xl:max-h-[365px] object-contain pointer-events-none filter drop-shadow-[0_18px_36px_rgba(0,0,0,0.38)]"
                         />
                       </motion.div>
                     </div>
 
                     {/* Bottom Garment Lockup */}
                     <div className="relative z-10 flex flex-col items-center text-center w-full pt-1.5 border-t border-[var(--acc)]/25">
-                      <span className="font-serif text-xs sm:text-sm lg:text-base font-bold text-[var(--ink)] leading-tight tracking-tight truncate max-w-full">
+                      <span className="font-serif text-sm sm:text-base lg:text-lg font-bold text-[var(--ink)] leading-tight tracking-tight truncate max-w-full">
                         {card.garmentName}
                       </span>
-                      <div className="flex items-center gap-1.5 font-mono text-[7px] sm:text-[8px] uppercase tracking-wider text-[var(--acc-on-bone)] font-semibold mt-0.5">
-                        <span>{card.word}</span>
-                        <span>•</span>
+                      <div className="flex items-center gap-1.5 font-mono text-[7px] sm:text-[8px] uppercase tracking-wider text-[var(--acc-on-bone)] font-bold mt-0.5">
                         <span>{card.garmentColor}</span>
+                        <span>•</span>
+                        <span>HEAVYWEIGHT GRAPHIC TEE</span>
                       </div>
                     </div>
 
                     {/* Bottom-Right Corner Pip */}
-                    <div className="relative z-10 flex items-center justify-between w-full pt-0.5">
-                      <span className="font-mono text-[6px] sm:text-[7px] text-[var(--ink)]/40 uppercase tracking-widest">
-                        {card.serial.replace('ROF-', '')}
+                    <div className="relative z-10 flex items-center justify-between w-full pt-1 border-t border-[var(--acc)]/15">
+                      <span className="font-mono text-[6px] sm:text-[7px] text-[var(--ink)]/45 uppercase tracking-widest">
+                        {card.serial}
                       </span>
                       <span className="font-mono text-[6px] sm:text-[7px] text-[var(--acc-on-bone)] font-bold uppercase tracking-wider">
-                        ROF RAGE
+                        A LUXURY FASHION BRAND
                       </span>
                     </div>
                   </div>
@@ -1075,7 +1085,9 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               <span className="w-2.5 h-2.5 rounded-full bg-[var(--acc)] shrink-0 animate-pulse" />
               <div className="text-left">
                 <div className="flex items-center gap-2 font-mono text-[9px] text-[var(--acc)] uppercase tracking-wider font-semibold">
-                  <span>PIECE 0{activeGarment.id}</span>
+                  <span>LOOK 0{activeGarment.id}</span>
+                  <span>•</span>
+                  <span>READY-TO-WEAR</span>
                   <span>•</span>
                   <span>{activeGarment.garmentColor}</span>
                 </div>
@@ -1097,7 +1109,10 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                   <button
                     key={sz}
                     type="button"
-                    onClick={() => setSelectedSize(sz)}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setSelectedSize(sz)
+                    }}
                     className={cn(
                       'w-6 h-6 flex items-center justify-center font-mono text-[9px] font-bold rounded-xs transition-colors cursor-pointer',
                       selectedSize === sz
@@ -1113,7 +1128,10 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               <Button
                 variant="primary"
                 size="sm"
-                onClick={handleQuickAddToBag}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleQuickAddToBag()
+                }}
                 className="px-3.5 py-1.5 text-[11px] font-mono uppercase tracking-wider font-bold cursor-pointer flex items-center gap-1.5 shadow-md"
               >
                 {addedNotice ? (
@@ -1138,7 +1156,8 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               variant="primary"
               size="md"
               withArrow
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation()
                 const target = document.getElementById('collection-chapters')
                 if (target) {
                   target.scrollIntoView({ behavior: 'smooth' })
@@ -1154,6 +1173,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             {/* Brand Story Link */}
             <Link
               to="/story"
+              onClick={(e) => e.stopPropagation()}
               className="inline-flex items-center justify-center px-5 py-2.5 min-h-[44px] border border-[var(--hairline)] hover:border-[var(--bone)] text-xs font-mono uppercase tracking-wider text-[var(--bone)] transition-colors bg-[var(--ink)]/80 backdrop-blur-md hover:bg-[var(--bone)]/5 rounded-xs"
             >
               Brand story

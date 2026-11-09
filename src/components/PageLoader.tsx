@@ -290,19 +290,24 @@ export const PageLoader: React.FC<PageLoaderProps> = ({ currentPath }) => {
                 Destined for riches.
               </h2>
 
-              {/* ROOF • OF • FAME Badge */}
-              <div className="flex items-center gap-3 text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.28em] text-[var(--bone)]/85 bg-[var(--surface-deep)]/90 backdrop-blur-md px-4 py-1.5 rounded-full border border-[var(--acc)]/40 shadow-lg">
-                <span className="text-[var(--bone)] font-semibold">ROOF</span>
+              {/* ROF RAGE Fashion Brand Badge */}
+              <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.24em] text-[var(--bone)]/90 bg-[var(--surface-deep)]/95 backdrop-blur-md px-4 py-1.5 rounded-full border border-[var(--acc)]/50 shadow-lg">
+                <span className="text-[var(--bone)] font-bold tracking-widest">ROF RAGE</span>
                 <span className="text-[var(--acc)]">◆</span>
-                <span className="text-[var(--acc)] font-bold">OF</span>
+                <span className="text-[var(--acc)] font-bold">READY-TO-WEAR</span>
                 <span className="text-[var(--acc)]">◆</span>
-                <span className="text-[var(--bone)] font-semibold">FAME</span>
+                <span className="text-[var(--bone)] font-bold tracking-widest">COLLECTION 01</span>
               </div>
 
               {/* Luxury Fashion Statement */}
-              <p className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.26em] text-[var(--bone)]/70 mt-1">
-                A luxury fashion brand made for the street
-              </p>
+              <div className="flex flex-col items-center gap-1 mt-1.5">
+                <p className="font-mono text-[10px] sm:text-[12px] uppercase tracking-[0.28em] text-[var(--bone)] font-bold">
+                  A luxury fashion brand made for the street
+                </p>
+                <span className="font-mono text-[8px] sm:text-[9px] uppercase tracking-[0.22em] text-[var(--acc)] font-semibold">
+                  HAUTE STREETWEAR APPAREL • THREE ARCHITECTURAL TEES
+                </span>
+              </div>
             </motion.div>
           </div>
         </motion.div>

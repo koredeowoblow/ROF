@@ -66,17 +66,19 @@ export const Header: React.FC = () => {
         )}
       >
         <div className="mx-auto flex h-16 md:h-20 max-w-[var(--max-content)] items-center justify-between px-4 md:px-8">
-          {/* Left: Logo & Mindset Retention Badge */}
+          {/* Left: Brand Logo & Classification */}
           <div className="flex items-center gap-3">
-            <Link to="/" aria-label="ROF RAGE Home" className="flex items-center gap-2 group">
+            <Link to="/" aria-label="ROF RAGE Home" className="flex items-center gap-3 group">
               <Logo size="md" className="transition-transform group-hover:scale-[1.02]" />
+              <div className="flex flex-col border-l border-[var(--hairline)] pl-2 sm:pl-3 text-left">
+                <span className="font-mono text-[8px] sm:text-[9px] uppercase tracking-[0.2em] sm:tracking-[0.24em] text-[var(--acc)] font-bold leading-tight">
+                  CLOTHING BRAND
+                </span>
+                <span className="font-mono text-[7px] sm:text-[8px] uppercase tracking-[0.16em] sm:tracking-[0.18em] text-[var(--bone)]/60 leading-tight">
+                  READY-TO-WEAR
+                </span>
+              </div>
             </Link>
-            {sealedMindset && (
-              <span className="hidden xl:inline-flex items-center gap-1.5 px-2.5 py-1 border border-[var(--hairline)] bg-[var(--bone)]/5 text-[var(--bone)] text-[10px] font-mono uppercase tracking-widest rounded-xs">
-                <DiamondMark size={5} accent filled />
-                <span>MINDSET: {sealedMindset}</span>
-              </span>
-            )}
           </div>
 
           {/* Desktop Center: Navigation with Active Indicator */}
@@ -117,14 +119,8 @@ export const Header: React.FC = () => {
             ))}
           </nav>
 
-          {/* Right: Telemetry & Bag Trigger & Mobile Menu Toggle */}
+          {/* Right: Bag Trigger & Mobile Menu Toggle */}
           <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
-            {/* Quick Live Lagos Status Pill (Desktop only) */}
-            <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 border border-[var(--hairline)] bg-[var(--bone)]/5 text-[10px] font-mono uppercase tracking-wider text-[var(--bone)]/70 rounded-xs">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span>STUDIO ONLINE</span>
-            </div>
-
             {/* Bag Button */}
             <button
               type="button"
