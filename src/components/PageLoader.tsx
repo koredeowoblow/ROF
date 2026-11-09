@@ -278,7 +278,7 @@ export const PageLoader: React.FC<PageLoaderProps> = ({ currentPath }) => {
             </div>
 
             {/* ============================================================ */}
-            {/* 3. CENTERPIECE TYPOGRAPHY & ROOF • OF • FRAME TRINITY        */}
+            {/* 3. CENTERPIECE TYPOGRAPHY & ROOF • OF • FAME TRINITY         */}
             {/* ============================================================ */}
             <motion.div
               initial={{ opacity: 0, y: 12 }}
@@ -290,13 +290,13 @@ export const PageLoader: React.FC<PageLoaderProps> = ({ currentPath }) => {
                 Destined for riches.
               </h2>
 
-              {/* ROOF • OF • FRAME Badge */}
+              {/* ROOF • OF • FAME Badge */}
               <div className="flex items-center gap-3 text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.28em] text-[var(--bone)]/85 bg-[var(--surface-deep)]/90 backdrop-blur-md px-4 py-1.5 rounded-full border border-[var(--acc)]/40 shadow-lg">
                 <span className="text-[var(--bone)] font-semibold">ROOF</span>
                 <span className="text-[var(--acc)]">◆</span>
                 <span className="text-[var(--acc)] font-bold">OF</span>
                 <span className="text-[var(--acc)]">◆</span>
-                <span className="text-[var(--bone)] font-semibold">FRAME</span>
+                <span className="text-[var(--bone)] font-semibold">FAME</span>
               </div>
             </motion.div>
           </div>

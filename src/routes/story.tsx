@@ -46,7 +46,7 @@ function StoryPage() {
             </h2>
             <div className="mt-8 space-y-4 text-base sm:text-lg text-[var(--muted)] leading-relaxed font-sans max-w-xl">
               <p>
-                ROF stands for Roof Of Frame. It was created with a clear point of view: ambition is not something you hide, and greatness is not accidental.
+                ROF stands for Roof Of Fame. It was created with a clear point of view: ambition is not something you hide, and greatness is not accidental.
               </p>
               <p>
                 It is for people on the climb. People who put in the quiet hours, who take pride in their craft, and who intend to build their own legacy on their own terms.

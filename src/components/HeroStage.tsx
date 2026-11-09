@@ -119,7 +119,7 @@ const CardBackFace: React.FC<{ serial?: string }> = ({ serial = 'ROF-ARCHIVE-01'
 )
 
 // ---------------------------------------------------------------------------
-// THE 3 CARDS OF ROF: ROOF • OF • FRAME (AMBITION • CONFIDENCE • ORIGINALITY)
+// THE 3 CARDS OF ROF: ROOF • OF • FAME (AMBITION • CONFIDENCE • ORIGINALITY)
 // ---------------------------------------------------------------------------
 interface RofCard {
   id: number
@@ -173,18 +173,18 @@ const ROF_CARDS: RofCard[] = [
   {
     id: 3,
     letter: 'F',
-    word: 'FRAME',
+    word: 'FAME',
     pillar: 'ORIGINALITY',
     number: '03',
     roman: 'III',
-    label: 'FRAME',
-    title: 'THE ARCHITECTURAL SKELETON',
-    mantra: 'Heavyweight intention in every seam. An unbreakable frame built to outlast trends.',
-    creed: 'Frame is the foundation and structure. Heavyweight 260 GSM combed terry engineered to outlive temporary hype.',
-    reflection: 'What are you crafting today that will stand ten years from now?',
+    label: 'FAME',
+    title: 'THE PINNACLE OF FAME',
+    mantra: 'Heavyweight intention recognized. Greatness earned through relentless craft and ambition.',
+    creed: 'Fame is earned through distinction, permanence, and vision. Heavyweight 260 GSM combed terry engineered to outlive temporary hype.',
+    reflection: 'What greatness are you building today that will echo through generations?',
     codexEssay:
-      'A flawless frame defines true permanence. Fast trends come and dissolve within weeks, but a solid architectural frame endures for generations. ROOF OF FRAME is the standard of original greatness.',
-    serial: 'ROF-FRAME-7703',
+      'True fame is the natural consequence of undeniable craft. Fast trends come and dissolve within weeks, but generational greatness endures. ROOF OF FAME is the gold standard of ambition, confidence, and legacy.',
+    serial: 'ROF-FAME-7703',
   },
 ]
 
@@ -210,7 +210,7 @@ const DICE_OUTCOMES: Record<number, { title: string; desc: string; perk: string;
   4: {
     title: 'ORIGINALITY WOVEN',
     desc: 'Architectural distinction engineered in heavyweight combed terry.',
-    perk: 'MINDSET UNLOCKED: UNBROKEN FRAME',
+    perk: 'MINDSET UNLOCKED: TIMELESS FAME',
     cardIndex: 2,
   },
   5: {
@@ -937,7 +937,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
 
         {/* Minimalist Subtitle */}
         <p className="font-mono text-[10px] sm:text-xs text-[var(--muted)] uppercase tracking-[0.28em] mb-3 sm:mb-4">
-          ROF TRINITY // ROOF • OF • FRAME
+          ROF TRINITY // ROOF • OF • FAME
         </p>
 
         {/* 3D Tilted Perspective Canvas - Monumental on Big Screens */}
@@ -1028,7 +1028,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               )
             })}
 
-            {/* THE 3 TRINITY CARDS: ROOF [R] • OF [O] • FRAME [F] */}
+            {/* THE 3 TRINITY CARDS: ROOF [R] • OF [O] • FAME [F] */}
             {ROF_CARDS.map((card, idx) => {
               const pos = getDestinyCardTransform(idx)
               const isSelected = activeCardIndex === idx
@@ -1254,7 +1254,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                         </div>
                       )}
 
-                      {/* Card Meaning & Pillar Tag (R = ROOF, O = OF, F = FRAME) */}
+                      {/* Card Meaning & Pillar Tag (R = ROOF, O = OF, F = FAME) */}
                       <span className="relative z-10 font-mono text-[11px] sm:text-xs lg:text-sm uppercase tracking-[0.24em] font-bold text-[var(--ink)] mt-0.5">
                         {card.word}
                       </span>
