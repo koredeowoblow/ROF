@@ -2,7 +2,7 @@ import http from 'http'
 import fs from 'fs'
 import path from 'path'
 import os from 'os'
-import { execSync } from 'child_process'
+import { spawn } from 'child_process'
 import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -43,15 +43,35 @@ const server = http.createServer((req, res) => {
     if (err) {
       res.writeHead(404)
       res.end('Not found')
-      return
+    } else {
+      res.writeHead(200, { 'Content-Type': contentType })
+      res.end(data)
     }
-    res.writeHead(200, { 'Content-Type': contentType })
-    res.end(data)
   })
 })
 
+function runChrome(chromePath, args) {
+  return new Promise((resolve, reject) => {
+    const cp = spawn(chromePath, args, { stdio: 'ignore' })
+    const timeout = setTimeout(() => {
+      cp.kill('SIGKILL')
+      reject(new Error('Chrome timed out'))
+    }, 12000)
+
+    cp.on('error', (err) => {
+      clearTimeout(timeout)
+      reject(err)
+    })
+
+    cp.on('close', (code) => {
+      clearTimeout(timeout)
+      resolve(code)
+    })
+  })
+}
+
 const PORT = 5991
-server.listen(PORT, '127.0.0.1', () => {
+server.listen(PORT, '127.0.0.1', async () => {
   console.log(`Server running at http://127.0.0.1:${PORT}`)
 
   const chromePath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
@@ -70,10 +90,19 @@ server.listen(PORT, '127.0.0.1', () => {
         const outFile = path.join(screensDir, `hero-${vp.name}-look${lookNum}.png`)
         console.log(`Capturing ${vp.name}x${vp.height} Look ${lookNum}...`)
         
-        execSync(
-          `"${chromePath}" --headless=new --no-sandbox --disable-gpu --disable-background-networking --disable-sync --no-first-run --no-default-browser-check --user-data-dir="${tempProfileDir}" --hide-scrollbars --window-size=${vp.width},${vp.height} --virtual-time-budget=1200 --screenshot="${outFile}" "http://127.0.0.1:${PORT}/?card=${look}&dealt=1"`,
-          { stdio: 'inherit', timeout: 15000 }
-        )
+        await runChrome(chromePath, [
+          '--headless',
+          '--disable-gpu',
+          '--no-sandbox',
+          '--no-first-run',
+          '--no-default-browser-check',
+          `--user-data-dir=${tempProfileDir}`,
+          '--hide-scrollbars',
+          `--window-size=${vp.width},${vp.height}`,
+          '--virtual-time-budget=1200',
+          `--screenshot=${outFile}`,
+          `http://127.0.0.1:${PORT}/?card=${look}&dealt=1`,
+        ])
       }
     }
 
@@ -85,10 +114,19 @@ server.listen(PORT, '127.0.0.1', () => {
     // Capture intro sequence frame
     const introFile = path.join(screensDir, 'hero-intro-deck.png')
     console.log('Capturing intro deck spread...')
-    execSync(
-      `"${chromePath}" --headless=new --no-sandbox --disable-gpu --disable-background-networking --disable-sync --no-first-run --no-default-browser-check --user-data-dir="${tempProfileDir}" --hide-scrollbars --window-size=1440,900 --virtual-time-budget=300 --screenshot="${introFile}" "http://127.0.0.1:${PORT}/?dealt=0"`,
-      { stdio: 'pipe', timeout: 15000 }
-    )
+    await runChrome(chromePath, [
+      '--headless',
+      '--disable-gpu',
+      '--no-sandbox',
+      '--no-first-run',
+      '--no-default-browser-check',
+      `--user-data-dir=${tempProfileDir}`,
+      '--hide-scrollbars',
+      '--window-size=1440,900',
+      '--virtual-time-budget=400',
+      `--screenshot=${introFile}`,
+      `http://127.0.0.1:${PORT}/?dealt=0`,
+    ])
 
     console.log('All screenshots captured successfully!')
   } catch (err) {
@@ -103,5 +141,6 @@ server.listen(PORT, '127.0.0.1', () => {
     })
   }
 })
+
 
 
