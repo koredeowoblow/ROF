@@ -8,7 +8,6 @@ import { Mast } from '@/components/Mast'
 import { Numeral } from '@/components/Numeral'
 import { Chip } from '@/components/Chip'
 import { Button } from '@/components/Button'
-import { TeeCutout, TeeDesign, TeeColour } from '@/components/TeeCutout'
 import { ShopAccordion } from '@/components/ShopAccordion'
 import { initialProducts } from '@/api/products'
 import { formatNaira, formatNairaAria } from '@/lib/money'
@@ -91,16 +90,6 @@ function ShopPage() {
         q: searchQuery || undefined,
       },
     })
-  }
-
-  const getTeeMeta = (p: Product): { design: TeeDesign; colour: TeeColour } => {
-    const design: TeeDesign = p.name.includes('Cards') ? 'cards' : p.name.includes('Wave') ? 'wave' : 'scribble'
-    const colour: TeeColour = p.colour.toLowerCase().includes('green')
-      ? 'forest-green'
-      : p.colour.toLowerCase().includes('white')
-      ? 'white'
-      : 'black'
-    return { design, colour }
   }
 
   return (
@@ -283,7 +272,6 @@ function ShopPage() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
               <AnimatePresence mode="popLayout">
                 {filteredProducts.map((product) => {
-                  const meta = getTeeMeta(product)
                   const tileTone: 'ink' | 'bone' = product.ground
 
                   return (
@@ -312,18 +300,21 @@ function ShopPage() {
                             <Numeral value={product.position} size="sm" />
                           </div>
 
-                          {/* 260 GSM Specs badge top-right */}
+                          {/* Collection badge top-right */}
                           <div className="absolute top-3 right-3 z-10 px-2 py-0.5 border border-[var(--hairline)] rounded-xs bg-[var(--bg)]/80 text-[9px] font-mono uppercase tracking-wider text-[var(--fg)] backdrop-blur-xs">
-                            260 GSM
+                            COLLECTION 01
                           </div>
 
                           {/* Cut-out tee image with gentle organic hover lift */}
                           <div className="w-full h-full flex items-center justify-center transition-all duration-300 ease-out group-hover:scale-108 group-hover:-translate-y-1.5 drop-shadow-[0_12px_24px_rgba(0,0,0,0.3)] group-hover:drop-shadow-[0_20px_35px_rgba(0,0,0,0.45)]">
-                            <TeeCutout
-                              design={meta.design}
-                              colour={meta.colour}
-                              withDiamondAccent={false}
-                              className="w-full h-full"
+                            <img
+                              src={product.images[0]}
+                              alt={product.name}
+                              width={320}
+                              height={320}
+                              loading="lazy"
+                              decoding="async"
+                              className="w-full h-full object-contain"
                             />
                           </div>
                         </div>

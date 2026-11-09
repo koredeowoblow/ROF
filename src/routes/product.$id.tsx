@@ -8,7 +8,6 @@ import { Button } from '@/components/Button'
 import { Chip } from '@/components/Chip'
 import { Tape } from '@/components/Tape'
 import { DiamondMark } from '@/components/Logo'
-import { TeeCutout, TeeDesign, TeeColour } from '@/components/TeeCutout'
 import { initialProducts } from '@/api/products'
 import { formatNaira, formatNairaAria } from '@/lib/money'
 import { useBagStore } from '@/features/bag/bagStore'
@@ -44,18 +43,6 @@ function ProductPage() {
 
   // Other rail pieces (excluding current piece)
   const railPieces = initialProducts.filter((p) => p.id !== product.id)
-
-  const getTeeMeta = (p: Product): { design: TeeDesign; colour: TeeColour } => {
-    const design: TeeDesign = p.name.includes('Cards') ? 'cards' : p.name.includes('Wave') ? 'wave' : 'scribble'
-    const colour: TeeColour = p.colour.toLowerCase().includes('green')
-      ? 'forest-green'
-      : p.colour.toLowerCase().includes('white')
-        ? 'white'
-        : 'black'
-    return { design, colour }
-  }
-
-  const meta = getTeeMeta(product)
 
   // Choreographed stagger animation curves
   const infoContainerVariants = {
@@ -188,12 +175,17 @@ function ProductPage() {
                 transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                 className="w-full flex justify-center max-w-lg"
               >
-                <TeeCutout
-                  design={meta.design}
-                  colour={meta.colour}
-                  view={activeView}
-                  withDiamondAccent
-                  className="w-full h-auto max-h-[520px] drop-shadow-2xl"
+                <img
+                  src={product.images[0]}
+                  alt={product.name}
+                  width={560}
+                  height={560}
+                  loading="eager"
+                  decoding="async"
+                  className={cn(
+                    "w-full h-auto max-h-[520px] object-contain drop-shadow-2xl transition-transform duration-500",
+                    activeView === 'closeup' ? 'scale-125' : 'scale-100'
+                  )}
                 />
               </motion.div>
             </AnimatePresence>
@@ -526,7 +518,6 @@ function ProductPage() {
             className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6"
           >
             {railPieces.slice(0, 4).map((p) => {
-              const pMeta = getTeeMeta(p)
               const tileTone: 'ink' | 'bone' = p.ground
 
               return (
@@ -551,11 +542,14 @@ function ProductPage() {
                       className={`relative aspect-square w-full flex items-center justify-center p-4 overflow-hidden ${tileTone === 'ink' ? 'bg-[var(--surface-deep)]' : 'bg-[var(--bone-muted)]'
                         }`}
                     >
-                      <TeeCutout
-                        design={pMeta.design}
-                        colour={pMeta.colour}
-                        withDiamondAccent={false}
-                        className="w-full h-full group-hover:scale-108 transition-transform duration-500 ease-[var(--ease-out-expo)]"
+                      <img
+                        src={p.images[0]}
+                        alt={p.name}
+                        width={280}
+                        height={280}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-contain group-hover:scale-108 transition-transform duration-500 ease-[var(--ease-out-expo)]"
                       />
                     </div>
                     <div className="p-3 bg-[var(--ink)] border-t border-[var(--hairline)]">

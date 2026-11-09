@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'motion/react'
 import { Link } from '@tanstack/react-router'
 import { ChevronLeft, ChevronRight, Check, ArrowRight, Sparkles, Layers } from 'lucide-react'
 import { Product } from '@/api/types'
-import { TeeCutout, TeeDesign, TeeColour } from '@/components/TeeCutout'
 import { Numeral } from '@/components/Numeral'
 import { Button } from '@/components/Button'
 import { DiamondMark } from '@/components/Logo'
@@ -84,20 +83,6 @@ export const ShopAccordion: React.FC<ShopAccordionProps> = ({ products }) => {
     setActiveIndex((prev) => (prev > 0 ? prev - 1 : products.length - 1))
   }
 
-  const getTeeMeta = (p: Product): { design: TeeDesign; colour: TeeColour } => {
-    const design: TeeDesign = p.name.includes('Cards')
-      ? 'cards'
-      : p.name.includes('Wave')
-      ? 'wave'
-      : 'scribble'
-    const colour: TeeColour = p.colour.toLowerCase().includes('green')
-      ? 'forest-green'
-      : p.colour.toLowerCase().includes('white')
-      ? 'white'
-      : 'black'
-    return { design, colour }
-  }
-
   const handleSizeSelect = (productId: string, size: SizeType) => {
     setSelectedSizes((prev) => ({ ...prev, [productId]: size }))
   }
@@ -121,7 +106,6 @@ export const ShopAccordion: React.FC<ShopAccordionProps> = ({ products }) => {
   if (!products.length) return null
 
   const activeProduct = products[activeIndex]
-  const activeMeta = getTeeMeta(activeProduct)
   const activeSize = selectedSizes[activeProduct.id] || 'L'
 
   return (
@@ -133,7 +117,6 @@ export const ShopAccordion: React.FC<ShopAccordionProps> = ({ products }) => {
       <div className="hidden lg:flex w-full h-[620px] gap-2 select-none">
         {products.map((product, idx) => {
           const isExpanded = activeIndex === idx
-          const meta = getTeeMeta(product)
           const size = selectedSizes[product.id] || 'L'
           const tileTone: 'ink' | 'bone' = product.ground
 
@@ -196,7 +179,7 @@ export const ShopAccordion: React.FC<ShopAccordionProps> = ({ products }) => {
                     <div className="absolute top-6 left-6 z-10 flex items-center gap-3">
                       <Numeral value={product.position} size="md" />
                       <span className="px-2 py-0.5 border border-[var(--hairline)] bg-[var(--surface-tint)] text-[10px] font-mono uppercase tracking-wider rounded-xs text-[var(--fg)]">
-                        260 GSM TERRIER
+                        COLLECTION 01
                       </span>
                     </div>
 
@@ -206,20 +189,23 @@ export const ShopAccordion: React.FC<ShopAccordionProps> = ({ products }) => {
                       </span>
                     </div>
 
-                    {/* Garment Cutout Display */}
+                    {/* Garment Real Photo Display */}
                     <div className="w-full max-w-[340px] h-[340px] flex items-center justify-center transition-transform duration-500 hover:scale-105">
-                      <TeeCutout
-                        design={meta.design}
-                        colour={meta.colour}
-                        withDiamondAccent={false}
-                        className="w-full h-full drop-shadow-2xl"
+                      <img
+                        src={product.images[0]}
+                        alt={product.name}
+                        width={380}
+                        height={380}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-contain drop-shadow-[0_16px_36px_rgba(0,0,0,0.35)]"
                       />
                     </div>
 
                     {/* Bottom Ground Cue */}
                     <div className="absolute bottom-4 left-6 right-6 flex items-center justify-between text-[10px] font-mono text-[var(--muted)] border-t border-[var(--hairline)]/50 pt-2">
-                      <span>SILICON ENZYME WASH</span>
-                      <span>OVERSIZED BOXY DRAPE</span>
+                      <span>READY-TO-WEAR</span>
+                      <span>ROF RAGE ARCHIVE</span>
                     </div>
                   </div>
 
@@ -360,15 +346,18 @@ export const ShopAccordion: React.FC<ShopAccordionProps> = ({ products }) => {
                   <Numeral value={activeProduct.position} size="md" />
                 </div>
                 <div className="absolute top-4 right-4 z-10 px-2 py-0.5 border border-[var(--hairline)] bg-[var(--surface-tint)] text-[9px] font-mono uppercase tracking-wider rounded-xs text-[var(--fg)]">
-                  260 GSM
+                  COLLECTION 01
                 </div>
 
                 <div className="w-4/5 h-4/5 flex items-center justify-center">
-                  <TeeCutout
-                    design={activeMeta.design}
-                    colour={activeMeta.colour}
-                    withDiamondAccent={false}
-                    className="w-full h-full drop-shadow-xl"
+                  <img
+                    src={activeProduct.images[0]}
+                    alt={activeProduct.name}
+                    width={320}
+                    height={320}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-contain drop-shadow-xl"
                   />
                 </div>
               </div>

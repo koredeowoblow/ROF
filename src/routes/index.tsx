@@ -9,7 +9,6 @@ import { Numeral } from '@/components/Numeral'
 import { Button } from '@/components/Button'
 import { Chip } from '@/components/Chip'
 import { Ticker } from '@/components/Ticker'
-import { TeeCutout, TeeDesign, TeeColour } from '@/components/TeeCutout'
 import { formatAccentText } from '@/components/Mast'
 import { ScrollSection } from '@/components/ScrollSection'
 import { useBagStore } from '@/features/bag/bagStore'
@@ -58,33 +57,6 @@ const PILLAR_MANTRAS: Record<string, string> = {
   Greatness: 'Every stitch, every drop, built to outlast trends and establish legacy.',
 }
 
-const CHAPTER_HOOKS: Record<string, SectionHook> = {
-  'prod-1': {
-    tag: 'HOOK 01 // THE GAMBLE & THE GLORY',
-    punchline: 'Play the hand you were dealt like it was destined to win.',
-    subhook: 'Five cracked playing cards. No permission asked. Destined for riches.',
-  },
-  'prod-2': {
-    tag: 'HOOK 02 // THE PULSE OF MOMENTUM',
-    punchline: 'Ride the frequency of your own ambition. Never dilute the sound.',
-    subhook: 'Crisp organic drape cut for those who set the tempo in every room.',
-  },
-  'prod-3': {
-    tag: 'HOOK 03 // THE MIDNIGHT CURRENT',
-    punchline: 'Silence the room before you ever speak a word.',
-    subhook: 'Pure obsidian presence with kinetic electric mint and rage accents.',
-  },
-  'prod-4': {
-    tag: 'HOOK 04 // THE ARCHITECTURAL SKELETON',
-    punchline: 'One unbroken standard. Drawn in darkness, built to outlast all noise.',
-    subhook: 'Continuous line geometry mirroring the discipline of building a legacy.',
-  },
-  'prod-5': {
-    tag: 'HOOK 05 // THE RAW CANVAS',
-    punchline: 'A luminous canvas for an uncompromising life.',
-    subhook: 'Burnt terracotta wireframe over chalk-white heavyweight combed terry.',
-  },
-}
 
 export const Route = createFileRoute('/')({
   component: HomePage,
@@ -104,16 +76,6 @@ function HomePage() {
     'prod-4': 'L',
     'prod-5': 'XL',
   })
-
-  const getTeeMeta = (p: Product): { design: TeeDesign; colour: TeeColour } => {
-    const design: TeeDesign = p.name.includes('Cards') ? 'cards' : p.name.includes('Wave') ? 'wave' : 'scribble'
-    const colour: TeeColour = p.colour.toLowerCase().includes('green')
-      ? 'forest-green'
-      : p.colour.toLowerCase().includes('white')
-      ? 'white'
-      : 'black'
-    return { design, colour }
-  }
 
   const handleQuickAdd = (product: Product) => {
     const size = selectedSizes[product.id] || 'L'
@@ -151,12 +113,6 @@ function HomePage() {
       {/* ============================================================ */}
       <section id="collection-chapters" className="w-full flex flex-col">
         {initialProducts.map((product, idx) => {
-          const meta = getTeeMeta(product)
-          const hook = CHAPTER_HOOKS[product.id] || {
-            tag: `HOOK 0${idx + 1} // ARCHIVE`,
-            punchline: product.blurb,
-            subhook: '',
-          }
           const isEven = idx % 2 === 0
           // White tees sit on Ink, Black/Green tees sit on Bone
           const teeTone: 'ink' | 'bone' = product.ground
@@ -182,11 +138,10 @@ function HomePage() {
               <Pane
                 tone={teeTone}
                 withGrain={teeTone === 'ink'}
-                className={`relative flex items-center justify-center p-8 sm:p-12 lg:p-16 xl:p-20 border-b lg:border-b-0 overflow-hidden ${
-                  isEven
-                    ? 'lg:col-span-7 lg:border-r border-[var(--hairline)] lg:order-1'
-                    : 'lg:col-span-7 lg:border-l border-[var(--hairline)] lg:order-2'
-                }`}
+                className={`relative flex items-center justify-center p-8 sm:p-12 lg:p-16 xl:p-20 border-b lg:border-b-0 overflow-hidden ${isEven
+                  ? 'lg:col-span-7 lg:border-r border-[var(--hairline)] lg:order-1'
+                  : 'lg:col-span-7 lg:border-l border-[var(--hairline)] lg:order-2'
+                  }`}
               >
                 {/* Large Ghosted Architectural Watermark Numeral */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden opacity-[0.04]">
@@ -195,11 +150,6 @@ function HomePage() {
                   </span>
                 </div>
 
-                {/* Section Hook Telemetry Pin */}
-                <div className="absolute top-4 left-4 z-10 flex items-center gap-1.5 px-3 py-1 bg-[var(--bg)]/90 backdrop-blur-md border border-[var(--hairline)] rounded-xs text-[10px] font-mono tracking-widest uppercase text-[var(--fg)] shadow-sm">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--acc)] animate-pulse" />
-                  <span>{hook.tag}</span>
-                </div>
 
                 {/* Floating Tee with Continuous Organic Drift & Spring Hover Lift */}
                 <motion.div
@@ -214,13 +164,14 @@ function HomePage() {
                   whileHover={{ scale: 1.05, y: -12, rotateZ: isEven ? -1.5 : 1.5 }}
                   className="relative w-full max-w-md lg:max-w-lg xl:max-w-xl flex flex-col items-center justify-center cursor-pointer group z-10"
                 >
-                  <TeeCutout
-                    design={meta.design}
-                    colour={meta.colour}
-                    withDiamondAccent
-                    interactiveZoom
-                    priority={idx === 0}
-                    className="w-full h-auto max-h-[480px] lg:max-h-[560px] xl:max-h-[640px] drop-shadow-[0_20px_40px_rgba(0,0,0,0.45)]"
+                  <img
+                    src={product.images[0]}
+                    alt={product.name}
+                    width={560}
+                    height={560}
+                    loading={idx === 0 ? "eager" : "lazy"}
+                    decoding="async"
+                    className="w-full h-auto max-h-[480px] lg:max-h-[560px] xl:max-h-[640px] object-contain drop-shadow-[0_24px_50px_rgba(0,0,0,0.45)] transition-transform duration-500 group-hover:scale-105"
                   />
                   {/* Soft Breathing Contact Shadow */}
                   <motion.div
@@ -242,28 +193,14 @@ function HomePage() {
               <Pane
                 tone={infoTone}
                 withGrain={infoTone === 'ink'}
-                className={`flex flex-col justify-between p-6 sm:p-10 lg:p-14 xl:p-18 ${
-                  isEven
-                    ? 'lg:col-span-5 lg:order-2'
-                    : 'lg:col-span-5 lg:order-1'
-                }`}
+                className={`flex flex-col justify-between p-6 sm:p-10 lg:p-14 xl:p-18 ${isEven
+                  ? 'lg:col-span-5 lg:order-2'
+                  : 'lg:col-span-5 lg:order-1'
+                  }`}
               >
                 <div>
                   {/* Editorial Section Hook Banner */}
-                  <div className="mb-4 pb-3.5 border-b border-[var(--hairline)]">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-xs border border-[var(--acc)]/40 bg-[var(--acc)]/10 text-[var(--acc)] text-[10px] font-mono font-bold tracking-widest uppercase">
-                        <DiamondMark size={4} accent filled />
-                        <span>{hook.tag}</span>
-                      </span>
-                      <span className="text-[10px] font-mono text-[var(--muted)] uppercase tracking-wider">
-                        ARCHIVE 01
-                      </span>
-                    </div>
-                    <p className="font-serif italic text-base sm:text-lg lg:text-xl text-[var(--fg)] mt-2 leading-snug">
-                      "{hook.punchline}"
-                    </p>
-                  </div>
+
 
                   {/* Top numeral and index label */}
                   <div className="flex items-start justify-between border-b border-[var(--hairline)] pb-4">
@@ -278,13 +215,16 @@ function HomePage() {
                     <Numeral value={product.position} size="md" />
                   </div>
 
-                  {/* Fabric Specs Tag Strip */}
+                  {/* Fashion Editorial Spec Tags */}
                   <div className="mt-3 flex items-center gap-2 text-[10px] font-mono text-[var(--muted)] uppercase tracking-wider">
                     <span className="px-2 py-0.5 border border-[var(--hairline)] rounded-xs bg-[var(--surface-tint)]">
-                      260 GSM SILK-TERRY
+                      COLLECTION 01
                     </span>
                     <span className="px-2 py-0.5 border border-[var(--hairline)] rounded-xs bg-[var(--surface-tint)]">
-                      OVERSIZED BOXY
+                      READY-TO-WEAR
+                    </span>
+                    <span className="px-2 py-0.5 border border-[var(--hairline)] rounded-xs bg-[var(--surface-tint)] text-[var(--acc)]">
+                      {product.colour}
                     </span>
                   </div>
 
@@ -416,57 +356,14 @@ function HomePage() {
             </h2>
           </motion.div>
 
-          {/* Interactive Four Pillars Tabs */}
+          {/* Brand Conviction Quote */}
           <div className="mt-12 pt-8 border-t border-[var(--hairline)]">
             <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[var(--muted)] block mb-3">
-              Explore the four pillars
+              Brand Conviction
             </span>
-            <div className="flex flex-wrap items-center gap-2.5">
-              {['Ambition', 'Confidence', 'Originality', 'Greatness'].map((pillar) => {
-                const isActive = activePillar === pillar
-                return (
-                  <button
-                    key={pillar}
-                    type="button"
-                    onClick={() => setActivePillar(pillar)}
-                    className={cn(
-                      'relative px-4 py-2 text-xs lg:text-sm font-mono uppercase tracking-[0.18em] transition-colors rounded-xs cursor-pointer flex items-center gap-2 select-none',
-                      isActive
-                        ? 'text-[var(--label-on-acc)] font-bold shadow-md'
-                        : 'border border-[var(--hairline)] text-[var(--bone)]/75 hover:text-[var(--bone)] hover:border-[var(--bone)]/60 bg-[var(--surface-tint)]'
-                    )}
-                  >
-                    {isActive && (
-                      <motion.div
-                        layoutId="activePillarPill"
-                        transition={
-                          prefersReduced
-                            ? { duration: 0 }
-                            : { type: 'spring', stiffness: 450, damping: 35 }
-                        }
-                        className="absolute inset-0 bg-[var(--acc)] rounded-xs"
-                      />
-                    )}
-                    <span className="relative z-10">{pillar}</span>
-                    {isActive && <DiamondMark size={4} accent filled className="relative z-10 text-[var(--label-on-acc)]" />}
-                  </button>
-                )
-              })}
+            <div className="p-4 lg:p-5 rounded-xs border border-[var(--acc)]/30 bg-[var(--acc)]/5 text-base sm:text-lg text-[var(--bone)]/90 font-serif italic max-w-xl">
+              "Destined for riches. Built with discipline, worn with pride."
             </div>
-
-            {/* Active Pillar Mantra Callout */}
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activePillar}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                className="mt-4 p-4 lg:p-5 rounded-xs border border-[var(--acc)]/30 bg-[var(--acc)]/5 text-sm sm:text-base lg:text-lg text-[var(--bone)]/90 font-serif italic max-w-xl shadow-inner"
-              >
-                "{PILLAR_MANTRAS[activePillar]}"
-              </motion.div>
-            </AnimatePresence>
           </div>
         </Pane>
 
