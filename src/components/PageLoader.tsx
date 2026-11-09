@@ -298,6 +298,11 @@ export const PageLoader: React.FC<PageLoaderProps> = ({ currentPath }) => {
                 <span className="text-[var(--acc)]">◆</span>
                 <span className="text-[var(--bone)] font-semibold">FAME</span>
               </div>
+
+              {/* Luxury Fashion Statement */}
+              <p className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.26em] text-[var(--bone)]/70 mt-1">
+                A luxury fashion brand made for the street
+              </p>
             </motion.div>
           </div>
         </motion.div>
