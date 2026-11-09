@@ -9,7 +9,7 @@ import { Button } from '@/components/Button'
 import { DiamondMark } from '@/components/Logo'
 import { DiamondCursor } from '@/components/DiamondCursor'
 import { formatAccentText } from '@/components/Mast'
-import { PageLoader, RouteProgressBar } from '@/components/PageLoader'
+import { RouteProgressBar } from '@/components/PageLoader'
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -108,9 +108,6 @@ function RootComponent() {
 
   return (
     <div className="flex min-h-[100svh] flex-col bg-[var(--ink)] text-[var(--bone)]">
-      {/* Luxury ROF Monolith Loader before every page navigation */}
-      <PageLoader currentPath={router.location.pathname} />
-
       {/* Top Routing Progress Beam */}
       <RouteProgressBar activeKey={router.location.pathname} />
 

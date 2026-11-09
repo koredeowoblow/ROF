@@ -11,10 +11,10 @@ export const initialProducts: Product[] = [
     print: 'Five cracked playing cards spelling ROF RAGE, red dice, Destined for riches print',
     price: 30000,
     blurb:
-      'Heavyweight 260 GSM combed cotton. Oversized boxy silhouette featuring five hand-rendered cracked playing cards spelling ROF RAGE, accented with high-gloss red dice and the signature brand conviction.',
+      'Forest green tee featuring five cracked playing cards spelling ROF RAGE, high-gloss red dice graphic, and Destined for riches print.',
     ground: 'bone', // Green sits on Bone where it reads best
     zoomOrigin: '50% 45%',
-    images: ['/images/destined-cards-green.webp', '/images/destined-cards-green-detail.webp'],
+    images: ['/images/destined-cards-green.webp', '/images/destined-cards-green.webp'],
     position: 1,
     published: true,
     variants: [
@@ -35,10 +35,10 @@ export const initialProducts: Product[] = [
     print: 'Warped ROF RAGE wordmark in red and mint, lilac tag',
     price: 25000,
     blurb:
-      'Crisp heavyweight organic cotton with dropped shoulders and a dense 1.25-inch rib neckband. Features a warped screenprint across the chest in rage red and cool mint with an authentic lilac brand tag.',
+      'White tee featuring the warped ROF RAGE wordmark across the chest in red and mint, with a lilac brand tag.',
     ground: 'ink', // White sits on Ink where it reads best
     zoomOrigin: '50% 40%',
-    images: ['/images/rage-wave-white.webp', '/images/rage-wave-white-detail.webp'],
+    images: ['/images/rage-wave-white.webp', '/images/rage-wave-white.webp'],
     pairId: 'prod-3',
     position: 2,
     published: true,
@@ -60,10 +60,10 @@ export const initialProducts: Product[] = [
     print: 'Warped ROF RAGE wordmark in red and mint, lilac tag',
     price: 25000,
     blurb:
-      'Deep jet black heavy cotton construction. Engineered for maximum longevity with reinforced chain-stitched seams and the signature warped ROF RAGE wave graphic in high-contrast inks.',
+      'Black tee featuring the warped ROF RAGE wave graphic across the chest in red and mint, with a lilac brand tag.',
     ground: 'bone', // Black sits on Bone where it reads best
     zoomOrigin: '50% 40%',
-    images: ['/images/rage-wave-black.webp', '/images/rage-wave-black-detail.webp'],
+    images: ['/images/rage-wave-black.webp', '/images/rage-wave-black.webp'],
     pairId: 'prod-2',
     position: 3,
     published: true,
@@ -85,10 +85,10 @@ export const initialProducts: Product[] = [
     print: 'Continuous line drawing in an orange frame, ROF Rage worked into the lines',
     price: 28000,
     blurb:
-      'A singular piece of wearable art. Features an intricate continuous line drawing contained within a burnt orange architectural frame, seamlessly weaving the ROF Rage identity into every contour.',
+      'White tee featuring an intricate continuous line drawing contained within a burnt orange architectural frame, with ROF Rage worked into the lines.',
     ground: 'ink', // White sits on Ink
     zoomOrigin: '50% 45%',
-    images: ['/images/rage-scribble-white.webp', '/images/rage-scribble-white-detail.webp'],
+    images: ['/images/rage-scribble-white.webp', '/images/rage-scribble-white.webp'],
     pairId: 'prod-5',
     position: 4,
     published: true,
@@ -110,10 +110,10 @@ export const initialProducts: Product[] = [
     print: 'Continuous line drawing in an orange frame, ROF Rage worked into the lines',
     price: 28000,
     blurb:
-      'Jet black boxy silhouette providing a high-impact contrast against the burnt orange continuous line artwork. Screenprinted by hand using water-based discharge inks for a soft, breathable hand feel.',
+      'Black tee featuring a burnt orange continuous line artwork contained in an architectural frame, with ROF Rage worked into the lines.',
     ground: 'bone', // Black sits on Bone
     zoomOrigin: '50% 45%',
-    images: ['/images/rage-scribble-black.webp', '/images/rage-scribble-black-detail.webp'],
+    images: ['/images/rage-scribble-black.webp', '/images/rage-scribble-black.webp'],
     pairId: 'prod-4',
     position: 5,
     published: true,

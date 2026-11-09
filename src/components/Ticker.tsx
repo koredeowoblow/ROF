@@ -10,12 +10,10 @@ interface TickerProps {
 
 const defaultItems = [
   'ROF RAGE',
-  'A luxury fashion brand made for the street',
-  'Ready-to-wear apparel',
-  'Collection 01',
+  'Clothing and fashion',
   'Destined for riches',
-  'Three architectural heavyweight tees',
-  'Haute streetwear',
+  'Collection 01 / Five pieces',
+  'Destined for greatness',
 ]
 
 /**

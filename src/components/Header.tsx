@@ -72,10 +72,10 @@ export const Header: React.FC = () => {
               <Logo size="md" className="transition-transform group-hover:scale-[1.02]" />
               <div className="flex flex-col border-l border-[var(--hairline)] pl-2 sm:pl-3 text-left">
                 <span className="font-mono text-[8px] sm:text-[9px] uppercase tracking-[0.2em] sm:tracking-[0.24em] text-[var(--acc)] font-bold leading-tight">
-                  CLOTHING BRAND
+                  ROF RAGE
                 </span>
                 <span className="font-mono text-[7px] sm:text-[8px] uppercase tracking-[0.16em] sm:tracking-[0.18em] text-[var(--bone)]/60 leading-tight">
-                  READY-TO-WEAR
+                  CLOTHING AND FASHION
                 </span>
               </div>
             </Link>

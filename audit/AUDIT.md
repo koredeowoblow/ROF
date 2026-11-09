@@ -66,7 +66,13 @@ Scores range from 1 (Broken / Obstructive) to 5 (Production-Grade / Masterful).
 * **Why it matters to a shopper:** Information overload. Real navigational links (`Shop`, `Story`, `Help`, `Contact`, `Track order`) are drowned out by fake hardware telemetry.
 * **Smallest fix:** Strip all telemetry chips from the header and hero. The header retains only: Logo, 5 text links, and Bag trigger with count. 260 GSM details move to product cards/pages where they belong.
 
-#### M-02: Home Route JS Exceeds Mobile Performance Budget (221 KB vs 130 KB Target)
+#### M-02: Orders Stored Client-Side in LocalStorage (No Server Backend Connected)
+* **Location:** [`src/api/client.ts`](file:///c:/Users/pc/Documents/GitHub/ROF/src/api/client.ts#L6-L100)
+* **What is wrong:** `api/client.ts` stores orders entirely in the browser's `localStorage` (`STORAGE_KEYS.ORDERS = 'rof_orders_db'`) and calculates prices, delivery fees, and discount codes purely client-side. No order payload is ever dispatched to a remote backend server.
+* **Why it matters to a shopper:** Orders placed on one device cannot be seen on another device or by real dispatch staff unless synced to an external order management database. *(Documented as instructed; not modified in this phase).*
+* **Smallest fix:** Documented for architecture roadmap; connect a webhook or remote order ingestion endpoint in a subsequent release.
+
+#### M-03: Home Route JS Exceeds Mobile Performance Budget (221 KB vs 130 KB Target)
 * **Location:** [`src/main.tsx`](file:///c:/Users/pc/Documents/GitHub/ROF/src/main.tsx#L40-L45), [`dist/assets/`](file:///c:/Users/pc/Documents/GitHub/ROF/dist/assets)
 * **What is wrong:** The production build bundles MSW browser mock (`browser-CvzLi16U.js`, 94.68 KB gzipped) and multiple vendor chunks, totaling over 221 KB gzipped for the initial home route.
 * **Why it matters to a shopper:** On a throttled Slow 4G / 4x CPU mobile device in Nigeria or emerging markets, this results in a Time to Interactive (TTI) and Largest Contentful Paint (LCP) exceeding 3.8 seconds.
@@ -190,3 +196,4 @@ flowchart TD
 ---
 
 *Phase 1 Audit complete. Standing by for approval before proceeding to Phase 2 (revamp).*
+

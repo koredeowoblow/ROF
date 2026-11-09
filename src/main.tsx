@@ -41,8 +41,8 @@ declare module '@tanstack/react-router' {
 }
 
 async function startApp() {
-  // Optional MSW mocking layer activation for network simulation
-  if (typeof window !== 'undefined' && window.location.search.includes('msw=true')) {
+  // Only load MSW in development if explicitly requested via ?msw=true (completely excluded from production bundles)
+  if (import.meta.env.DEV && typeof window !== 'undefined' && window.location.search.includes('msw=true')) {
     const { worker } = await import('./mocks/browser')
     await worker.start({ onUnhandledRequest: 'bypass' })
   }
