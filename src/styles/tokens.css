@@ -6,8 +6,10 @@
   --bone: #ece3cb;
   /* Accent (about 10%): Marigold gold (italic headlines, big numbers, buttons, moving strip) */
   --acc-on-ink: #f0b429;
-  --acc-on-bone: #8f5200; /* High-contrast burnished gold/amber on aged cream ground */
-  --label-on-acc: #0e2f2f; /* Deep pine teal label text on radiant marigold gold */
+  --acc-on-bone: #8f5200;
+  /* High-contrast burnished gold/amber on aged cream ground */
+  --label-on-acc: #0e2f2f;
+  /* Deep pine teal label text on radiant marigold gold */
 
   /* Typography */
   --font-display: 'Instrument Serif', Georgia, serif;

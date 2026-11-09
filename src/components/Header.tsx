@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'motion/react'
 import { Menu, X, ShoppingBag } from 'lucide-react'
 import { Logo, DiamondMark } from './Logo'
 import { useBagStore } from '@/features/bag/bagStore'
+import { useScrollDirection } from '@/lib/useScrollDirection'
 import { cn } from '@/lib/utils'
 
 export const Header: React.FC = () => {
@@ -12,6 +13,7 @@ export const Header: React.FC = () => {
   const setBagOpen = useBagStore((s) => s.setIsOpen)
   const totalPieces = useBagStore((s) => s.totalPieces())
   const [sealedMindset, setSealedMindset] = useState<string | null>(null)
+  const { direction, isAtTop } = useScrollDirection()
 
   React.useEffect(() => {
     const syncMindset = () => {
@@ -56,7 +58,15 @@ export const Header: React.FC = () => {
 
       <header
         data-tone="ink"
-        className="fixed top-0 left-0 right-0 z-40 bg-[var(--ink)]/95 backdrop-blur-md border-b border-[var(--hairline)]"
+        className={cn(
+          'fixed top-0 left-0 right-0 z-40 bg-[var(--ink)]/95 backdrop-blur-md transition-all duration-300',
+          !isAtTop && direction === 'down'
+            ? '-translate-y-full border-b border-[var(--hairline)] opacity-0 pointer-events-none'
+            : 'translate-y-0 opacity-100',
+          !isAtTop && direction === 'up'
+            ? 'border-b border-[var(--acc)]/40 shadow-[0_8px_30px_rgba(14,47,47,0.8)]'
+            : 'border-b border-[var(--hairline)]'
+        )}
       >
         <div className="mx-auto flex h-16 md:h-20 max-w-[var(--max-content)] items-center justify-between px-4 md:px-8">
           {/* Left: Logo & Mindset Retention Badge */}

@@ -15,6 +15,29 @@ interface ShopAccordionProps {
   products: Product[]
 }
 
+const ACCORDION_HOOKS: Record<string, { tag: string; punchline: string }> = {
+  'prod-1': {
+    tag: 'HOOK 01 // THE GAMBLE & THE GLORY',
+    punchline: 'Play the hand you were dealt like it was destined to win.',
+  },
+  'prod-2': {
+    tag: 'HOOK 02 // THE PULSE OF MOMENTUM',
+    punchline: 'Ride the frequency of your own ambition. Never dilute the sound.',
+  },
+  'prod-3': {
+    tag: 'HOOK 03 // THE MIDNIGHT CURRENT',
+    punchline: 'Silence the room before you ever speak a word.',
+  },
+  'prod-4': {
+    tag: 'HOOK 04 // THE ARCHITECTURAL SKELETON',
+    punchline: 'One unbroken standard. Drawn in darkness, built to outlast all noise.',
+  },
+  'prod-5': {
+    tag: 'HOOK 05 // THE RAW CANVAS',
+    punchline: 'A luminous canvas for an uncompromising life.',
+  },
+}
+
 const AVAILABLE_SIZES = ['S', 'M', 'L', 'XL', 'XXL'] as const
 type SizeType = typeof AVAILABLE_SIZES[number]
 
@@ -135,6 +158,9 @@ export const ShopAccordion: React.FC<ShopAccordionProps> = ({ products }) => {
                       {String(product.position).padStart(2, '0')}
                     </span>
                     <DiamondMark size={6} accent filled />
+                    <span className="text-[7px] font-mono uppercase tracking-widest text-[var(--acc-on-bone)] font-bold">
+                      HOOK 0{idx + 1}
+                    </span>
                   </div>
 
                   {/* Rotated Vertical Title */}
@@ -200,6 +226,22 @@ export const ShopAccordion: React.FC<ShopAccordionProps> = ({ products }) => {
                   {/* Right: Architectural Dossier & Quick Actions (5 cols) */}
                   <div className="col-span-5 h-full p-8 flex flex-col justify-between bg-[var(--bone)] text-[var(--ink)] border-l border-[var(--hairline)]">
                     <div>
+                      {/* Section Hook Tag & Punchline */}
+                      <div className="pb-3 mb-3 border-b border-[var(--hairline)] flex items-center justify-between">
+                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-xs border border-[var(--acc-on-bone)]/30 bg-[var(--acc-on-bone)]/10 text-[var(--acc-on-bone)] text-[9px] font-mono uppercase tracking-widest font-bold">
+                          <DiamondMark size={4} accent filled />
+                          <span>HOOK 0{idx + 1} // {product.name}</span>
+                        </span>
+                        <span className="text-[10px] font-mono text-[var(--muted)]">ARCHIVE 01</span>
+                      </div>
+
+                      {/* Hook Quote */}
+                      {ACCORDION_HOOKS[product.id] && (
+                        <p className="font-serif italic text-sm text-[var(--acc-on-bone)] mb-3 leading-snug">
+                          "{ACCORDION_HOOKS[product.id].punchline}"
+                        </p>
+                      )}
+
                       {/* Subtitle */}
                       <div className="flex items-center gap-2 text-xs font-mono text-[var(--acc-on-bone)] uppercase tracking-widest font-bold">
                         <DiamondMark size={6} accent filled />
@@ -207,11 +249,11 @@ export const ShopAccordion: React.FC<ShopAccordionProps> = ({ products }) => {
                       </div>
 
                       {/* Title */}
-                      <h3 className="font-serif text-3xl font-bold text-[var(--ink)] mt-2 leading-tight">
+                      <h3 className="font-serif text-3xl font-bold text-[var(--ink)] mt-1.5 leading-tight">
                         {product.name}
                       </h3>
 
-                      <p className="mt-3 text-xs text-[var(--ink)]/80 leading-relaxed font-sans">
+                      <p className="mt-2.5 text-xs text-[var(--ink)]/80 leading-relaxed font-sans">
                         Heavyweight 260 GSM combed cotton. Built with dropped shoulders, reinforced ribbed neckline, and subtle luxury silhouette.
                       </p>
 
@@ -335,11 +377,20 @@ export const ShopAccordion: React.FC<ShopAccordionProps> = ({ products }) => {
               <div className="p-5 flex flex-col gap-4 bg-[var(--bone)] text-[var(--ink)] border-t border-[var(--hairline)]">
                 <div>
                   <div className="flex items-center justify-between text-xs font-mono text-[var(--muted)] uppercase tracking-wider">
-                    <span>{activeProduct.colour}</span>
+                    <span className="inline-flex items-center gap-1 text-[var(--acc-on-bone)] font-bold">
+                      <DiamondMark size={4} accent filled />
+                      <span>HOOK 0{activeIndex + 1}</span>
+                    </span>
                     <span className="font-bold text-[var(--ink)]">{formatNaira(activeProduct.price)}</span>
                   </div>
 
-                  <h3 className="font-serif text-2xl font-bold text-[var(--ink)] mt-1">
+                  {ACCORDION_HOOKS[activeProduct.id] && (
+                    <p className="font-serif italic text-xs text-[var(--acc-on-bone)] mt-1.5 leading-snug">
+                      "{ACCORDION_HOOKS[activeProduct.id].punchline}"
+                    </p>
+                  )}
+
+                  <h3 className="font-serif text-2xl font-bold text-[var(--ink)] mt-1.5">
                     {activeProduct.name}
                   </h3>
 

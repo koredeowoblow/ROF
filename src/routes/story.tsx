@@ -5,6 +5,7 @@ import { Mast } from '@/components/Mast'
 import { Button } from '@/components/Button'
 import { DiamondMark, Logo } from '@/components/Logo'
 import { formatAccentText } from '@/components/Mast'
+import { ScrollSection } from '@/components/ScrollSection'
 
 export const Route = createFileRoute('/story')({
   component: StoryPage,
@@ -25,7 +26,7 @@ function StoryPage() {
       />
 
       {/* 2. Bone and Ink Split: The Brand Story in the Owner's Words */}
-      <section className="w-full border-b border-[var(--hairline)] grid grid-cols-1 lg:grid-cols-12 min-h-[580px]">
+      <ScrollSection className="w-full border-b border-[var(--hairline)] grid grid-cols-1 lg:grid-cols-12 min-h-[580px]">
         {/* Ink Pane (3fr / 7 cols) */}
         <Pane tone="ink" withGrain className="lg:col-span-7 p-8 sm:p-12 lg:p-16 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-[var(--hairline)]">
           <div>
@@ -38,7 +39,7 @@ function StoryPage() {
             </h2>
             <div className="mt-8 space-y-4 text-base sm:text-lg text-[var(--muted)] leading-relaxed font-sans max-w-xl">
               <p>
-                ROF means Roof of Fame. It was created with a clear point of view: ambition is not something you hide, and greatness is not accidental.
+                ROF stands for Roof Of Frame. It was created with a clear point of view: ambition is not something you hide, and greatness is not accidental.
               </p>
               <p>
                 It is for people on the climb. People who put in the quiet hours, who take pride in their craft, and who intend to build their own legacy on their own terms.
@@ -74,10 +75,10 @@ function StoryPage() {
             </Link>
           </div>
         </Pane>
-      </section>
+      </ScrollSection>
 
       {/* 3. Ink Section: Three Designs */}
-      <section data-tone="ink" className="w-full bg-[var(--ink)] text-[var(--bone)] py-16 sm:py-24 px-4 md:px-8 border-b border-[var(--hairline)] grain-overlay">
+      <ScrollSection data-tone="ink" className="w-full bg-[var(--ink)] text-[var(--bone)] py-16 sm:py-24 px-4 md:px-8 border-b border-[var(--hairline)] grain-overlay">
         <div className="mx-auto max-w-[var(--max-content)]">
           <div className="max-w-2xl mb-12">
             <span className="label-caps text-[var(--acc)]">The Trilogy</span>
@@ -91,7 +92,7 @@ function StoryPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Design 1: Cards */}
-            <div className="p-8 border border-[var(--hairline)] bg-[#121110] flex flex-col justify-between min-h-[280px]">
+            <div className="p-8 border border-[var(--hairline)] bg-[#0a2323] flex flex-col justify-between min-h-[280px]">
               <div>
                 <span className="label-caps text-[var(--acc)]">Design 01</span>
                 <h3 className="font-serif text-2xl sm:text-3xl text-[var(--bone)] mt-2 mb-3">
@@ -109,7 +110,7 @@ function StoryPage() {
             </div>
 
             {/* Design 2: Wave */}
-            <div className="p-8 border border-[var(--hairline)] bg-[#121110] flex flex-col justify-between min-h-[280px]">
+            <div className="p-8 border border-[var(--hairline)] bg-[#0a2323] flex flex-col justify-between min-h-[280px]">
               <div>
                 <span className="label-caps text-[var(--acc)]">Design 02</span>
                 <h3 className="font-serif text-2xl sm:text-3xl text-[var(--bone)] mt-2 mb-3">
@@ -127,7 +128,7 @@ function StoryPage() {
             </div>
 
             {/* Design 3: Scribble */}
-            <div className="p-8 border border-[var(--hairline)] bg-[#121110] flex flex-col justify-between min-h-[280px]">
+            <div className="p-8 border border-[var(--hairline)] bg-[#0a2323] flex flex-col justify-between min-h-[280px]">
               <div>
                 <span className="label-caps text-[var(--acc)]">Design 03</span>
                 <h3 className="font-serif text-2xl sm:text-3xl text-[var(--bone)] mt-2 mb-3">
@@ -145,7 +146,7 @@ function StoryPage() {
             </div>
           </div>
         </div>
-      </section>
+      </ScrollSection>
     </div>
   )
 }

@@ -108,8 +108,8 @@ function RootComponent() {
 
   return (
     <div className="flex min-h-[100svh] flex-col bg-[var(--ink)] text-[var(--bone)]">
-      {/* Editorial Entrance Page Loader */}
-      <PageLoader />
+      {/* Luxury ROF Monolith Loader before every page navigation */}
+      <PageLoader currentPath={router.location.pathname} />
 
       {/* Top Routing Progress Beam */}
       <RouteProgressBar activeKey={router.location.pathname} />
