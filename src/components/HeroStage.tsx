@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence, useReducedMotion } from 'motion/react'
-import { RotateCw, Sparkles, BookOpen, Check, X, ShieldCheck, Layers } from 'lucide-react'
+import { Sparkles, BookOpen, Check, X, ShieldCheck, Layers } from 'lucide-react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { DiamondMark } from '@/components/Logo'
 import { safeStorage } from '@/lib/storage'
@@ -232,7 +232,9 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   const prefersReduced = useReducedMotion()
 
   const [activeCardIndex, setActiveCardIndex] = useState<number>(1) // Center 'O' card default
-  const [isFlipped, setIsFlipped] = useState<boolean>(false)
+  const [flippedCards, setFlippedCards] = useState<Record<number, boolean>>({}) // Per-card flip state
+  const flipTimersRef = useRef<Record<number, NodeJS.Timeout>>({})
+  const lastTapTimeRef = useRef<Record<number, number>>({})
   const [isTouch, setIsTouch] = useState(true)
   const [sealedMindset, setSealedMindset] = useState<string | null>(null)
   const [isSealing, setIsSealing] = useState(false)
@@ -256,6 +258,11 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   const handleShuffleDeck = useCallback(() => {
     if (isShufflingRef.current) return
     isShufflingRef.current = true
+
+    // Clear any active individual card flip timers and reset flip state
+    Object.values(flipTimersRef.current).forEach((timer) => clearTimeout(timer))
+    flipTimersRef.current = {}
+    setFlippedCards({})
 
     // Step 1: 20 cards face-down in wide table ribbon spread ("faced backward plenty")
     setDeckPhase('spread')
@@ -413,15 +420,67 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
     rawMouseY.set(0)
   }
 
+  // Clean up any remaining card flip timers on unmount
+  useEffect(() => {
+    return () => {
+      Object.values(flipTimersRef.current).forEach((timer) => clearTimeout(timer))
+    }
+  }, [])
+
   // Handle Card Select
   const handleSelectCard = useCallback((index: number) => {
     setActiveCardIndex(index)
   }, [])
 
-  // Handle Card Flip
-  const handleToggleFlip = useCallback(() => {
-    setIsFlipped((prev) => !prev)
-  }, [])
+  // Handle Individual Card Flip (Double Tap / Double Click with 10s auto-revert)
+  const handleToggleCardFlip = useCallback(
+    (idx: number) => {
+      if (deckPhase !== 'dealt') return
+
+      setFlippedCards((prev) => {
+        const isCurrentlyFlipped = Boolean(prev[idx])
+        const willBeFlipped = !isCurrentlyFlipped
+
+        // Clear existing timer if any for this card
+        if (flipTimersRef.current[idx]) {
+          clearTimeout(flipTimersRef.current[idx])
+          delete flipTimersRef.current[idx]
+        }
+
+        if (willBeFlipped) {
+          // Revert back to front face after exactly 10 seconds
+          flipTimersRef.current[idx] = setTimeout(() => {
+            setFlippedCards((current) => {
+              if (!current[idx]) return current
+              return { ...current, [idx]: false }
+            })
+            delete flipTimersRef.current[idx]
+          }, 10000)
+        }
+
+        return { ...prev, [idx]: willBeFlipped }
+      })
+    },
+    [deckPhase]
+  )
+
+  // Double-tap detector for mobile & touchscreens
+  const handleCardTouchEnd = useCallback(
+    (idx: number, e: React.TouchEvent) => {
+      if (deckPhase !== 'dealt') return
+      const now = Date.now()
+      const lastTap = lastTapTimeRef.current[idx] || 0
+      if (now - lastTap < 350) {
+        // Double-tap detected!
+        e.preventDefault()
+        handleToggleCardFlip(idx)
+        lastTapTimeRef.current[idx] = 0
+      } else {
+        lastTapTimeRef.current[idx] = now
+      }
+    },
+    [deckPhase, handleToggleCardFlip]
+  )
 
   // Handle Dice Roll & Destiny Revelation
   const handleRollDice = useCallback(() => {
@@ -665,12 +724,13 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
     }
 
     // 'dealing' or 'dealt':
+    const isCardFlipped = Boolean(flippedCards[idx])
     return {
       x: xOffsets[idx],
       y: isSelected ? -24 : baseY[idx],
       z: isSelected ? 40 : idx === 1 ? 30 : 20,
       rotateZ: isSelected ? 0 : baseRot[idx],
-      rotateY: isFlipped ? 180 : 0, // Face up!
+      rotateY: deckPhase === 'dealt' && isCardFlipped ? 180 : 0, // Face up when dealt, flips to 180 on individual double tap
       scale: isSelected ? 1.06 : 0.98,
       zIndex: isSelected ? 60 : idx === 1 ? 40 : 30,
     }
@@ -982,6 +1042,18 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                       handleSelectCard(idx)
                     }
                   }}
+                  onDoubleClick={(e) => {
+                    if (deckPhase === 'dealt') {
+                      e.stopPropagation()
+                      handleToggleCardFlip(idx)
+                    }
+                  }}
+                  onTouchEnd={(e) => {
+                    if (deckPhase === 'dealt') {
+                      handleCardTouchEnd(idx, e)
+                    }
+                  }}
+                  title="Click to select • Double-tap or double-click to flip card"
                   onMouseEnter={() => {
                     if (deckPhase === 'dealt') handleSelectCard(idx)
                   }}
@@ -1360,18 +1432,6 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                 `DESTINY ROLL [${diceNumber}]`
               )}
             </span>
-          </motion.button>
-
-          {/* Flip Cards Button */}
-          <motion.button
-            type="button"
-            onClick={handleToggleFlip}
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.94 }}
-            className="flex items-center gap-1.5 px-4 py-2.5 min-h-[44px] border border-[var(--hairline)] hover:border-[var(--bone)] text-xs font-mono uppercase tracking-wider text-[var(--bone)] bg-[var(--ink)]/80 backdrop-blur-md rounded-sm cursor-pointer transition-colors"
-          >
-            <RotateCw size={13} className={cn('text-[var(--acc)]', isFlipped && 'rotate-180 transition-transform duration-300')} />
-            <span>{isFlipped ? 'SHOW FRONT' : 'INSPECT CARDS'}</span>
           </motion.button>
 
           {/* Primary CTA: Witness The Capsule */}
