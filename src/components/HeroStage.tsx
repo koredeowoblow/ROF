@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
-import { motion, useMotionValue, useSpring, useTransform, AnimatePresence, useReducedMotion } from 'motion/react'
+import { motion, useMotionValue, useSpring, useTransform, useReducedMotion } from 'motion/react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { DiamondMark } from '@/components/Logo'
 import { Button } from '@/components/Button'
@@ -54,7 +54,7 @@ const CardBackFace: React.FC<{ serial?: string }> = ({ serial = 'ROF-ARCHIVE-01'
 )
 
 // ---------------------------------------------------------------------------
-// THE 3 CARDS OF ROF: ROOF • OF • FAME (AMBITION • CONFIDENCE • ORIGINALITY)
+// THE 3 CARDS OF ROF: ROOF • OF • FAME & THEIR SIGNATURE FASHION SILHOUETTES
 // ---------------------------------------------------------------------------
 interface RofCard {
   id: number
@@ -67,6 +67,11 @@ interface RofCard {
   title: string
   mantra: string
   serial: string
+  garmentName: string
+  garmentColor: string
+  garmentImage: string
+  garmentPrice: number
+  garmentSlug: string
 }
 
 const ROF_CARDS: RofCard[] = [
@@ -81,6 +86,11 @@ const ROF_CARDS: RofCard[] = [
     title: 'THE APEX OF AMBITION',
     mantra: 'Built above the noise. No ceiling to what was destined.',
     serial: 'ROF-ROOF-8821',
+    garmentName: 'Destined Cards Tee',
+    garmentColor: 'Forest green',
+    garmentImage: '/images/destined-cards-green.webp',
+    garmentPrice: 30000,
+    garmentSlug: 'destined-cards-tee',
   },
   {
     id: 2,
@@ -93,6 +103,11 @@ const ROF_CARDS: RofCard[] = [
     title: 'THE SACRED CONNECTOR',
     mantra: 'Pressure does not break the core; it refines our edges into diamonds.',
     serial: 'ROF-OF-9940',
+    garmentName: 'Rage Wave Tee',
+    garmentColor: 'White',
+    garmentImage: '/images/rage-wave-white.webp',
+    garmentPrice: 25000,
+    garmentSlug: 'rage-wave-tee-white',
   },
   {
     id: 3,
@@ -103,8 +118,13 @@ const ROF_CARDS: RofCard[] = [
     roman: 'III',
     label: 'FAME',
     title: 'THE PINNACLE OF FAME',
-    mantra: 'Intention recognized. Greatness earned through relentless craft and ambition.',
+    mantra: 'Intention recognized. Greatness earned through relentless craft.',
     serial: 'ROF-FAME-7703',
+    garmentName: 'Rage Scribble Tee',
+    garmentColor: 'Black',
+    garmentImage: '/images/rage-scribble-black.webp',
+    garmentPrice: 28000,
+    garmentSlug: 'rage-scribble-tee-white',
   },
 ]
 
@@ -112,7 +132,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   const navigate = useNavigate()
   const prefersReduced = useReducedMotion()
 
-  const [activeCardIndex, setActiveCardIndex] = useState<number>(1) // Center 'O' card default
+  const [activeCardIndex, setActiveCardIndex] = useState<number>(0) // First card (Destined Cards Tee) default
   const [flippedCards, setFlippedCards] = useState<Record<number, boolean>>({}) // Per-card flip state
   const flipTimersRef = useRef<Record<number, NodeJS.Timeout>>({})
   const lastTapTimeRef = useRef<Record<number, number>>({})
@@ -445,7 +465,6 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
 
   const getDestinyCardTransform = (idx: number) => {
     const cardI = 17 + idx
-    const isLeft = false
     const packetIdx = cardI - 10
     const interleaveOrder = (cardI - 10) * 2 + 1
     const isSelected = activeCardIndex === idx
@@ -546,6 +565,8 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
     }
   }
 
+  const activeGarment = ROF_CARDS[activeCardIndex] || ROF_CARDS[0]
+
   return (
     <section
       ref={stageRef}
@@ -593,11 +614,11 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--acc)]" />
             </span>
             <span className="label-caps text-[var(--bone)] tracking-[0.24em] font-semibold text-[11px] sm:text-xs">
-              ROF RAGE • COLLECTION 01
+              ROF RAGE • CAPSULE 01
             </span>
           </div>
 
-          {/* 3 ROF Pillars Mindset Bar */}
+          {/* 3 ROF Pillars & Silhouettes Bar */}
           <div className="hidden sm:flex items-center gap-1.5 bg-[var(--ink)]/90 backdrop-blur-md border border-[var(--hairline)] p-1 rounded-sm shadow-xl">
             {ROF_CARDS.map((card, idx) => {
               const isActive = activeCardIndex === idx
@@ -608,7 +629,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                   type="button"
                   onClick={() => handleSelectCard(idx)}
                   className={cn(
-                    'px-3.5 py-1 text-[11px] font-mono uppercase tracking-[0.18em] transition-all cursor-pointer rounded-xs flex items-center gap-1.5',
+                    'px-3.5 py-1 text-[11px] font-mono uppercase tracking-[0.16em] transition-all cursor-pointer rounded-xs flex items-center gap-1.5',
                     isActive
                       ? 'bg-[var(--acc)] text-[var(--label-on-acc)] font-bold shadow-md'
                       : 'text-[var(--muted)] hover:text-[var(--bone)] hover:bg-[var(--bone)]/5'
@@ -617,7 +638,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                   <span className={isActive ? 'text-[var(--label-on-acc)]' : 'text-[var(--acc)]'}>
                     [{card.letter}]
                   </span>
-                  <span>{card.label}</span>
+                  <span>{card.garmentName}</span>
                 </button>
               )
             })}
@@ -634,6 +655,12 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
       {/* 3. CENTERPIECE: UNCLUTTERED MONUMENTAL HERO */}
       {/* ============================================================ */}
       <div className="relative z-10 flex-1 flex flex-col items-center justify-center my-auto py-2 sm:py-4 px-4 md:px-8 text-center">
+        {/* Editorial Fashion Capsule Badge */}
+        <div className="inline-flex items-center gap-2 px-3 py-1 mb-2 sm:mb-3 rounded-full border border-[var(--hairline)] bg-[var(--surface-deep)]/80 text-[10px] font-mono uppercase tracking-[0.22em] text-[var(--acc)] shadow-sm">
+          <DiamondMark size={4} accent filled />
+          <span>ROF RAGE • HAUTE STREETWEAR CAPSULE 01</span>
+        </div>
+
         {/* Masked Clip-Reveal Monumental Headline */}
         <div className="overflow-hidden py-1 mb-1 sm:mb-2">
           <motion.h1
@@ -652,15 +679,15 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
           </motion.h1>
         </div>
 
-        {/* Minimalist Subtitle */}
-        <p className="font-mono text-[10px] sm:text-xs text-[var(--muted)] uppercase tracking-[0.28em] mb-3 sm:mb-4">
-          ROF TRINITY // ROOF • OF • FAME
+        {/* Minimalist Subtitle with Fashion Focus */}
+        <p className="font-mono text-[10px] sm:text-xs text-[var(--bone)]/70 uppercase tracking-[0.26em] mb-3 sm:mb-4">
+          THREE ARCHITECTURAL SILHOUETTES • AMBITION • CONFIDENCE • ORIGINALITY
         </p>
 
-        {/* 3D Tilted Perspective Canvas - Monumental on Big Screens */}
+        {/* 3D Tilted Perspective Canvas */}
         <div
           style={{ perspective: 1200 }}
-          className="relative w-full max-w-[640px] md:max-w-[820px] lg:max-w-[1020px] xl:max-w-[1240px] 2xl:max-w-[1420px] h-[260px] sm:h-[320px] md:h-[380px] lg:h-[430px] xl:h-[480px] 2xl:h-[520px] flex items-center justify-center mb-5 sm:mb-6"
+          className="relative w-full max-w-[640px] md:max-w-[820px] lg:max-w-[1020px] xl:max-w-[1240px] 2xl:max-w-[1420px] h-[270px] sm:h-[330px] md:h-[390px] lg:h-[440px] xl:h-[490px] 2xl:h-[530px] flex items-center justify-center mb-3 sm:mb-4"
         >
           <motion.div
             style={{
@@ -670,7 +697,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             }}
             className="relative w-full h-full flex items-center justify-center"
           >
-            {/* 17 FOUNDATION DECK CARDS (REAL CASINO 20-CARD HANDLING ARCHITECTURE) */}
+            {/* 17 FOUNDATION DECK CARDS */}
             {DECK_FOUNDATION_CARDS.map((item, i) => {
               const pos = getDeckCardTransform(i)
               return (
@@ -722,7 +749,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               )
             })}
 
-            {/* THE 3 TRINITY CARDS: ROOF [R] • OF [O] • FAME [F] */}
+            {/* THE 3 TRINITY FASHION CARDS: ROOF [R] • OF [O] • FAME [F] */}
             {ROF_CARDS.map((card, idx) => {
               const pos = getDestinyCardTransform(idx)
               const isSelected = activeCardIndex === idx
@@ -799,7 +826,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                   }
                   style={{ transformStyle: 'preserve-3d' }}
                   className={cn(
-                    'absolute select-none rounded-xl lg:rounded-2xl transition-shadow duration-300',
+                    'group absolute select-none rounded-xl lg:rounded-2xl transition-shadow duration-300',
                     CARD_SIZE_CLASSES,
                     deckPhase === 'dealt'
                       ? 'cursor-pointer'
@@ -812,7 +839,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                   {/* FRONT FACE OF CARD (HAUTE-COUTURE STREETWEAR TAROT) */}
                   <div
                     style={{ backfaceVisibility: 'hidden' }}
-                    className="absolute inset-0 rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-5 flex flex-col justify-between bg-[var(--bone-surface)] text-[var(--ink)] border border-[var(--acc)]/30 overflow-hidden"
+                    className="absolute inset-0 rounded-xl lg:rounded-2xl p-2.5 sm:p-3.5 lg:p-4 flex flex-col justify-between bg-[var(--bone-surface)] text-[var(--ink)] border border-[var(--acc)]/30 overflow-hidden"
                   >
                     {/* Top Specular Sheen */}
                     <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/15 to-white/40 pointer-events-none" />
@@ -829,7 +856,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                     )}
 
                     {/* Inset Gold Hairline Frame with Corner Diamonds */}
-                    <div className="absolute inset-2 sm:inset-2.5 border border-[var(--acc)]/30 rounded-lg pointer-events-none">
+                    <div className="absolute inset-1.5 sm:inset-2 border border-[var(--acc)]/30 rounded-lg pointer-events-none">
                       <div className="absolute top-1 left-1">
                         <DiamondMark size={4} accent filled />
                       </div>
@@ -844,131 +871,105 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                       </div>
                     </div>
 
-                    {/* Top Header Row with Index Pip */}
+                    {/* Top Header Row with Index Pip & Price */}
                     <div className="relative z-10 flex items-start justify-between w-full">
                       {/* Top-Left Card Corner Pip */}
                       <div className="flex flex-col items-center leading-none text-left">
                         <span
                           className={cn(
-                            'font-serif text-xl sm:text-2xl lg:text-3xl font-bold',
+                            'font-serif text-lg sm:text-xl lg:text-2xl font-bold',
                             card.letter === 'O' ? 'text-[var(--acc-on-bone)]' : 'text-[var(--ink)]'
                           )}
                         >
                           {card.letter}
                         </span>
                         <DiamondMark
-                          size={6}
+                          size={5}
                           accent={card.letter === 'O'}
                           filled
                           className="mt-0.5 opacity-90"
                         />
-                        <span className="font-mono text-[7px] sm:text-[8px] text-[var(--muted)] font-bold mt-0.5">
+                        <span className="font-mono text-[7px] text-[var(--muted)] font-bold mt-0.5">
                           {card.roman}
                         </span>
                       </div>
 
-                      {/* Top Center Archive Tag */}
-                      <span className="font-mono text-[7px] sm:text-[8px] uppercase tracking-[0.26em] text-[var(--ink)]/45 font-semibold mt-0.5">
-                        COLLECTION 01
+                      {/* Top Center Capsule Tag */}
+                      <span className="font-mono text-[7px] sm:text-[8px] uppercase tracking-[0.2em] text-[var(--ink)]/50 font-semibold mt-0.5">
+                        CAPSULE 01
                       </span>
 
-                      <div className="w-4 h-4" />
+                      {/* Top Right Price Tag */}
+                      <div className="flex flex-col items-end leading-none text-right">
+                        <span className="font-sans text-[8px] sm:text-[9px] font-bold text-[var(--acc-on-bone)]">
+                          ₦{card.garmentPrice.toLocaleString('en-NG')}
+                        </span>
+                        <span className="font-mono text-[6px] uppercase tracking-wider text-[var(--ink)]/40 mt-0.5">
+                          PIECE 0{card.id}
+                        </span>
+                      </div>
                     </div>
 
-                    {/* Center Monumental Art with Architectural Geometry */}
-                    <div className="relative z-10 flex flex-col items-center justify-center my-auto w-full">
-                      {card.letter === 'R' ? (
-                        /* CARD R: ROOF APEX SUMMIT MOTIF */
-                        <div className="relative flex items-center justify-center mb-1">
-                          <svg
-                            viewBox="0 0 100 100"
-                            className="w-20 h-20 sm:w-24 sm:h-24 lg:w-30 lg:h-30 text-[var(--ink)]/15 absolute inset-0 m-auto pointer-events-none"
-                          >
-                            <polygon points="50,12 88,78 12,78" stroke="currentColor" strokeWidth="1.5" fill="none" />
+                    {/* Center Monumental Garment Showcase with Subtle Sacred Geometry Watermark */}
+                    <div className="relative z-10 flex-1 flex flex-col items-center justify-center my-auto w-full overflow-hidden">
+                      {/* Subtle Geometric Watermark Behind Garment */}
+                      <div className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
+                        {card.letter === 'R' ? (
+                          <svg viewBox="0 0 100 100" className="w-24 h-24 text-[var(--ink)]">
+                            <polygon points="50,12 88,78 12,78" stroke="currentColor" strokeWidth="2" fill="none" />
                             <polygon points="50,26 78,74 22,74" stroke="currentColor" strokeWidth="1" fill="none" />
-                            <line x1="50" y1="12" x2="50" y2="78" stroke="currentColor" strokeWidth="0.75" strokeDasharray="3 3" />
-                            <polygon points="50,4 56,12 50,20 44,12" fill="var(--acc)" />
                           </svg>
-                          <span className="relative z-10 font-serif font-bold text-5xl sm:text-6xl lg:text-7xl text-[var(--ink)] drop-shadow-sm">
-                            R
-                          </span>
-                        </div>
-                      ) : card.letter === 'O' ? (
-                        /* CARD O: SACRED CONCENTRIC DIAMOND */
-                        <div className="relative flex items-center justify-center mb-1">
-                          <svg
-                            viewBox="0 0 100 100"
-                            className="w-20 h-20 sm:w-24 sm:h-24 lg:w-30 lg:h-30 text-[var(--acc-on-bone)]"
-                          >
-                            <polygon
-                              points="50,8 92,50 50,92 8,50"
-                              stroke="currentColor"
-                              strokeWidth="2.5"
-                              fill="rgba(143,82,0,0.06)"
-                            />
-                            <polygon
-                              points="50,22 78,50 50,78 22,50"
-                              stroke="currentColor"
-                              strokeWidth="1.5"
-                              fill="rgba(143,82,0,0.12)"
-                            />
-                            <polygon points="50,34 66,50 50,66 34,50" stroke="currentColor" strokeWidth="1" fill="none" />
-                            <circle cx="50" cy="50" r="3.5" fill="currentColor" />
+                        ) : card.letter === 'O' ? (
+                          <svg viewBox="0 0 100 100" className="w-24 h-24 text-[var(--acc-on-bone)]">
+                            <polygon points="50,8 92,50 50,92 8,50" stroke="currentColor" strokeWidth="2.5" fill="none" />
+                            <polygon points="50,22 78,50 50,78 22,50" stroke="currentColor" strokeWidth="1.5" fill="none" />
                           </svg>
-                          <span className="absolute font-serif font-bold text-4xl sm:text-5xl lg:text-6xl text-[var(--acc-on-bone)] drop-shadow-sm">
-                            O
-                          </span>
-                        </div>
-                      ) : (
-                        /* CARD F: ARCHITECTURAL FRAME WIREFRAME */
-                        <div className="relative flex items-center justify-center mb-1">
-                          <svg
-                            viewBox="0 0 100 100"
-                            className="w-20 h-20 sm:w-24 sm:h-24 lg:w-30 lg:h-30 text-[var(--ink)]/15 absolute inset-0 m-auto pointer-events-none"
-                          >
-                            <rect x="14" y="14" width="72" height="72" stroke="currentColor" strokeWidth="1.5" fill="none" />
-                            <line x1="14" y1="14" x2="86" y2="86" stroke="currentColor" strokeWidth="0.75" strokeDasharray="3 3" />
-                            <line x1="86" y1="14" x2="14" y2="86" stroke="currentColor" strokeWidth="0.75" strokeDasharray="3 3" />
+                        ) : (
+                          <svg viewBox="0 0 100 100" className="w-24 h-24 text-[var(--ink)]">
+                            <rect x="14" y="14" width="72" height="72" stroke="currentColor" strokeWidth="2" fill="none" />
                             <rect x="28" y="28" width="44" height="44" stroke="currentColor" strokeWidth="1" fill="none" />
-                            <polygon points="50,14 54,18 50,22 46,18" fill="var(--acc)" />
-                            <polygon points="50,78 54,82 50,86 46,82" fill="var(--acc)" />
                           </svg>
-                          <span className="relative z-10 font-serif font-bold text-5xl sm:text-6xl lg:text-7xl text-[var(--ink)] drop-shadow-sm">
-                            F
-                          </span>
-                        </div>
-                      )}
+                        )}
+                      </div>
 
-                      {/* Card Meaning & Pillar Tag (R = ROOF, O = OF, F = FAME) */}
-                      <span className="relative z-10 font-mono text-[11px] sm:text-xs lg:text-sm uppercase tracking-[0.24em] font-bold text-[var(--ink)] mt-0.5">
-                        {card.word}
-                      </span>
-                      <span className="relative z-10 font-mono text-[7px] sm:text-[8px] uppercase tracking-[0.22em] text-[var(--acc-on-bone)] font-semibold">
-                        {card.pillar} // {card.number}
-                      </span>
+                      {/* REAL LUXURY GARMENT CUT-OUT (UNMISTAKABLY FASHION) */}
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ duration: 0.25 }}
+                        className="relative z-10 w-full flex items-center justify-center py-0.5 sm:py-1"
+                      >
+                        <img
+                          src={card.garmentImage}
+                          alt={card.garmentName}
+                          width={240}
+                          height={240}
+                          loading="eager"
+                          decoding="async"
+                          className="w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-44 lg:h-44 object-contain pointer-events-none filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.24)]"
+                        />
+                      </motion.div>
                     </div>
 
-                    {/* Bottom-Right Inverted Corner Pip */}
-                    <div className="relative z-10 flex items-center justify-between w-full">
-                      <span className="font-mono text-[7px] sm:text-[8px] text-[var(--ink)]/40 uppercase tracking-widest">
+                    {/* Bottom Garment Lockup */}
+                    <div className="relative z-10 flex flex-col items-center text-center w-full pt-1 border-t border-[var(--acc)]/20">
+                      <span className="font-serif text-xs sm:text-sm font-bold text-[var(--ink)] leading-tight tracking-tight truncate max-w-full">
+                        {card.garmentName}
+                      </span>
+                      <div className="flex items-center gap-1.5 font-mono text-[7px] sm:text-[8px] uppercase tracking-wider text-[var(--acc-on-bone)] font-semibold mt-0.5">
+                        <span>{card.word}</span>
+                        <span>•</span>
+                        <span>{card.garmentColor}</span>
+                      </div>
+                    </div>
+
+                    {/* Bottom-Right Corner Pip */}
+                    <div className="relative z-10 flex items-center justify-between w-full pt-0.5">
+                      <span className="font-mono text-[6px] sm:text-[7px] text-[var(--ink)]/40 uppercase tracking-widest">
                         {card.serial.replace('ROF-', '')}
                       </span>
-                      <div className="flex flex-col items-center leading-none text-right rotate-180">
-                        <span
-                          className={cn(
-                            'font-serif text-xl sm:text-2xl lg:text-3xl font-bold',
-                            card.letter === 'O' ? 'text-[var(--acc-on-bone)]' : 'text-[var(--ink)]'
-                          )}
-                        >
-                          {card.letter}
-                        </span>
-                        <DiamondMark
-                          size={6}
-                          accent={card.letter === 'O'}
-                          filled
-                          className="mt-0.5 opacity-90"
-                        />
-                      </div>
+                      <span className="font-mono text-[6px] sm:text-[7px] text-[var(--acc-on-bone)] font-semibold uppercase tracking-wider">
+                        ROF RAGE
+                      </span>
                     </div>
                   </div>
 
@@ -980,8 +981,41 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
           </motion.div>
         </div>
 
+        {/* Selected Garment Fashion Readout */}
+        <motion.div
+          key={activeCardIndex}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25 }}
+          className="inline-flex flex-wrap items-center justify-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--surface-deep)]/90 border border-[var(--acc)]/40 text-[11px] font-mono text-[var(--bone)] shadow-md mb-3"
+        >
+          <span className="flex items-center gap-1.5 text-[var(--acc)] font-semibold tracking-wider uppercase text-[10px]">
+            <DiamondMark size={4} accent filled />
+            <span>PIECE 0{activeCardIndex + 1} //</span>
+          </span>
+          <span className="font-semibold text-[var(--bone)]">{activeGarment.garmentName}</span>
+          <span className="text-[var(--bone)]/50">({activeGarment.garmentColor})</span>
+          <span className="text-[var(--acc)] font-bold font-sans">
+            ₦{activeGarment.garmentPrice.toLocaleString('en-NG')}
+          </span>
+          <button
+            type="button"
+            onClick={() => {
+              const target = document.getElementById(activeGarment.garmentSlug)
+              if (target) {
+                target.scrollIntoView({ behavior: 'smooth' })
+              } else {
+                navigate({ to: '/shop' })
+              }
+            }}
+            className="underline hover:text-[var(--acc)] text-[10px] tracking-wider uppercase ml-1 cursor-pointer"
+          >
+            view piece ↓
+          </button>
+        </motion.div>
+
         {/* Clean Tactical Controls & Action Row */}
-        <div className="flex flex-col items-center gap-3">
+        <div className="flex flex-col items-center gap-2.5">
           <div className="flex flex-wrap items-center justify-center gap-3">
             {/* Primary CTA: Shop The Collection */}
             <Button
@@ -1011,9 +1045,9 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
           </div>
 
           {/* Micro-hint explaining the interactive card flip (replaces former inspect button) */}
-          <p className="font-mono text-[10px] text-[var(--bone)]/60 uppercase tracking-wider flex items-center gap-1.5 pt-1">
+          <p className="font-mono text-[10px] text-[var(--bone)]/60 uppercase tracking-wider flex items-center gap-1.5 pt-0.5">
             <DiamondMark size={4} accent filled />
-            <span>Double-tap any card to flip • Auto-reverts in 10s</span>
+            <span>Double-tap any card to flip archive • Auto-reverts in 10s</span>
           </p>
         </div>
       </div>
