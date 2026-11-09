@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { ChevronDown, ChevronUp, Truck, RefreshCw, Ruler, HelpCircle } from 'lucide-react'
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
+import { ChevronDown, Truck, RefreshCw, Ruler, HelpCircle } from 'lucide-react'
 import { Pane } from '@/components/Pane'
 import { Mast } from '@/components/Mast'
 import { DiamondMark } from '@/components/Logo'
 import { initialContentConfig } from '@/content/config'
 import { formatNaira } from '@/lib/money'
+import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/help')({
   component: HelpPage,
@@ -13,6 +15,7 @@ export const Route = createFileRoute('/help')({
 
 function HelpPage() {
   const content = initialContentConfig
+  const prefersReduced = useReducedMotion()
   const [openFaq, setOpenFaq] = useState<string | null>('faq-1')
 
   const navItems = [
@@ -48,10 +51,10 @@ function HelpPage() {
                   <a
                     key={item.id}
                     href={`#${item.id}`}
-                    className="flex items-center gap-3 p-3 text-xs uppercase tracking-wider font-sans text-[var(--bone)]/80 hover:text-[var(--bone)] hover:bg-[var(--surface-tint)] transition-colors"
+                    className="flex items-center gap-3 p-3 text-xs uppercase tracking-wider font-sans text-[var(--bone)]/80 hover:text-[var(--bone)] hover:bg-[var(--surface-tint)] transition-all group"
                   >
-                    <Icon className="h-4 w-4 text-[var(--acc)]" />
-                    <span>{item.label}</span>
+                    <Icon className="h-4 w-4 text-[var(--acc)] transition-transform duration-200 group-hover:scale-110" />
+                    <span className="transition-transform duration-200 group-hover:translate-x-1">{item.label}</span>
                   </a>
                 )
               })}
@@ -164,16 +167,31 @@ function HelpPage() {
                       <button
                         type="button"
                         onClick={() => setOpenFaq(isOpen ? null : faq.id)}
-                        className="w-full p-4 text-left flex items-center justify-between text-sm font-semibold font-serif text-[var(--ink)] hover:text-[var(--acc-on-bone)] transition-colors"
+                        className="w-full p-4 text-left flex items-center justify-between text-sm font-semibold font-serif text-[var(--ink)] hover:text-[var(--acc-on-bone)] transition-colors cursor-pointer group"
                       >
                         <span>{faq.question}</span>
-                        {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                        <ChevronDown
+                          className={cn(
+                            'h-4 w-4 shrink-0 transition-transform duration-300 ease-[var(--ease-out-expo)]',
+                            isOpen && 'rotate-180 text-[var(--acc-on-bone)]'
+                          )}
+                        />
                       </button>
-                      {isOpen && (
-                        <div className="px-4 pb-4 text-xs font-sans text-[var(--muted)] leading-relaxed border-t border-[var(--hairline)]/40 pt-2">
-                          {faq.answer}
-                        </div>
-                      )}
+                      <AnimatePresence initial={false}>
+                        {isOpen && (
+                          <motion.div
+                            initial={prefersReduced ? undefined : { height: 0, opacity: 0 }}
+                            animate={prefersReduced ? undefined : { height: 'auto', opacity: 1 }}
+                            exit={prefersReduced ? undefined : { height: 0, opacity: 0 }}
+                            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] as const }}
+                            className="overflow-hidden"
+                          >
+                            <div className="px-4 pb-4 text-xs font-sans text-[var(--muted)] leading-relaxed border-t border-[var(--hairline)]/40 pt-2">
+                              {faq.answer}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                   )
                 })}

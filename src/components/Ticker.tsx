@@ -19,36 +19,64 @@ const defaultItems = [
 
 /**
  * Continuous Rotating Marigold Ticker Strip
- * Continuously glides from LEFT TO RIGHT across the screen.
- * Driven by GPU-accelerated translate3d for 60fps infinite rotation.
- * Features continuously rotating 360° diamond marks.
+ * Continuously scrolls infinitely across the screen with 360° rotating gold diamonds.
+ * Driven by hardware-accelerated CSS animations for guaranteed 60fps rotation.
  */
 export const Ticker: React.FC<TickerProps> = React.memo(({
   items = defaultItems,
   className,
   speed = 'normal',
 }) => {
-  // 4 identical sets ensure a 100% seamless, mathematically infinite loop from -50% to 0%
+  // Repeat items to ensure a seamless infinite loop
   const repeated = [...items, ...items, ...items, ...items]
-
-  const animDuration = speed === 'fast' ? '18s' : '26s'
+  const animDuration = speed === 'fast' ? '20s' : '30s'
 
   return (
     <div
       className={cn(
         'relative w-full overflow-hidden bg-[var(--acc-on-ink)] text-[var(--ink)] py-3 select-none border-y border-[var(--ink)] cursor-default',
-        'group',
         className
       )}
       role="region"
       aria-label="Continuous brand rotating ticker"
     >
-      <div
-        className="flex w-max items-center will-change-transform group-hover:[animation-play-state:paused]"
-        style={{
-          animation: `rof-ticker-ltr ${animDuration} linear infinite`,
-        }}
-      >
+      <style>{`
+        @keyframes rofContinuousTicker {
+          0% {
+            transform: translate3d(0%, 0, 0);
+          }
+          100% {
+            transform: translate3d(-50%, 0, 0);
+          }
+        }
+        @keyframes rofContinuousDiamondSpin {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+        .rof-ticker-wrapper {
+          display: flex;
+          width: max-content;
+          align-items: center;
+          animation: rofContinuousTicker ${animDuration} linear infinite !important;
+          will-change: transform;
+        }
+        .rof-ticker-wrapper:hover {
+          animation-play-state: paused;
+        }
+        .rof-spinning-diamond {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          animation: rofContinuousDiamondSpin 2.8s linear infinite !important;
+          will-change: transform;
+        }
+      `}</style>
+
+      <div className="rof-ticker-wrapper">
         {repeated.map((phrase, idx) => (
           <div key={idx} className="flex items-center shrink-0 space-x-6 pr-6">
             <span className="text-xs sm:text-sm font-semibold uppercase tracking-[0.24em] font-sans">
@@ -56,12 +84,7 @@ export const Ticker: React.FC<TickerProps> = React.memo(({
             </span>
 
             {/* Continuously 360° Rotating Diamond Icon */}
-            <div
-              className="inline-flex items-center justify-center shrink-0"
-              style={{
-                animation: 'rof-spin-diamond 3.2s linear infinite',
-              }}
-            >
+            <div className="rof-spinning-diamond">
               <DiamondMark size={8} filled className="text-[var(--ink)]" />
             </div>
           </div>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { createFileRoute, Link, useParams } from '@tanstack/react-router'
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
 import { Check, Copy, ArrowRight, ShieldCheck, Truck, Package } from 'lucide-react'
 import { Pane } from '@/components/Pane'
 import { Mast } from '@/components/Mast'
@@ -21,6 +22,7 @@ export const Route = createFileRoute('/order/$id')({
 function OrderConfirmationPage() {
   const { id } = useParams({ from: '/order/$id' })
   const order = Route.useLoaderData()
+  const prefersReduced = useReducedMotion()
   const [copied, setCopied] = useState(false)
   const [accountCopied, setAccountCopied] = useState(false)
 
@@ -52,9 +54,14 @@ function OrderConfirmationPage() {
 
       {/* 2. Confirmation Details */}
       <Pane tone="bone" className="min-h-screen py-12 px-4 md:px-8">
-        <div className="mx-auto max-w-3xl space-y-8">
+        <motion.div
+          initial={prefersReduced ? undefined : { opacity: 0, y: 16 }}
+          animate={prefersReduced ? undefined : { opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] as const }}
+          className="mx-auto max-w-3xl space-y-8"
+        >
           {/* Order ID Banner */}
-          <div className="p-6 md:p-8 bg-[var(--bone)] border-2 border-[var(--ink)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="p-6 md:p-8 bg-[var(--bone)] border-2 border-[var(--ink)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
             <div>
               <span className="label-caps text-[var(--acc-on-bone)]">Official Reference</span>
               <p className="font-serif text-3xl sm:text-4xl text-[var(--ink)] mt-1 font-bold">
@@ -66,15 +73,29 @@ function OrderConfirmationPage() {
             </div>
 
             <Button variant="secondary" size="sm" onClick={handleCopy}>
-              {copied ? (
-                <span className="flex items-center gap-1.5 text-[var(--acc-on-bone)]">
-                  <Check className="h-4 w-4" /> Copied
-                </span>
-              ) : (
-                <span className="flex items-center gap-1.5">
-                  <Copy className="h-4 w-4" /> Copy Reference
-                </span>
-              )}
+              <AnimatePresence mode="wait" initial={false}>
+                {copied ? (
+                  <motion.span
+                    key="copied"
+                    initial={{ scale: 0.88, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.88, opacity: 0 }}
+                    className="flex items-center gap-1.5 text-[var(--acc-on-bone)] font-semibold"
+                  >
+                    <Check className="h-4 w-4 stroke-[2.5]" /> Copied
+                  </motion.span>
+                ) : (
+                  <motion.span
+                    key="copy"
+                    initial={{ scale: 0.88, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.88, opacity: 0 }}
+                    className="flex items-center gap-1.5"
+                  >
+                    <Copy className="h-4 w-4" /> Copy Reference
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </Button>
           </div>
 
@@ -96,17 +117,31 @@ function OrderConfirmationPage() {
                     onClick={handleCopyAccount}
                     className="touch-target-48 px-2 py-1 text-[11px] font-sans uppercase font-medium tracking-wider text-[var(--acc-on-bone)] hover:underline flex items-center gap-1 cursor-pointer"
                   >
-                    {accountCopied ? (
-                      <>
-                        <Check className="h-3 w-3" />
-                        <span>Copied</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="h-3 w-3" />
-                        <span>Copy NUBAN</span>
-                      </>
-                    )}
+                    <AnimatePresence mode="wait" initial={false}>
+                      {accountCopied ? (
+                        <motion.span
+                          key="copied"
+                          initial={{ scale: 0.88, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          exit={{ scale: 0.88, opacity: 0 }}
+                          className="flex items-center gap-1"
+                        >
+                          <Check className="h-3 w-3 stroke-[2.5]" />
+                          <span>Copied</span>
+                        </motion.span>
+                      ) : (
+                        <motion.span
+                          key="copy"
+                          initial={{ scale: 0.88, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          exit={{ scale: 0.88, opacity: 0 }}
+                          className="flex items-center gap-1"
+                        >
+                          <Copy className="h-3 w-3" />
+                          <span>Copy NUBAN</span>
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
                   </button>
                 </div>
               </div>
@@ -203,7 +238,7 @@ function OrderConfirmationPage() {
               </Button>
             </Link>
           </div>
-        </div>
+        </motion.div>
       </Pane>
     </div>
   )

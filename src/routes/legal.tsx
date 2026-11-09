@@ -1,5 +1,6 @@
 import React from 'react'
 import { createFileRoute } from '@tanstack/react-router'
+import { motion, useReducedMotion } from 'motion/react'
 import { Pane } from '@/components/Pane'
 import { Mast } from '@/components/Mast'
 
@@ -8,6 +9,8 @@ export const Route = createFileRoute('/legal')({
 })
 
 function LegalPage() {
+  const prefersReduced = useReducedMotion()
+
   return (
     <div className="flex flex-col w-full">
       {/* 1. Masthead */}
@@ -23,7 +26,12 @@ function LegalPage() {
 
       {/* 2. Long-form Policies Body */}
       <Pane tone="bone" className="min-h-screen py-16 px-4 md:px-8">
-        <div className="mx-auto max-w-3xl space-y-12 font-sans text-sm text-[var(--ink)] leading-relaxed">
+        <motion.div
+          initial={prefersReduced ? undefined : { opacity: 0, y: 16 }}
+          animate={prefersReduced ? undefined : { opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] as const }}
+          className="mx-auto max-w-3xl space-y-12 font-sans text-sm text-[var(--ink)] leading-relaxed"
+        >
           {/* Section 1: Terms of Sale */}
           <section className="space-y-4 border-b border-[var(--hairline)] pb-8">
             <h2 className="font-serif text-3xl text-[var(--ink)]">1. Terms of Sale</h2>
@@ -67,7 +75,7 @@ function LegalPage() {
               Size exchanges must be initiated within 7 calendar days of package receipt. Items must be in pristine unworn condition with tags attached.
             </p>
           </section>
-        </div>
+        </motion.div>
       </Pane>
     </div>
   )

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
 import { Mail, Phone, MessageSquare, MapPin, Instagram, Check } from 'lucide-react'
 import { Pane } from '@/components/Pane'
 import { Mast } from '@/components/Mast'
@@ -15,6 +16,7 @@ export const Route = createFileRoute('/contact')({
 
 function ContactPage() {
   const contact = initialContentConfig.contact
+  const prefersReduced = useReducedMotion()
 
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' })
   const [loading, setLoading] = useState(false)
@@ -120,94 +122,111 @@ function ContactPage() {
             <span className="label-caps text-[var(--acc-on-bone)]">Direct Message</span>
             <h3 className="font-serif text-3xl text-[var(--ink)] mt-2 mb-6">Send an inquiry</h3>
 
-            {submitted ? (
-              <div className="p-8 bg-[var(--bone-muted)] border-2 border-[var(--ink)] space-y-3">
-                <div className="flex items-center gap-2 text-[var(--acc-on-bone)]">
-                  <Check className="h-5 w-5" />
-                  <span className="font-semibold text-sm">Message Delivered</span>
-                </div>
-                <p className="text-xs text-[var(--ink)] leading-relaxed font-sans">
-                  Thank you for reaching out. Our team will review your message and reply via email within 24 hours.
-                </p>
-                <Button variant="secondary" size="sm" onClick={() => setSubmitted(false)}>
-                  Send another message
-                </Button>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label htmlFor="contact-name" className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
-                    Your Name *
-                  </label>
-                  <input
-                    id="contact-name"
-                    type="text"
-                    required
-                    maxLength={100}
-                    autoComplete="name"
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    placeholder="Full name"
-                    className="w-full h-11 px-3 text-sm font-sans bg-transparent border border-[var(--hairline)] text-[var(--ink)] focus:outline-none focus:border-[var(--acc-on-bone)]"
-                  />
-                </div>
+            <AnimatePresence mode="wait">
+              {submitted ? (
+                <motion.div
+                  key="submitted"
+                  initial={prefersReduced ? undefined : { opacity: 0, scale: 0.96 }}
+                  animate={prefersReduced ? undefined : { opacity: 1, scale: 1 }}
+                  exit={prefersReduced ? undefined : { opacity: 0, scale: 0.96 }}
+                  transition={{ duration: 0.3 }}
+                  className="p-8 bg-[var(--bone-muted)] border-2 border-[var(--ink)] space-y-3"
+                >
+                  <div className="flex items-center gap-2 text-[var(--acc-on-bone)]">
+                    <Check className="h-5 w-5" />
+                    <span className="font-semibold text-sm">Message Delivered</span>
+                  </div>
+                  <p className="text-xs text-[var(--ink)] leading-relaxed font-sans">
+                    Thank you for reaching out. Our team will review your message and reply via email within 24 hours.
+                  </p>
+                  <Button variant="secondary" size="sm" onClick={() => setSubmitted(false)}>
+                    Send another message
+                  </Button>
+                </motion.div>
+              ) : (
+                <motion.form
+                  key="form"
+                  initial={prefersReduced ? undefined : { opacity: 0 }}
+                  animate={prefersReduced ? undefined : { opacity: 1 }}
+                  exit={prefersReduced ? undefined : { opacity: 0 }}
+                  transition={{ duration: 0.25 }}
+                  onSubmit={handleSubmit}
+                  className="space-y-4"
+                >
+                  <div>
+                    <label htmlFor="contact-name" className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
+                      Your Name *
+                    </label>
+                    <input
+                      id="contact-name"
+                      type="text"
+                      required
+                      maxLength={100}
+                      autoComplete="name"
+                      value={form.name}
+                      onChange={(e) => setForm({ ...form, name: e.target.value })}
+                      placeholder="Full name"
+                      className="w-full h-11 px-3 text-sm font-sans bg-transparent border border-[var(--hairline)] text-[var(--ink)] focus:outline-none focus:border-[var(--acc-on-bone)] transition-colors"
+                    />
+                  </div>
 
-                <div>
-                  <label htmlFor="contact-email" className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
-                    Email Address *
-                  </label>
-                  <input
-                    id="contact-email"
-                    type="email"
-                    required
-                    maxLength={120}
-                    inputMode="email"
-                    autoComplete="email"
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    placeholder="Email address"
-                    className="w-full h-11 px-3 text-sm font-sans bg-transparent border border-[var(--hairline)] text-[var(--ink)] focus:outline-none focus:border-[var(--acc-on-bone)]"
-                  />
-                </div>
+                  <div>
+                    <label htmlFor="contact-email" className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
+                      Email Address *
+                    </label>
+                    <input
+                      id="contact-email"
+                      type="email"
+                      required
+                      maxLength={120}
+                      inputMode="email"
+                      autoComplete="email"
+                      value={form.email}
+                      onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      placeholder="Email address"
+                      className="w-full h-11 px-3 text-sm font-sans bg-transparent border border-[var(--hairline)] text-[var(--ink)] focus:outline-none focus:border-[var(--acc-on-bone)] transition-colors"
+                    />
+                  </div>
 
-                <div>
-                  <label htmlFor="contact-phone" className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
-                    Phone (Optional)
-                  </label>
-                  <input
-                    id="contact-phone"
-                    type="tel"
-                    maxLength={25}
-                    inputMode="tel"
-                    autoComplete="tel"
-                    value={form.phone}
-                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    placeholder="+234..."
-                    className="w-full h-11 px-3 text-sm font-sans bg-transparent border border-[var(--hairline)] text-[var(--ink)] focus:outline-none focus:border-[var(--acc-on-bone)]"
-                  />
-                </div>
+                  <div>
+                    <label htmlFor="contact-phone" className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
+                      Phone (Optional)
+                    </label>
+                    <input
+                      id="contact-phone"
+                      type="tel"
+                      maxLength={25}
+                      inputMode="tel"
+                      autoComplete="tel"
+                      value={form.phone}
+                      onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                      placeholder="+234..."
+                      className="w-full h-11 px-3 text-sm font-sans bg-transparent border border-[var(--hairline)] text-[var(--ink)] focus:outline-none focus:border-[var(--acc-on-bone)] transition-colors"
+                    />
+                  </div>
 
-                <div>
-                  <label htmlFor="contact-message" className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
-                    Message *
-                  </label>
-                  <textarea
-                    id="contact-message"
-                    required
-                    rows={4}
-                    maxLength={2000}
-                    value={form.message}
-                    onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    placeholder="What would you like to ask or discuss?"
-                    className="w-full p-3 text-sm font-sans bg-transparent border border-[var(--hairline)] text-[var(--ink)] focus:outline-none focus:border-[var(--acc-on-bone)]"
-                  />
-                </div>
+                  <div>
+                    <label htmlFor="contact-message" className="block text-xs uppercase tracking-wider font-semibold text-[var(--ink)] mb-1">
+                      Message *
+                    </label>
+                    <textarea
+                      id="contact-message"
+                      required
+                      rows={4}
+                      maxLength={2000}
+                      value={form.message}
+                      onChange={(e) => setForm({ ...form, message: e.target.value })}
+                      placeholder="What would you like to ask or discuss?"
+                      className="w-full p-3 text-sm font-sans bg-transparent border border-[var(--hairline)] text-[var(--ink)] focus:outline-none focus:border-[var(--acc-on-bone)] transition-colors"
+                    />
+                  </div>
 
-                <Button type="submit" variant="primary" fullWidth size="lg" disabled={loading} aria-busy={loading}>
-                  {loading ? 'Transmitting...' : 'Send Message'}
-                </Button>
-              </form>
-            )}
+                  <Button type="submit" variant="primary" fullWidth size="lg" disabled={loading} aria-busy={loading}>
+                    {loading ? 'Transmitting...' : 'Send Message'}
+                  </Button>
+                </motion.form>
+              )}
+            </AnimatePresence>
           </div>
         </Pane>
       </div>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
 import { Search, CheckCircle2, Clock, Truck, Package, ShieldCheck, MapPin } from 'lucide-react'
 import { Pane } from '@/components/Pane'
 import { Mast } from '@/components/Mast'
@@ -22,6 +23,7 @@ const STATUS_STEPS: { status: OrderStatus; label: string; desc: string }[] = [
 ]
 
 function TrackOrderPage() {
+  const prefersReduced = useReducedMotion()
   const [orderId, setOrderId] = useState('')
   const [contact, setContact] = useState('')
   const [order, setOrder] = useState<Order | null>(null)
@@ -129,89 +131,104 @@ function TrackOrderPage() {
             )}
           </form>
 
-          {/* Result Timeline */}
-          {order && (
-            <div className="p-6 md:p-8 bg-[var(--bone)] border-2 border-[var(--ink)] space-y-8 animate-fadeIn">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-4 border-b border-[var(--hairline)]">
-                <div>
-                  <span className="label-caps text-[var(--acc-on-bone)]">Current Status</span>
-                  <h3 className="font-serif text-3xl text-[var(--ink)] capitalize">
-                    {order.status.replace(/_/g, ' ')}
-                  </h3>
-                </div>
-                <div className="text-right text-xs font-sans text-[var(--muted)]">
-                  <p>Ref: <span className="font-mono font-semibold text-[var(--ink)]">{order.id}</span></p>
-                  <p>{new Date(order.createdAt).toLocaleDateString('en-NG', { dateStyle: 'medium' })}</p>
-                </div>
-              </div>
-
-              {/* Waybill / Courier info if out for delivery */}
-              {order.courier && (
-                <div className="p-4 bg-[var(--bone-muted)] border border-[var(--hairline)] flex items-center justify-between text-xs font-sans">
-                  <div className="flex items-center gap-2">
-                    <Truck className="h-4 w-4 text-[var(--acc-on-bone)]" />
-                    <span>Courier: <strong className="text-[var(--ink)]">{order.courier}</strong></span>
+          {/* Result Timeline with AnimatePresence */}
+          <AnimatePresence mode="wait">
+            {order && (
+              <motion.div
+                key={order.id}
+                initial={prefersReduced ? undefined : { opacity: 0, y: 16, scale: 0.98 }}
+                animate={prefersReduced ? undefined : { opacity: 1, y: 0, scale: 1 }}
+                exit={prefersReduced ? undefined : { opacity: 0, y: -12, scale: 0.98 }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] as const }}
+                className="p-6 md:p-8 bg-[var(--bone)] border-2 border-[var(--ink)] space-y-8 shadow-lg"
+              >
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-4 border-b border-[var(--hairline)]">
+                  <div>
+                    <span className="label-caps text-[var(--acc-on-bone)]">Current Status</span>
+                    <h3 className="font-serif text-3xl text-[var(--ink)] capitalize">
+                      {order.status.replace(/_/g, ' ')}
+                    </h3>
                   </div>
-                  {order.trackingNumber && (
-                    <span>Waybill: <strong className="font-mono">{order.trackingNumber}</strong></span>
-                  )}
+                  <div className="text-right text-xs font-sans text-[var(--muted)]">
+                    <p>Ref: <span className="font-mono font-semibold text-[var(--ink)]">{order.id}</span></p>
+                    <p>{new Date(order.createdAt).toLocaleDateString('en-NG', { dateStyle: 'medium' })}</p>
+                  </div>
                 </div>
-              )}
 
-              {/* Vertical Status Timeline */}
-              <div className="space-y-6 relative pl-6 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-[2px] before:bg-[var(--hairline)]">
-                {STATUS_STEPS.map((step, idx) => {
-                  const currentIdx = getStepIndex(order.status)
-                  const isDone = idx <= currentIdx
-                  const isCurrent = idx === currentIdx
-
-                  return (
-                    <div key={step.status} className="relative flex items-start gap-4">
-                      {/* Step Indicator with active pulse */}
-                      <span
-                        className={`absolute -left-6 h-5 w-5 rounded-full flex items-center justify-center text-[10px] transition-colors ${
-                          isDone
-                            ? 'bg-[var(--acc-on-bone)] text-[var(--bone)]'
-                            : 'bg-[var(--bone)] border border-[var(--hairline)] text-[var(--muted)]'
-                        } ${isCurrent ? 'ring-4 ring-[var(--acc-on-bone)]/25 animate-pulse' : ''}`}
-                      >
-                        {isDone ? <CheckCircle2 className="h-3.5 w-3.5" /> : idx + 1}
-                      </span>
-
-                      {/* Content */}
-                      <div className="space-y-0.5">
-                        <p
-                          className={`text-sm font-semibold uppercase tracking-wider font-sans ${
-                            isCurrent
-                              ? 'text-[var(--acc-on-bone)]'
-                              : isDone
-                              ? 'text-[var(--ink)]'
-                              : 'text-[var(--muted)]'
-                          }`}
-                        >
-                          {step.label}
-                        </p>
-                        <p className="text-xs text-[var(--muted)] font-sans">
-                          {step.desc}
-                        </p>
-                      </div>
+                {/* Waybill / Courier info if out for delivery */}
+                {order.courier && (
+                  <div className="p-4 bg-[var(--bone-muted)] border border-[var(--hairline)] flex items-center justify-between text-xs font-sans">
+                    <div className="flex items-center gap-2">
+                      <Truck className="h-4 w-4 text-[var(--acc-on-bone)]" />
+                      <span>Courier: <strong className="text-[var(--ink)]">{order.courier}</strong></span>
                     </div>
-                  )
-                })}
-              </div>
-
-              {/* Item summary */}
-              <div className="pt-4 border-t border-[var(--hairline)] space-y-2">
-                <span className="label-caps text-[var(--muted)]">Package Pieces</span>
-                {order.items.map((item, i) => (
-                  <div key={i} className="flex justify-between text-xs font-sans text-[var(--ink)]">
-                    <span>{item.qty}× {item.name} ({item.colour}, Size {item.size})</span>
-                    <span className="font-medium">{formatNaira(item.unitPrice * item.qty)}</span>
+                    {order.trackingNumber && (
+                      <span>Waybill: <strong className="font-mono">{order.trackingNumber}</strong></span>
+                    )}
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
+                )}
+
+                {/* Vertical Status Timeline */}
+                <div className="space-y-6 relative pl-6 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-[2px] before:bg-[var(--hairline)]">
+                  {STATUS_STEPS.map((step, idx) => {
+                    const currentIdx = getStepIndex(order.status)
+                    const isDone = idx <= currentIdx
+                    const isCurrent = idx === currentIdx
+
+                    return (
+                      <motion.div
+                        key={step.status}
+                        initial={prefersReduced ? undefined : { opacity: 0, x: -8 }}
+                        animate={prefersReduced ? undefined : { opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.05, duration: 0.3 }}
+                        className="relative flex items-start gap-4"
+                      >
+                        {/* Step Indicator with active pulse */}
+                        <span
+                          className={`absolute -left-6 h-5 w-5 rounded-full flex items-center justify-center text-[10px] transition-colors ${
+                            isDone
+                              ? 'bg-[var(--acc-on-bone)] text-[var(--bone)]'
+                              : 'bg-[var(--bone)] border border-[var(--hairline)] text-[var(--muted)]'
+                          } ${isCurrent ? 'ring-4 ring-[var(--acc-on-bone)]/25 animate-pulse' : ''}`}
+                        >
+                          {isDone ? <CheckCircle2 className="h-3.5 w-3.5" /> : idx + 1}
+                        </span>
+
+                        {/* Content */}
+                        <div className="space-y-0.5">
+                          <p
+                            className={`text-sm font-semibold uppercase tracking-wider font-sans ${
+                              isCurrent
+                                ? 'text-[var(--acc-on-bone)]'
+                                : isDone
+                                ? 'text-[var(--ink)]'
+                                : 'text-[var(--muted)]'
+                            }`}
+                          >
+                            {step.label}
+                          </p>
+                          <p className="text-xs text-[var(--muted)] font-sans">
+                            {step.desc}
+                          </p>
+                        </div>
+                      </motion.div>
+                    )
+                  })}
+                </div>
+
+                {/* Item summary */}
+                <div className="pt-4 border-t border-[var(--hairline)] space-y-2">
+                  <span className="label-caps text-[var(--muted)]">Package Pieces</span>
+                  {order.items.map((item, i) => (
+                    <div key={i} className="flex justify-between text-xs font-sans text-[var(--ink)]">
+                      <span>{item.qty}× {item.name} ({item.colour}, Size {item.size})</span>
+                      <span className="font-medium">{formatNaira(item.unitPrice * item.qty)}</span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </Pane>
     </div>

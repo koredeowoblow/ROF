@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { motion, AnimatePresence } from 'motion/react'
-import { ArrowRight, ShieldCheck, Truck, RefreshCw } from 'lucide-react'
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
+import { ArrowRight, ShieldCheck, Truck, RefreshCw, Check } from 'lucide-react'
 import { Pane } from '@/components/Pane'
 import { DiamondMark } from '@/components/Logo'
 import { HeroStage } from '@/components/HeroStage'
@@ -93,6 +93,7 @@ export const Route = createFileRoute('/')({
 function HomePage() {
   const navigate = useNavigate()
   const addItem = useBagStore((s) => s.addItem)
+  const prefersReduced = useReducedMotion()
   const [addedId, setAddedId] = useState<string | null>(null)
   const [selectedCity, setSelectedCity] = useState<'lagos' | 'abuja' | 'ph' | 'nationwide'>('lagos')
   const [activePillar, setActivePillar] = useState<string>('Ambition')
@@ -347,9 +348,22 @@ function HomePage() {
                     withArrow={addedId !== product.id}
                     fullWidth
                     onClick={() => handleQuickAdd(product)}
-                    className={addedId === product.id ? 'bg-[var(--bone)] text-[var(--ink)]' : ''}
+                    className={cn(
+                      'relative overflow-hidden',
+                      addedId === product.id ? 'bg-[var(--bone)] text-[var(--ink)]' : ''
+                    )}
                   >
-                    {addedId === product.id ? 'Piece added to bag ✓' : 'Add to bag'}
+                    {addedId === product.id ? (
+                      <motion.span
+                        initial={{ scale: 0.88, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className="flex items-center gap-2"
+                      >
+                        <Check className="h-4 w-4 stroke-[2.5]" /> Piece added to bag ✓
+                      </motion.span>
+                    ) : (
+                      'Add to bag'
+                    )}
                   </Button>
 
                   <Link
@@ -416,14 +430,25 @@ function HomePage() {
                     type="button"
                     onClick={() => setActivePillar(pillar)}
                     className={cn(
-                      'px-4 py-2 text-xs lg:text-sm font-mono uppercase tracking-[0.18em] transition-all rounded-xs cursor-pointer flex items-center gap-2',
+                      'relative px-4 py-2 text-xs lg:text-sm font-mono uppercase tracking-[0.18em] transition-colors rounded-xs cursor-pointer flex items-center gap-2 select-none',
                       isActive
-                        ? 'bg-[var(--acc)] text-[var(--label-on-acc)] font-bold shadow-md'
+                        ? 'text-[var(--label-on-acc)] font-bold shadow-md'
                         : 'border border-[var(--hairline)] text-[var(--bone)]/75 hover:text-[var(--bone)] hover:border-[var(--bone)]/60 bg-[var(--surface-tint)]'
                     )}
                   >
-                    <span>{pillar}</span>
-                    {isActive && <DiamondMark size={4} accent filled className="text-[var(--label-on-acc)]" />}
+                    {isActive && (
+                      <motion.div
+                        layoutId="activePillarPill"
+                        transition={
+                          prefersReduced
+                            ? { duration: 0 }
+                            : { type: 'spring', stiffness: 450, damping: 35 }
+                        }
+                        className="absolute inset-0 bg-[var(--acc)] rounded-xs"
+                      />
+                    )}
+                    <span className="relative z-10">{pillar}</span>
+                    {isActive && <DiamondMark size={4} accent filled className="relative z-10 text-[var(--label-on-acc)]" />}
                   </button>
                 )
               })}
@@ -547,27 +572,47 @@ function HomePage() {
                     type="button"
                     onClick={() => setSelectedCity(c.id)}
                     className={cn(
-                      'px-2.5 py-1.5 text-[11px] font-mono uppercase tracking-wider text-left rounded-xs transition-colors cursor-pointer border',
+                      'relative px-2.5 py-1.5 text-[11px] font-mono uppercase tracking-wider text-left rounded-xs transition-colors cursor-pointer border select-none',
                       isSelected
-                        ? 'border-[var(--acc)] bg-[var(--acc)] text-[var(--label-on-acc)] font-bold shadow-sm'
+                        ? 'border-[var(--acc)] text-[var(--label-on-acc)] font-bold shadow-sm'
                         : 'border-[var(--hairline)] text-[var(--bone)]/75 hover:text-[var(--bone)] hover:border-[var(--bone)]/50 bg-[var(--surface-tint)]'
                     )}
                   >
-                    {c.label}
+                    {isSelected && (
+                      <motion.div
+                        layoutId="activeCityPill"
+                        transition={
+                          prefersReduced
+                            ? { duration: 0 }
+                            : { type: 'spring', stiffness: 450, damping: 35 }
+                        }
+                        className="absolute inset-0 bg-[var(--acc)] rounded-xs"
+                      />
+                    )}
+                    <span className="relative z-10">{c.label}</span>
                   </button>
                 )
               })}
             </div>
 
             {/* Live City Calculation Details */}
-            <div className="p-3 rounded-xs border border-[var(--hairline)] bg-[var(--surface-tint)] text-[11px] sm:text-xs font-mono space-y-1">
-              <div className="text-[var(--bone)] font-medium">
-                {CITY_DELIVERY_DATA[selectedCity].city}: {CITY_DELIVERY_DATA[selectedCity].estimate}
-              </div>
-              <div className="text-[var(--muted)] text-[10px]">
-                Courier: {CITY_DELIVERY_DATA[selectedCity].courier}
-              </div>
-            </div>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={selectedCity}
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.2 }}
+                className="p-3 rounded-xs border border-[var(--hairline)] bg-[var(--surface-tint)] text-[11px] sm:text-xs font-mono space-y-1"
+              >
+                <div className="text-[var(--bone)] font-medium">
+                  {CITY_DELIVERY_DATA[selectedCity].city}: {CITY_DELIVERY_DATA[selectedCity].estimate}
+                </div>
+                <div className="text-[var(--muted)] text-[10px]">
+                  Courier: {CITY_DELIVERY_DATA[selectedCity].courier}
+                </div>
+              </motion.div>
+            </AnimatePresence>
           </motion.div>
           <Link
             to="/help"

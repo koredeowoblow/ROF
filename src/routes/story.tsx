@@ -1,5 +1,6 @@
 import React from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { motion, useReducedMotion } from 'motion/react'
 import { Pane } from '@/components/Pane'
 import { Mast } from '@/components/Mast'
 import { Button } from '@/components/Button'
@@ -12,6 +13,8 @@ export const Route = createFileRoute('/story')({
 })
 
 function StoryPage() {
+  const prefersReduced = useReducedMotion()
+
   return (
     <div className="flex flex-col w-full">
       {/* 1. Two-line Masthead */}
@@ -29,7 +32,11 @@ function StoryPage() {
       <ScrollSection className="w-full border-b border-[var(--hairline)] grid grid-cols-1 lg:grid-cols-12 min-h-[580px]">
         {/* Ink Pane (3fr / 7 cols) */}
         <Pane tone="ink" withGrain className="lg:col-span-7 p-8 sm:p-12 lg:p-16 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-[var(--hairline)]">
-          <div>
+          <motion.div
+            initial={prefersReduced ? undefined : { opacity: 0, y: 20 }}
+            animate={prefersReduced ? undefined : { opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as const }}
+          >
             <div className="flex items-center gap-2 mb-4">
               <DiamondMark size={8} accent filled />
               <span className="label-caps text-[var(--acc)]">Roof of Fame</span>
@@ -45,11 +52,11 @@ function StoryPage() {
                 It is for people on the climb. People who put in the quiet hours, who take pride in their craft, and who intend to build their own legacy on their own terms.
               </p>
             </div>
-          </div>
+          </motion.div>
 
           <div className="mt-12 pt-8 border-t border-[var(--hairline)] flex items-center justify-between">
             <span className="label-caps text-[var(--acc)]">Destined for riches</span>
-            <div className="opacity-20">
+            <div className="opacity-20 transition-opacity duration-300 hover:opacity-40">
               <Logo size="sm" ghost />
             </div>
           </div>
@@ -57,7 +64,12 @@ function StoryPage() {
 
         {/* Bone Pane (2fr / 5 cols) */}
         <Pane tone="bone" className="lg:col-span-5 p-8 sm:p-12 lg:p-16 flex flex-col justify-between">
-          <div className="space-y-6">
+          <motion.div
+            initial={prefersReduced ? undefined : { opacity: 0, y: 20 }}
+            animate={prefersReduced ? undefined : { opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] as const }}
+            className="space-y-6"
+          >
             <span className="label-caps text-[var(--acc-on-bone)]">Mindset & Lifestyle</span>
             <h3 className="font-serif text-3xl sm:text-4xl text-[var(--ink)] leading-snug">
               Wear it with pride because it represents something bigger than yourself.
@@ -65,7 +77,7 @@ function StoryPage() {
             <p className="text-sm sm:text-base text-[var(--ink)] leading-relaxed font-sans">
               ROF stands for ambition, confidence and originality. It is made for people who stay focused on their goals, never settle for less, and understand that clothing is an outward statement of inner discipline.
             </p>
-          </div>
+          </motion.div>
 
           <div className="mt-10 pt-6 border-t border-[var(--hairline)]">
             <Link to="/shop">
@@ -80,7 +92,13 @@ function StoryPage() {
       {/* 3. Ink Section: Three Designs */}
       <ScrollSection data-tone="ink" className="w-full bg-[var(--ink)] text-[var(--bone)] py-16 sm:py-24 px-4 md:px-8 border-b border-[var(--hairline)] grain-overlay">
         <div className="mx-auto max-w-[var(--max-content)]">
-          <div className="max-w-2xl mb-12">
+          <motion.div
+            initial={prefersReduced ? undefined : { opacity: 0, y: 24 }}
+            whileInView={prefersReduced ? undefined : { opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as const }}
+            className="max-w-2xl mb-12"
+          >
             <span className="label-caps text-[var(--acc)]">The Trilogy</span>
             <h2 className="text-4xl sm:text-5xl font-display text-[var(--bone)] mt-2">
               {formatAccentText('Three *designs*')}
@@ -88,14 +106,36 @@ function StoryPage() {
             <p className="mt-3 text-sm sm:text-base text-[var(--muted)] font-sans">
               Each piece in Collection 01 explores a different facet of conviction, craft and identity.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <motion.div
+            initial={prefersReduced ? undefined : 'hidden'}
+            whileInView={prefersReduced ? undefined : 'visible'}
+            viewport={{ once: true, amount: 0.2 }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: { staggerChildren: prefersReduced ? 0 : 0.1 },
+              },
+            }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          >
             {/* Design 1: Cards */}
-            <div className="p-8 border border-[var(--hairline)] bg-[var(--surface-deep)] flex flex-col justify-between min-h-[280px]">
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: prefersReduced ? 0 : 20 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] as const },
+                },
+              }}
+              className="p-8 border border-[var(--hairline)] bg-[var(--surface-deep)] flex flex-col justify-between min-h-[280px] rounded-xs transition-all duration-300 hover:border-[var(--acc)]/60 hover:-translate-y-1.5 hover:shadow-[0_16px_36px_rgba(0,0,0,0.6)] group"
+            >
               <div>
                 <span className="label-caps text-[var(--acc)]">Design 01</span>
-                <h3 className="font-serif text-2xl sm:text-3xl text-[var(--bone)] mt-2 mb-3">
+                <h3 className="font-serif text-2xl sm:text-3xl text-[var(--bone)] mt-2 mb-3 group-hover:text-[var(--acc)] transition-colors">
                   Destined Cards
                 </h3>
                 <p className="text-sm text-[var(--muted)] font-sans leading-relaxed">
@@ -103,17 +143,28 @@ function StoryPage() {
                 </p>
               </div>
               <div className="mt-6 pt-4 border-t border-[var(--hairline)]">
-                <Link to="/shop" search={{ colour: 'green' }} className="text-xs uppercase tracking-wider text-[var(--bone)] hover:text-[var(--acc)] transition-colors">
-                  View Forest Green piece →
+                <Link to="/shop" search={{ colour: 'green' }} className="text-xs uppercase tracking-wider text-[var(--bone)] group-hover:text-[var(--acc)] transition-colors flex items-center gap-1.5">
+                  <span>View Forest Green piece</span>
+                  <span className="transition-transform duration-200 group-hover:translate-x-1.5">→</span>
                 </Link>
               </div>
-            </div>
+            </motion.div>
 
             {/* Design 2: Wave */}
-            <div className="p-8 border border-[var(--hairline)] bg-[var(--surface-deep)] flex flex-col justify-between min-h-[280px]">
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: prefersReduced ? 0 : 20 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] as const },
+                },
+              }}
+              className="p-8 border border-[var(--hairline)] bg-[var(--surface-deep)] flex flex-col justify-between min-h-[280px] rounded-xs transition-all duration-300 hover:border-[var(--acc)]/60 hover:-translate-y-1.5 hover:shadow-[0_16px_36px_rgba(0,0,0,0.6)] group"
+            >
               <div>
                 <span className="label-caps text-[var(--acc)]">Design 02</span>
-                <h3 className="font-serif text-2xl sm:text-3xl text-[var(--bone)] mt-2 mb-3">
+                <h3 className="font-serif text-2xl sm:text-3xl text-[var(--bone)] mt-2 mb-3 group-hover:text-[var(--acc)] transition-colors">
                   Rage Wave
                 </h3>
                 <p className="text-sm text-[var(--muted)] font-sans leading-relaxed">
@@ -121,17 +172,28 @@ function StoryPage() {
                 </p>
               </div>
               <div className="mt-6 pt-4 border-t border-[var(--hairline)]">
-                <Link to="/shop" search={{ colour: 'white' }} className="text-xs uppercase tracking-wider text-[var(--bone)] hover:text-[var(--acc)] transition-colors">
-                  View Wave colourways →
+                <Link to="/shop" search={{ colour: 'white' }} className="text-xs uppercase tracking-wider text-[var(--bone)] group-hover:text-[var(--acc)] transition-colors flex items-center gap-1.5">
+                  <span>View Wave colourways</span>
+                  <span className="transition-transform duration-200 group-hover:translate-x-1.5">→</span>
                 </Link>
               </div>
-            </div>
+            </motion.div>
 
             {/* Design 3: Scribble */}
-            <div className="p-8 border border-[var(--hairline)] bg-[var(--surface-deep)] flex flex-col justify-between min-h-[280px]">
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: prefersReduced ? 0 : 20 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] as const },
+                },
+              }}
+              className="p-8 border border-[var(--hairline)] bg-[var(--surface-deep)] flex flex-col justify-between min-h-[280px] rounded-xs transition-all duration-300 hover:border-[var(--acc)]/60 hover:-translate-y-1.5 hover:shadow-[0_16px_36px_rgba(0,0,0,0.6)] group"
+            >
               <div>
                 <span className="label-caps text-[var(--acc)]">Design 03</span>
-                <h3 className="font-serif text-2xl sm:text-3xl text-[var(--bone)] mt-2 mb-3">
+                <h3 className="font-serif text-2xl sm:text-3xl text-[var(--bone)] mt-2 mb-3 group-hover:text-[var(--acc)] transition-colors">
                   Rage Scribble
                 </h3>
                 <p className="text-sm text-[var(--muted)] font-sans leading-relaxed">
@@ -139,12 +201,13 @@ function StoryPage() {
                 </p>
               </div>
               <div className="mt-6 pt-4 border-t border-[var(--hairline)]">
-                <Link to="/shop" search={{ colour: 'black' }} className="text-xs uppercase tracking-wider text-[var(--bone)] hover:text-[var(--acc)] transition-colors">
-                  View Scribble colourways →
+                <Link to="/shop" search={{ colour: 'black' }} className="text-xs uppercase tracking-wider text-[var(--bone)] group-hover:text-[var(--acc)] transition-colors flex items-center gap-1.5">
+                  <span>View Scribble colourways</span>
+                  <span className="transition-transform duration-200 group-hover:translate-x-1.5">→</span>
                 </Link>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </ScrollSection>
     </div>

@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence, useReducedMotion } from 'motion/react'
-import { Volume2, VolumeX, RotateCw, Sparkles, BookOpen, Check, X, ShieldCheck, Layers } from 'lucide-react'
+import { RotateCw, Sparkles, BookOpen, Check, X, ShieldCheck, Layers } from 'lucide-react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { DiamondMark } from '@/components/Logo'
 import { safeStorage } from '@/lib/storage'
 import { Button } from '@/components/Button'
 import { cn } from '@/lib/utils'
+import { getIsPageLoaderActive } from '@/components/PageLoader'
 
 interface HeroStageProps {
   className?: string
@@ -75,124 +76,47 @@ const LagosClock = React.memo(() => {
 })
 
 // ---------------------------------------------------------------------------
-// SOOTHING ACOUSTIC WEB AUDIO SYNTHESIZER (Pure 432Hz harmonic resonance)
+// 20-CARD DECK CONSTANTS & REUSABLE CARD BACK COMPONENT
 // ---------------------------------------------------------------------------
-let globalAudioCtx: AudioContext | null = null
+const CARD_SIZE_CLASSES =
+  'w-[140px] h-[215px] sm:w-[185px] sm:h-[280px] md:w-[215px] md:h-[325px] lg:w-[245px] lg:h-[365px] xl:w-[275px] xl:h-[410px] 2xl:w-[295px] 2xl:h-[440px]'
 
-function getAudioContext(): AudioContext | null {
-  if (typeof window === 'undefined') return null
-  try {
-    if (!globalAudioCtx) {
-      const AudioCtxClass =
-        window.AudioContext ||
-        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
-      if (AudioCtxClass) {
-        globalAudioCtx = new AudioCtxClass()
-      }
-    }
-    if (globalAudioCtx && globalAudioCtx.state === 'suspended') {
-      globalAudioCtx.resume().catch(() => { })
-    }
-    return globalAudioCtx
-  } catch {
-    return null
-  }
-}
+// 17 foundation cards forming the 20-card pile with the 3 destiny cards
+const DECK_FOUNDATION_CARDS = Array.from({ length: 17 }, (_, i) => ({
+  id: `deck-${i}`,
+  index: i,
+  serial: `ROF-ARC-${String(i + 1).padStart(2, '0')}`,
+}))
 
-function playSoothingSound(type: 'card' | 'flip' | 'seal' | 'click' | 'dice', enabled: boolean) {
-  if (!enabled) return
-  const ctx = getAudioContext()
-  if (!ctx) return
+const CardBackFace: React.FC<{ serial?: string }> = ({ serial = 'ROF-ARCHIVE-01' }) => (
+  <div
+    style={{
+      backfaceVisibility: 'hidden',
+      transform: 'rotateY(180deg)',
+    }}
+    className="absolute inset-0 rounded-xl lg:rounded-2xl p-3.5 sm:p-5 flex flex-col justify-between bg-[var(--surface-deep)] text-[var(--bone)] border border-[var(--acc)] overflow-hidden shadow-2xl pointer-events-none select-none"
+  >
+    <div className="absolute inset-2 border border-[var(--bone)]/20 rounded-lg flex items-center justify-center overflow-hidden">
+      <div className="absolute inset-0 opacity-15 bg-[radial-gradient(circle_at_center,var(--acc)_0%,transparent_70%)]" />
 
-  try {
-    const now = ctx.currentTime
-    const osc = ctx.createOscillator()
-    const gain = ctx.createGain()
+      <svg viewBox="0 0 120 120" className="w-24 h-24 sm:w-28 sm:h-28 text-[var(--bone)]/30">
+        <polygon points="60,8 112,60 60,112 8,60" stroke="currentColor" strokeWidth="1" fill="none" />
+        <polygon points="60,20 100,60 60,100 20,60" stroke="currentColor" strokeWidth="1" fill="none" />
+        <polygon points="60,32 88,60 60,88 32,60" stroke="var(--acc)" strokeWidth="1.5" fill="rgba(240,180,41,0.20)" />
+        <polygon points="60,44 76,60 60,76 44,60" stroke="var(--acc)" strokeWidth="1" fill="none" />
+      </svg>
 
-    if (type === 'seal') {
-      // 432Hz Crystal Diamond Singing Chime with warm harmonic overtone
-      osc.type = 'sine'
-      osc.frequency.setValueAtTime(432, now)
-      osc.frequency.exponentialRampToValueAtTime(864, now + 0.15)
-      osc.frequency.exponentialRampToValueAtTime(432, now + 0.7)
+      <span className="absolute font-serif text-2xl sm:text-3xl font-bold text-[var(--bone)] tracking-widest">
+        ROF
+      </span>
+    </div>
 
-      gain.gain.setValueAtTime(0.001, now)
-      gain.gain.linearRampToValueAtTime(0.08, now + 0.05)
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.4)
-
-      // Soft harmonic fifth (648Hz)
-      const subOsc = ctx.createOscillator()
-      const subGain = ctx.createGain()
-      subOsc.type = 'sine'
-      subOsc.frequency.setValueAtTime(648, now)
-      subGain.gain.setValueAtTime(0.035, now)
-      subGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.0)
-      subOsc.connect(subGain)
-      subGain.connect(ctx.destination)
-      subOsc.start(now)
-      subOsc.stop(now + 1.0)
-
-      osc.connect(gain)
-      gain.connect(ctx.destination)
-      osc.start(now)
-      osc.stop(now + 1.4)
-    } else if (type === 'dice') {
-      // Resonant wooden/resin dice impact
-      osc.type = 'sine'
-      osc.frequency.setValueAtTime(460, now)
-      osc.frequency.exponentialRampToValueAtTime(95, now + 0.09)
-
-      gain.gain.setValueAtTime(0.09, now)
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09)
-
-      osc.connect(gain)
-      gain.connect(ctx.destination)
-      osc.start(now)
-      osc.stop(now + 0.09)
-    } else if (type === 'card') {
-      // Soft, organic card sliding over heavy textured cardstock
-      osc.type = 'triangle'
-      osc.frequency.setValueAtTime(680, now)
-      osc.frequency.exponentialRampToValueAtTime(240, now + 0.06)
-
-      gain.gain.setValueAtTime(0.035, now)
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06)
-
-      osc.connect(gain)
-      gain.connect(ctx.destination)
-      osc.start(now)
-      osc.stop(now + 0.06)
-    } else if (type === 'flip') {
-      // Gentle spatial card turn whoosh
-      osc.type = 'sine'
-      osc.frequency.setValueAtTime(320, now)
-      osc.frequency.exponentialRampToValueAtTime(620, now + 0.08)
-
-      gain.gain.setValueAtTime(0.045, now)
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08)
-
-      osc.connect(gain)
-      gain.connect(ctx.destination)
-      osc.start(now)
-      osc.stop(now + 0.08)
-    } else if (type === 'click') {
-      // Soft velvet switch click
-      osc.type = 'sine'
-      osc.frequency.setValueAtTime(1200, now)
-      osc.frequency.exponentialRampToValueAtTime(380, now + 0.03)
-
-      gain.gain.setValueAtTime(0.03, now)
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03)
-
-      osc.connect(gain)
-      gain.connect(ctx.destination)
-      osc.start(now)
-      osc.stop(now + 0.03)
-    }
-  } catch {
-    // Fail silently if browser blocks audio
-  }
-}
+    <div className="relative z-10 w-full flex items-center justify-between text-[8px] font-mono text-[var(--bone)]/60 pt-1">
+      <span>CERTIFIED ARCHIVE</span>
+      <span className="text-[var(--acc)]">{serial}</span>
+    </div>
+  </div>
+)
 
 // ---------------------------------------------------------------------------
 // THE 3 CARDS OF ROF: ROOF • OF • FRAME (AMBITION • CONFIDENCE • ORIGINALITY)
@@ -310,7 +234,6 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   const [activeCardIndex, setActiveCardIndex] = useState<number>(1) // Center 'O' card default
   const [isFlipped, setIsFlipped] = useState<boolean>(false)
   const [isTouch, setIsTouch] = useState(true)
-  const [soundEnabled, setSoundEnabled] = useState(true)
   const [sealedMindset, setSealedMindset] = useState<string | null>(null)
   const [isSealing, setIsSealing] = useState(false)
   const [showCodex, setShowCodex] = useState(false)
@@ -319,6 +242,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   const [diceNumber, setDiceNumber] = useState<number>(6)
   const [hasRolled, setHasRolled] = useState(false)
   const [showRollOutcome, setShowRollOutcome] = useState(false)
+  const [deckPhase, setDeckPhase] = useState<'spread' | 'gathering' | 'splitting' | 'riffling' | 'bridge' | 'squaring' | 'dealing' | 'dealt'>('spread')
   const [screenWidth, setScreenWidth] = useState<number>(() =>
     typeof window !== 'undefined' ? window.innerWidth : 1280
   )
@@ -326,6 +250,96 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   const stageRef = useRef<HTMLDivElement>(null)
   const rollButtonRef = useRef<HTMLButtonElement>(null)
   const decreeRef = useRef<HTMLDivElement>(null)
+  const isShufflingRef = useRef(false)
+
+  // 20-Card Realistic Ritual: Plenty Faced Backward -> Gathered -> Shuffled (Split, Riffle, Bridge) -> R • O • F Deal
+  const handleShuffleDeck = useCallback(() => {
+    if (isShufflingRef.current) return
+    isShufflingRef.current = true
+
+    // Step 1: 20 cards face-down in wide table ribbon spread ("faced backward plenty")
+    setDeckPhase('spread')
+
+    // Step 2: Croupier scoops cards inward to gather into center deck
+    const t1 = setTimeout(() => {
+      setDeckPhase('gathering')
+    }, 900)
+
+    // Step 3: Deck cuts and lifts into 2 distinct angled packets (left & right)
+    const t2 = setTimeout(() => {
+      setDeckPhase('splitting')
+    }, 1850)
+
+    // Step 4: Rapid alternating 3D thumb riffle interleave
+    const t3 = setTimeout(() => {
+      setDeckPhase('riffling')
+    }, 2550)
+
+    // Step 5: The arched bridge waterfall cascade snap
+    const t4 = setTimeout(() => {
+      setDeckPhase('bridge')
+    }, 3650)
+
+    // Step 6: Deck edges squared flush with crisp table taps
+    const t5 = setTimeout(() => {
+      setDeckPhase('squaring')
+    }, 4200)
+
+    // Step 7: Dealer pitches top 3 cards R - O - F flipping face-up into trinity
+    const t6 = setTimeout(() => {
+      setDeckPhase('dealing')
+    }, 4700)
+
+    // Step 8: Settled into final hero layout matching reference image
+    const t7 = setTimeout(() => {
+      setDeckPhase('dealt')
+      isShufflingRef.current = false
+    }, 5850)
+
+    return () => {
+      clearTimeout(t1)
+      clearTimeout(t2)
+      clearTimeout(t3)
+      clearTimeout(t4)
+      clearTimeout(t5)
+      clearTimeout(t6)
+      clearTimeout(t7)
+    }
+  }, [])
+
+  // Initial cinematic sequence: 20 cards faced backward plenty -> gathered -> shuffled -> R • O • F
+  useEffect(() => {
+    let timer: NodeJS.Timeout
+    let started = false
+
+    const triggerAutoSequence = () => {
+      if (started) return
+      started = true
+      // Display the wide ribbon spread of 20 cards faced backward for 850ms so user clearly takes it in, then gather & shuffle
+      timer = setTimeout(() => {
+        handleShuffleDeck()
+      }, 850)
+    }
+
+    if (!getIsPageLoaderActive()) {
+      triggerAutoSequence()
+    }
+
+    const handleLoaderDone = () => {
+      triggerAutoSequence()
+    }
+    window.addEventListener('rof:page-loader-done', handleLoaderDone)
+
+    const fallbackTimer = setTimeout(() => {
+      triggerAutoSequence()
+    }, 1300)
+
+    return () => {
+      window.removeEventListener('rof:page-loader-done', handleLoaderDone)
+      clearTimeout(timer)
+      clearTimeout(fallbackTimer)
+    }
+  }, [handleShuffleDeck])
 
   // Accessible Decree Focus & Escape Handling
   useEffect(() => {
@@ -386,7 +400,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   const holoGleam = useTransform(smoothMouseX, [-0.5, 0.5], [0, 360])
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (isTouch || prefersReduced || !stageRef.current) return
+    if (!stageRef.current) return
     const rect = stageRef.current.getBoundingClientRect()
     const x = (e.clientX - rect.left) / rect.width - 0.5
     const y = (e.clientY - rect.top) / rect.height - 0.5
@@ -400,26 +414,20 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   }
 
   // Handle Card Select
-  const handleSelectCard = useCallback(
-    (index: number) => {
-      setActiveCardIndex(index)
-      playSoothingSound('card', soundEnabled)
-    },
-    [soundEnabled]
-  )
+  const handleSelectCard = useCallback((index: number) => {
+    setActiveCardIndex(index)
+  }, [])
 
   // Handle Card Flip
   const handleToggleFlip = useCallback(() => {
     setIsFlipped((prev) => !prev)
-    playSoothingSound('flip', soundEnabled)
-  }, [soundEnabled])
+  }, [])
 
   // Handle Dice Roll & Destiny Revelation
   const handleRollDice = useCallback(() => {
     if (diceRolling) return
     setDiceRolling(true)
     setShowRollOutcome(false)
-    playSoothingSound('dice', soundEnabled)
     setTimeout(() => {
       const outcomes = [1, 2, 3, 4, 5, 6, 6]
       const nextRoll = outcomes[Math.floor(Math.random() * outcomes.length)]
@@ -431,15 +439,13 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
       if (outcome) {
         setActiveCardIndex(outcome.cardIndex)
       }
-      playSoothingSound('seal', soundEnabled)
     }, 550)
-  }, [diceRolling, soundEnabled])
+  }, [diceRolling])
 
   // Seal Current Mindset Ritual
   const handleSealMindset = useCallback(() => {
     const card = ROF_CARDS[activeCardIndex]
     setIsSealing(true)
-    playSoothingSound('seal', soundEnabled)
 
     setTimeout(() => {
       setSealedMindset(card.label)
@@ -447,11 +453,228 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
       window.dispatchEvent(new Event('rof-mindset-update'))
       setIsSealing(false)
     }, 600)
-  }, [activeCardIndex, soundEnabled])
+  }, [activeCardIndex])
 
   const currentCard = ROF_CARDS[activeCardIndex]
   const isCurrentCardSealed = sealedMindset === currentCard.label
   const currentOutcome = DICE_OUTCOMES[diceNumber]
+
+  // Spatial calculations for 20-card deck pile & 3 trinity cards
+  const spread =
+    screenWidth < 640
+      ? 88
+      : screenWidth < 768
+        ? 145
+        : screenWidth < 1024
+          ? 195
+          : screenWidth < 1440
+            ? 275
+            : 340
+  const xOffsets = [-spread, 0, spread]
+  const baseRot = [-6, 0, 6]
+  const baseY = [6, -10, 6]
+
+  const getDeckCardTransform = (i: number) => {
+    const isLeft = i < 10
+    const packetIdx = isLeft ? i : i - 10
+    const interleaveOrder = isLeft ? i * 2 : (i - 10) * 2 + 1
+
+    if (deckPhase === 'spread') {
+      const t = (i - 9.5) / 9.5
+      const spreadWidth =
+        screenWidth < 640
+          ? 150
+          : screenWidth < 768
+            ? 240
+            : screenWidth < 1024
+              ? 360
+              : screenWidth < 1440
+                ? 490
+                : 600
+      return {
+        x: t * spreadWidth,
+        y: Math.sin(((i + 0.5) / 20) * Math.PI) * -24 + ((i % 2 === 0 ? 1 : -1) * 2.5),
+        z: i * 1.8,
+        rotateZ: t * 14,
+        rotateY: 180, // ALL 20 cards face-down
+        opacity: 1,
+        scale: 1,
+      }
+    }
+
+    if (deckPhase === 'gathering') {
+      return {
+        x: 0,
+        y: -i * 1.4,
+        z: i * 2,
+        rotateZ: 0,
+        rotateY: 180,
+        opacity: 1,
+        scale: 1,
+      }
+    }
+
+    if (deckPhase === 'splitting') {
+      return {
+        x: isLeft ? -125 - packetIdx * 1.5 : 125 + packetIdx * 1.5,
+        y: -packetIdx * 1.8 - 18,
+        z: packetIdx * 2.5 + 20,
+        rotateZ: isLeft ? -14 : 14,
+        rotateY: isLeft ? 195 : 165,
+        opacity: 1,
+        scale: 1.02,
+      }
+    }
+
+    if (deckPhase === 'riffling') {
+      return {
+        x: isLeft ? -5 : 5,
+        y: -interleaveOrder * 1.35,
+        z: interleaveOrder * 2.5,
+        rotateZ: isLeft ? -1.5 : 1.5,
+        rotateY: 180,
+        opacity: 1,
+        scale: 1,
+      }
+    }
+
+    if (deckPhase === 'bridge') {
+      return {
+        x: isLeft ? -30 + packetIdx * 2.2 : 30 - packetIdx * 2.2,
+        y: -28 - Math.sin((packetIdx / 9) * Math.PI) * 20,
+        z: 42 + packetIdx * 2,
+        rotateZ: isLeft ? -10 + packetIdx * 0.8 : 10 - packetIdx * 0.8,
+        rotateY: isLeft ? 188 : 172,
+        opacity: 1,
+        scale: 1.02,
+      }
+    }
+
+    if (deckPhase === 'squaring') {
+      return {
+        x: 0,
+        y: -i * 1.3,
+        z: i * 2,
+        rotateZ: 0,
+        rotateY: 180,
+        opacity: 1,
+        scale: 1,
+      }
+    }
+
+    // 'dealing' or 'dealt': Foundation deck sits subtly centered behind
+    return {
+      x: 0,
+      y: 20 - i * 0.35,
+      z: -30 + i * 0.8,
+      rotateZ: 0,
+      rotateY: 180,
+      opacity: 0.16,
+      scale: 0.94,
+    }
+  }
+
+  const getDestinyCardTransform = (idx: number) => {
+    const cardI = 17 + idx // Top 3 cards in 20-card deck
+    const isLeft = cardI < 10
+    const packetIdx = cardI - 10
+    const interleaveOrder = isLeft ? cardI * 2 : (cardI - 10) * 2 + 1
+    const isSelected = activeCardIndex === idx
+
+    if (deckPhase === 'spread') {
+      const t = (cardI - 9.5) / 9.5
+      const spreadWidth =
+        screenWidth < 640
+          ? 150
+          : screenWidth < 768
+            ? 240
+            : screenWidth < 1024
+              ? 360
+              : screenWidth < 1440
+                ? 490
+                : 600
+      return {
+        x: t * spreadWidth,
+        y: Math.sin(((cardI + 0.5) / 20) * Math.PI) * -24 + ((cardI % 2 === 0 ? 1 : -1) * 2.5),
+        z: cardI * 1.8,
+        rotateZ: t * 14,
+        rotateY: 180,
+        scale: 1,
+        zIndex: 25 + idx,
+      }
+    }
+
+    if (deckPhase === 'gathering') {
+      return {
+        x: 0,
+        y: -cardI * 1.4,
+        z: cardI * 2,
+        rotateZ: 0,
+        rotateY: 180,
+        scale: 1,
+        zIndex: 35 + idx,
+      }
+    }
+
+    if (deckPhase === 'splitting') {
+      return {
+        x: 125 + packetIdx * 1.5,
+        y: -packetIdx * 1.8 - 18,
+        z: packetIdx * 2.5 + 20,
+        rotateZ: 14,
+        rotateY: 165,
+        scale: 1.02,
+        zIndex: 40 + idx,
+      }
+    }
+
+    if (deckPhase === 'riffling') {
+      return {
+        x: 5,
+        y: -interleaveOrder * 1.35,
+        z: interleaveOrder * 2.5,
+        rotateZ: 1.5,
+        rotateY: 180,
+        scale: 1,
+        zIndex: 45 + idx,
+      }
+    }
+
+    if (deckPhase === 'bridge') {
+      return {
+        x: 30 - packetIdx * 2.2,
+        y: -28 - Math.sin((packetIdx / 9) * Math.PI) * 20,
+        z: 42 + packetIdx * 2,
+        rotateZ: 10 - packetIdx * 0.8,
+        rotateY: 172,
+        scale: 1.02,
+        zIndex: 50 + idx,
+      }
+    }
+
+    if (deckPhase === 'squaring') {
+      return {
+        x: 0,
+        y: -cardI * 1.3,
+        z: cardI * 2,
+        rotateZ: 0,
+        rotateY: 180,
+        scale: 1,
+        zIndex: 52 + idx,
+      }
+    }
+
+    // 'dealing' or 'dealt':
+    return {
+      x: xOffsets[idx],
+      y: isSelected ? -24 : baseY[idx],
+      z: isSelected ? 40 : idx === 1 ? 30 : 20,
+      rotateZ: isSelected ? 0 : baseRot[idx],
+      rotateY: isFlipped ? 180 : 0, // Face up!
+      scale: isSelected ? 1.06 : 0.98,
+      zIndex: isSelected ? 60 : idx === 1 ? 40 : 30,
+    }
+  }
 
   return (
     <section
@@ -590,15 +813,12 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             })}
           </div>
 
-          {/* Calm Sound, Specs & Live Clock Controls with Accessible Touch Targets */}
+          {/* Specs & Live Clock Controls with Accessible Touch Targets */}
           <div className="flex items-center gap-1.5 sm:gap-3 font-mono text-xs text-[var(--bone)]">
             {/* Fabric Specs Button */}
             <button
               type="button"
-              onClick={() => {
-                setShowSpecs(!showSpecs)
-                playSoothingSound('click', soundEnabled)
-              }}
+              onClick={() => setShowSpecs(!showSpecs)}
               title="Inspect 260 GSM Heavyweight Specs"
               aria-label="Inspect 260 GSM Heavyweight Fabric Specs"
               className={cn(
@@ -615,45 +835,13 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             {/* Mindset Codex Drawer Button */}
             <button
               type="button"
-              onClick={() => {
-                setShowCodex(true)
-                playSoothingSound('click', soundEnabled)
-              }}
+              onClick={() => setShowCodex(true)}
               title="Open The ROF Mindset Codex"
               aria-label="Open The ROF Mindset Codex"
               className="flex items-center gap-1 px-3 sm:px-2.5 py-2 sm:py-1 min-h-[44px] sm:min-h-0 border border-[var(--hairline)] hover:border-[var(--bone)] text-[10px] uppercase tracking-wider text-[var(--bone)]/80 hover:text-[var(--bone)] cursor-pointer transition-colors bg-[var(--ink)]/70 rounded-xs"
             >
               <BookOpen size={11} className="text-[var(--acc)]" />
               <span className="hidden sm:inline">CODEX</span>
-            </button>
-
-            {/* Audio Toggle with Live Acoustic Waveform Visualizer */}
-            <button
-              type="button"
-              onClick={() => {
-                const next = !soundEnabled
-                setSoundEnabled(next)
-                playSoothingSound('click', next)
-              }}
-              title={soundEnabled ? 'Mute soothing audio' : 'Enable soothing audio'}
-              aria-label={soundEnabled ? 'Mute 432Hz ambient sound' : 'Enable 432Hz ambient sound'}
-              className="flex items-center gap-1.5 px-3 sm:px-2 py-2 sm:py-1 min-h-[44px] sm:min-h-0 border border-[var(--hairline)] hover:border-[var(--bone)]/60 text-[10px] uppercase tracking-wider text-[var(--bone)]/80 hover:text-[var(--bone)] cursor-pointer transition-colors bg-[var(--ink)]/70 rounded-xs"
-            >
-              {soundEnabled ? (
-                <>
-                  <div className="flex items-center gap-0.5 h-3">
-                    <span className="w-0.5 h-2 bg-[var(--acc)] animate-[pulse_1s_ease-in-out_infinite]" />
-                    <span className="w-0.5 h-3 bg-[var(--acc)] animate-[pulse_1.4s_ease-in-out_infinite]" />
-                    <span className="w-0.5 h-1.5 bg-[var(--acc)] animate-[pulse_0.8s_ease-in-out_infinite]" />
-                  </div>
-                  <span className="hidden sm:inline">432Hz</span>
-                </>
-              ) : (
-                <>
-                  <VolumeX size={12} className="text-[var(--muted)]" />
-                  <span className="hidden sm:inline">MUTED</span>
-                </>
-              )}
             </button>
 
             {/* Live Clock (Isolated Micro-Component) */}
@@ -699,9 +887,9 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
         >
           <motion.div
             style={{
-              rotateX: isTouch || prefersReduced ? 0 : stageRotateX,
-              rotateY: isTouch || prefersReduced ? 0 : stageRotateY,
-              z: isTouch || prefersReduced ? 0 : stageTranslateZ,
+              rotateX: stageRotateX,
+              rotateY: stageRotateY,
+              z: stageTranslateZ,
               transformStyle: 'preserve-3d',
             }}
             className="relative w-full h-full flex items-center justify-center"
@@ -709,60 +897,149 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             {/* Deep Contact Shadow */}
             <div className="absolute -bottom-6 lg:-bottom-10 w-4/5 h-10 lg:h-14 bg-black/80 blur-2xl lg:blur-3xl rounded-full pointer-events-none" />
 
-            {/* THE 3 CARDS: ROOF [R] • OF [O] • FRAME [F] */}
+            {/* 17 FOUNDATION CARDS (FORMING 20-CARD DECK WITH THE 3 TRINITY CARDS) */}
+            {DECK_FOUNDATION_CARDS.map((deckCard) => {
+              const pos = getDeckCardTransform(deckCard.index)
+              return (
+                <motion.div
+                  key={deckCard.id}
+                  animate={{
+                    x: pos.x,
+                    y: pos.y,
+                    z: pos.z,
+                    rotateZ: pos.rotateZ,
+                    rotateY: pos.rotateY,
+                    opacity: pos.opacity,
+                    scale: pos.scale,
+                  }}
+                  transition={{
+                    type: 'spring',
+                    stiffness:
+                      deckPhase === 'riffling'
+                        ? 320
+                        : deckPhase === 'bridge'
+                          ? 280
+                          : deckPhase === 'gathering'
+                            ? 220
+                            : 340,
+                    damping:
+                      deckPhase === 'riffling'
+                        ? 22
+                        : deckPhase === 'bridge'
+                          ? 20
+                          : deckPhase === 'gathering'
+                            ? 24
+                            : 28,
+                    mass: 0.75,
+                    delay:
+                      deckPhase === 'gathering'
+                        ? Math.abs(deckCard.index - 8.5) * 0.016
+                        : deckPhase === 'riffling'
+                          ? (deckCard.index < 10 ? deckCard.index * 2 : (deckCard.index - 10) * 2 + 1) * 0.035
+                          : 0,
+                  }}
+                  style={{ transformStyle: 'preserve-3d' }}
+                  className={cn(
+                    'absolute pointer-events-none select-none rounded-xl lg:rounded-2xl shadow-[0_12px_28px_rgba(0,0,0,0.65)]',
+                    CARD_SIZE_CLASSES
+                  )}
+                >
+                  {/* Subtle Front Specimen Face */}
+                  <div
+                    style={{ backfaceVisibility: 'hidden' }}
+                    className="absolute inset-0 rounded-xl lg:rounded-2xl p-3 sm:p-4 flex flex-col justify-between bg-[var(--bone-surface)] text-[var(--ink)] border border-[var(--acc)]/30 overflow-hidden"
+                  >
+                    <div className="flex items-center justify-between text-[7px] font-mono text-[var(--ink)]/50 uppercase">
+                      <span>SPECIMEN // {deckCard.serial}</span>
+                      <DiamondMark size={4} accent filled />
+                    </div>
+                    <div className="flex flex-col items-center justify-center my-auto opacity-20">
+                      <DiamondMark size={14} accent />
+                      <span className="font-serif text-lg text-[var(--ink)] font-bold mt-1">ROF</span>
+                    </div>
+                    <div className="text-[6px] font-mono text-[var(--ink)]/40 uppercase tracking-widest text-center">
+                      HEAVYWEIGHT TERRY ARCHIVE
+                    </div>
+                  </div>
+
+                  {/* Sacred Card Back Face */}
+                  <CardBackFace serial={deckCard.serial} />
+                </motion.div>
+              )
+            })}
+
+            {/* THE 3 TRINITY CARDS: ROOF [R] • OF [O] • FRAME [F] */}
             {ROF_CARDS.map((card, idx) => {
+              const pos = getDestinyCardTransform(idx)
               const isSelected = activeCardIndex === idx
-              const spread =
-                screenWidth < 640
-                  ? 88
-                  : screenWidth < 768
-                    ? 145
-                    : screenWidth < 1024
-                      ? 195
-                      : screenWidth < 1440
-                        ? 275
-                        : 340
-              const xOffsets = [-spread, 0, spread]
-              const baseRot = [-6, 0, 6][idx]
-              const baseY = [6, -10, 6][idx]
               const isCardSealed = sealedMindset === card.label
 
               return (
                 <motion.div
                   key={card.id}
-                  onClick={() => handleSelectCard(idx)}
+                  onClick={() => {
+                    if (deckPhase === 'dealt') {
+                      handleSelectCard(idx)
+                    }
+                  }}
                   onMouseEnter={() => {
-                    if (!isTouch) handleSelectCard(idx)
+                    if (deckPhase === 'dealt') handleSelectCard(idx)
                   }}
                   animate={{
-                    x: xOffsets[idx],
-                    y: isSelected ? -24 : baseY,
-                    rotateZ: isSelected ? 0 : baseRot,
-                    rotateY: isFlipped ? 180 : 0,
-                    scale: isSelected ? 1.06 : 0.98,
-                    zIndex: isSelected ? 30 : idx === 1 ? 20 : 10,
+                    x: pos.x,
+                    y: pos.y,
+                    z: pos.z,
+                    rotateZ: pos.rotateZ,
+                    rotateY: pos.rotateY,
+                    scale: pos.scale,
+                    zIndex: pos.zIndex,
                   }}
                   transition={{
                     type: 'spring',
-                    stiffness: 340,
-                    damping: 30,
+                    stiffness:
+                      deckPhase === 'riffling'
+                        ? 320
+                        : deckPhase === 'bridge'
+                          ? 280
+                          : deckPhase === 'gathering'
+                            ? 220
+                            : 340,
+                    damping:
+                      deckPhase === 'riffling'
+                        ? 22
+                        : deckPhase === 'bridge'
+                          ? 20
+                          : deckPhase === 'gathering'
+                            ? 24
+                            : 28,
                     mass: 0.75,
+                    delay:
+                      deckPhase === 'gathering'
+                        ? Math.abs((17 + idx) - 8.5) * 0.016
+                        : deckPhase === 'riffling'
+                          ? ((7 + idx) * 2 + 1) * 0.035
+                          : deckPhase === 'dealing'
+                            ? idx * 0.32
+                            : 0,
                   }}
                   whileHover={
-                    isTouch
+                    deckPhase !== 'dealt'
                       ? undefined
                       : {
-                        y: isSelected ? -30 : baseY - 14,
+                        y: isSelected ? -30 : pos.y - 14,
                         scale: 1.08,
-                        zIndex: 40,
+                        zIndex: 50,
                         transition: { duration: 0.2 },
                       }
                   }
                   style={{ transformStyle: 'preserve-3d' }}
                   className={cn(
-                    'absolute cursor-pointer select-none rounded-xl lg:rounded-2xl transition-shadow duration-300',
-                    'w-[140px] h-[215px] sm:w-[185px] sm:h-[280px] md:w-[215px] md:h-[325px] lg:w-[245px] lg:h-[365px] xl:w-[275px] xl:h-[410px] 2xl:w-[295px] 2xl:h-[440px]',
-                    isSelected
+                    'absolute select-none rounded-xl lg:rounded-2xl transition-shadow duration-300',
+                    CARD_SIZE_CLASSES,
+                    deckPhase === 'dealt'
+                      ? 'cursor-pointer'
+                      : 'pointer-events-none',
+                    deckPhase === 'dealt' && isSelected
                       ? 'ring-2 ring-[var(--acc)] shadow-[0_24px_60px_rgba(240,180,41,0.36),0_8px_24px_rgba(0,0,0,0.6)]'
                       : 'shadow-[0_14px_32px_rgba(0,0,0,0.65)] hover:shadow-[0_18px_40px_rgba(240,180,41,0.22)]'
                   )}
@@ -939,36 +1216,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                   </div>
 
                   {/* REVERSE FACE OF CARD */}
-                  <div
-                    style={{
-                      backfaceVisibility: 'hidden',
-                      transform: 'rotateY(180deg)',
-                    }}
-                    className="absolute inset-0 rounded-xl lg:rounded-2xl p-3.5 sm:p-5 flex flex-col justify-between bg-[var(--surface-deep)] text-[var(--bone)] border border-[var(--acc)] overflow-hidden shadow-2xl"
-                  >
-                    <div className="absolute inset-2 border border-[var(--bone)]/20 rounded-lg flex items-center justify-center overflow-hidden">
-                      <div className="absolute inset-0 opacity-15 bg-[radial-gradient(circle_at_center,var(--acc)_0%,transparent_70%)]" />
-
-                      <svg
-                        viewBox="0 0 120 120"
-                        className="w-24 h-24 sm:w-28 sm:h-28 text-[var(--bone)]/30"
-                      >
-                        <polygon points="60,8 112,60 60,112 8,60" stroke="currentColor" strokeWidth="1" fill="none" />
-                        <polygon points="60,20 100,60 60,100 20,60" stroke="currentColor" strokeWidth="1" fill="none" />
-                        <polygon points="60,32 88,60 60,88 32,60" stroke="var(--acc)" strokeWidth="1.5" fill="rgba(240,180,41,0.20)" />
-                        <polygon points="60,44 76,60 60,76 44,60" stroke="var(--acc)" strokeWidth="1" fill="none" />
-                      </svg>
-
-                      <span className="absolute font-serif text-2xl sm:text-3xl font-bold text-[var(--bone)] tracking-widest">
-                        ROF
-                      </span>
-                    </div>
-
-                    <div className="relative z-10 w-full flex items-center justify-between text-[8px] font-mono text-[var(--bone)]/60 pt-1">
-                      <span>CERTIFIED ARCHIVE</span>
-                      <span className="text-[var(--acc)]">{card.serial}</span>
-                    </div>
-                  </div>
+                  <CardBackFace serial={card.serial} />
                 </motion.div>
               )
             })}

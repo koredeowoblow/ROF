@@ -6,6 +6,16 @@ interface PageLoaderProps {
   currentPath?: string
 }
 
+let isGlobalPageLoaderActive = true
+
+/**
+ * Returns whether the fullscreen luxury page loader is currently covering the viewport.
+ */
+export function getIsPageLoaderActive(): boolean {
+  if (typeof window === 'undefined') return false
+  return isGlobalPageLoaderActive
+}
+
 /**
  * Fullscreen Luxury ROF Page Loader
  * Covers the ENTIRE screen 100% (fixed inset-0 w-screen h-screen z-[9999]).
@@ -21,10 +31,13 @@ export const PageLoader: React.FC<PageLoaderProps> = ({ currentPath }) => {
   if (currentPath !== activePath) {
     setActivePath(currentPath)
     setDisplaying(true)
+    isGlobalPageLoaderActive = true
   }
 
   useEffect(() => {
     if (!displaying) return
+
+    isGlobalPageLoaderActive = true
 
     // Lock body scroll while loader covers the screen
     const originalOverflow = document.body.style.overflow
@@ -36,14 +49,30 @@ export const PageLoader: React.FC<PageLoaderProps> = ({ currentPath }) => {
       document.body.style.overflow = originalOverflow
     }, 620)
 
+    // Complete exit dispatch backup (620ms display + 360ms fade + 20ms buffer = 1000ms)
+    const backupCompleteTimer = setTimeout(() => {
+      isGlobalPageLoaderActive = false
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('rof:page-loader-done'))
+      }
+    }, 1000)
+
     return () => {
       clearTimeout(timer)
+      clearTimeout(backupCompleteTimer)
       document.body.style.overflow = originalOverflow
     }
   }, [displaying, activePath])
 
+  const notifyLoaderDone = () => {
+    isGlobalPageLoaderActive = false
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('rof:page-loader-done'))
+    }
+  }
+
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode="wait" onExitComplete={notifyLoaderDone}>
       {displaying && (
         <motion.div
           key={`rof-page-loader-${activePath}`}

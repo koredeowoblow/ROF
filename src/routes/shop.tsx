@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
 import { z } from 'zod'
 import { Search, SlidersHorizontal, ArrowUpDown, X, LayoutGrid, Columns3 } from 'lucide-react'
 import { Pane } from '@/components/Pane'
@@ -33,6 +33,7 @@ export const Route = createFileRoute('/shop')({
 function ShopPage() {
   const searchParams = Route.useSearch()
   const navigate = useNavigate()
+  const prefersReduced = useReducedMotion()
 
   const [searchQuery, setSearchQuery] = useState(searchParams.q || '')
   const [viewMode, setViewMode] = useState<'accordion' | 'grid'>('accordion')
@@ -191,35 +192,57 @@ function ShopPage() {
                 </select>
               </div>
 
-              {/* View Mode Toggle: Accordion vs Grid */}
-              <div className="flex items-center border border-[var(--hairline)] p-0.5 rounded-xs bg-[var(--bone)]">
+              {/* View Mode Toggle: Accordion vs Grid with Sliding Pill */}
+              <div className="relative flex items-center border border-[var(--hairline)] p-0.5 rounded-xs bg-[var(--bone)]">
                 <button
                   type="button"
                   onClick={() => setViewMode('accordion')}
                   title="Swipeable Accordion Lookbook"
                   className={cn(
-                    'flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono uppercase tracking-wider rounded-xs transition-colors cursor-pointer',
+                    'relative flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono uppercase tracking-wider rounded-xs transition-colors cursor-pointer select-none',
                     viewMode === 'accordion'
-                      ? 'bg-[var(--ink)] text-[var(--bone)] font-bold shadow-sm'
+                      ? 'text-[var(--bone)] font-bold'
                       : 'text-[var(--muted)] hover:text-[var(--ink)]'
                   )}
                 >
-                  <Columns3 className="h-3.5 w-3.5" />
-                  <span className="hidden sm:inline">Accordion</span>
+                  {viewMode === 'accordion' && (
+                    <motion.div
+                      layoutId="viewModePill"
+                      transition={
+                        prefersReduced
+                          ? { duration: 0 }
+                          : { type: 'spring', stiffness: 450, damping: 35 }
+                      }
+                      className="absolute inset-0 bg-[var(--ink)] rounded-xs shadow-sm"
+                    />
+                  )}
+                  <Columns3 className="relative z-10 h-3.5 w-3.5" />
+                  <span className="relative z-10 hidden sm:inline">Accordion</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setViewMode('grid')}
                   title="Catalogue Grid"
                   className={cn(
-                    'flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono uppercase tracking-wider rounded-xs transition-colors cursor-pointer',
+                    'relative flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono uppercase tracking-wider rounded-xs transition-colors cursor-pointer select-none',
                     viewMode === 'grid'
-                      ? 'bg-[var(--ink)] text-[var(--bone)] font-bold shadow-sm'
+                      ? 'text-[var(--bone)] font-bold'
                       : 'text-[var(--muted)] hover:text-[var(--ink)]'
                   )}
                 >
-                  <LayoutGrid className="h-3.5 w-3.5" />
-                  <span className="hidden sm:inline">Grid</span>
+                  {viewMode === 'grid' && (
+                    <motion.div
+                      layoutId="viewModePill"
+                      transition={
+                        prefersReduced
+                          ? { duration: 0 }
+                          : { type: 'spring', stiffness: 450, damping: 35 }
+                      }
+                      className="absolute inset-0 bg-[var(--ink)] rounded-xs shadow-sm"
+                    />
+                  )}
+                  <LayoutGrid className="relative z-10 h-3.5 w-3.5" />
+                  <span className="relative z-10 hidden sm:inline">Grid</span>
                 </button>
               </div>
             </div>
