@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
-import { motion, useMotionValue, useSpring, useTransform, useReducedMotion } from 'motion/react'
+import { motion, useMotionValue, useSpring, useTransform, useReducedMotion, AnimatePresence } from 'motion/react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { DiamondMark } from '@/components/Logo'
 import { Button } from '@/components/Button'
 import { cn } from '@/lib/utils'
 import { getIsPageLoaderActive } from '@/components/PageLoader'
 import { useBagStore } from '@/features/bag/bagStore'
-import { Check, ShoppingBag } from 'lucide-react'
+import { Check, ShoppingBag, ArrowDown, Sparkles } from 'lucide-react'
 
 interface HeroStageProps {
   className?: string
@@ -15,8 +15,9 @@ interface HeroStageProps {
 // ---------------------------------------------------------------------------
 // 20-CARD DECK CONSTANTS & REUSABLE CARD BACK COMPONENT
 // ---------------------------------------------------------------------------
+// Monumental luxury scale: larger, more impactful, showroom presence
 const CARD_SIZE_CLASSES =
-  'w-[140px] h-[215px] sm:w-[185px] sm:h-[280px] md:w-[215px] md:h-[325px] lg:w-[245px] lg:h-[365px] xl:w-[275px] xl:h-[410px] 2xl:w-[295px] 2xl:h-[440px]'
+  'w-[155px] h-[240px] sm:w-[200px] sm:h-[305px] md:w-[240px] md:h-[365px] lg:w-[275px] lg:h-[415px] xl:w-[305px] xl:h-[455px] 2xl:w-[330px] 2xl:h-[490px]'
 
 // 17 foundation cards forming the 20-card pile with the 3 trinity cards
 const DECK_FOUNDATION_CARDS = Array.from({ length: 17 }, (_, i) => ({
@@ -31,26 +32,27 @@ const CardBackFace: React.FC<{ serial?: string }> = ({ serial = 'ROF-ARCHIVE-01'
       backfaceVisibility: 'hidden',
       transform: 'rotateY(180deg)',
     }}
-    className="absolute inset-0 rounded-xl lg:rounded-2xl p-3.5 sm:p-5 flex flex-col justify-between bg-[var(--surface-deep)] text-[var(--bone)] border border-[var(--acc)] overflow-hidden shadow-2xl pointer-events-none select-none"
+    className="absolute inset-0 rounded-xl lg:rounded-2xl p-4 sm:p-6 flex flex-col justify-between bg-[var(--surface-deep)] text-[var(--bone)] border-2 border-[var(--acc)]/80 overflow-hidden shadow-2xl pointer-events-none select-none"
   >
-    <div className="absolute inset-2 border border-[var(--bone)]/20 rounded-lg flex items-center justify-center overflow-hidden">
-      <div className="absolute inset-0 opacity-15 bg-[radial-gradient(circle_at_center,var(--acc)_0%,transparent_70%)]" />
+    {/* Archival Gold Textured Core */}
+    <div className="absolute inset-2 sm:inset-3 border border-[var(--bone)]/25 rounded-lg flex items-center justify-center overflow-hidden">
+      <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,var(--acc)_0%,transparent_70%)]" />
 
-      <svg viewBox="0 0 120 120" className="w-24 h-24 sm:w-28 sm:h-28 text-[var(--bone)]/30">
+      <svg viewBox="0 0 120 120" className="w-28 h-28 sm:w-36 sm:h-36 text-[var(--bone)]/30">
         <polygon points="60,8 112,60 60,112 8,60" stroke="currentColor" strokeWidth="1" fill="none" />
         <polygon points="60,20 100,60 60,100 20,60" stroke="currentColor" strokeWidth="1" fill="none" />
-        <polygon points="60,32 88,60 60,88 32,60" stroke="var(--acc)" strokeWidth="1.5" fill="rgba(240,180,41,0.20)" />
+        <polygon points="60,32 88,60 60,88 32,60" stroke="var(--acc)" strokeWidth="1.5" fill="rgba(240,180,41,0.22)" />
         <polygon points="60,44 76,60 60,76 44,60" stroke="var(--acc)" strokeWidth="1" fill="none" />
       </svg>
 
-      <span className="absolute font-serif text-2xl sm:text-3xl font-bold text-[var(--bone)] tracking-widest">
+      <span className="absolute font-serif text-3xl sm:text-4xl font-bold text-[var(--bone)] tracking-widest drop-shadow-md">
         ROF
       </span>
     </div>
 
-    <div className="relative z-10 w-full flex items-center justify-between text-[8px] font-mono text-[var(--bone)]/60 pt-1">
-      <span>CERTIFIED ARCHIVE</span>
-      <span className="text-[var(--acc)]">{serial}</span>
+    <div className="relative z-10 w-full flex items-center justify-between text-[8px] sm:text-[9px] font-mono text-[var(--bone)]/70 pt-1">
+      <span className="tracking-wider">CERTIFIED ARCHIVE</span>
+      <span className="text-[var(--acc)] font-bold">{serial}</span>
     </div>
   </div>
 )
@@ -76,6 +78,7 @@ interface RofCard {
   garmentPrice: number
   garmentSlug: string
   cutDesc: string
+  moodColor: string
 }
 
 const ROF_CARDS: RofCard[] = [
@@ -97,6 +100,7 @@ const ROF_CARDS: RofCard[] = [
     garmentPrice: 30000,
     garmentSlug: 'destined-cards-tee',
     cutDesc: 'Five cracked playing cards spelling ROF RAGE with high-gloss red dice graphic',
+    moodColor: 'rgba(27, 56, 43, 0.35)',
   },
   {
     id: 2,
@@ -116,6 +120,7 @@ const ROF_CARDS: RofCard[] = [
     garmentPrice: 25000,
     garmentSlug: 'rage-wave-tee-white',
     cutDesc: 'Warped ROF RAGE chest wordmark in red and mint with lilac brand tag',
+    moodColor: 'rgba(236, 227, 203, 0.18)',
   },
   {
     id: 3,
@@ -135,6 +140,7 @@ const ROF_CARDS: RofCard[] = [
     garmentPrice: 28000,
     garmentSlug: 'rage-scribble-tee-black',
     cutDesc: 'Burnt orange continuous line artwork contained in architectural frame',
+    moodColor: 'rgba(240, 180, 41, 0.15)',
   },
 ]
 
@@ -273,8 +279,8 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   const smoothMouseX = useSpring(rawMouseX, springConfig)
   const smoothMouseY = useSpring(rawMouseY, springConfig)
 
-  const stageRotateX = useTransform(smoothMouseY, [-200, 200], [7, -7])
-  const stageRotateY = useTransform(smoothMouseX, [-300, 300], [-9, 9])
+  const stageRotateX = useTransform(smoothMouseY, [-200, 200], [6, -6])
+  const stageRotateY = useTransform(smoothMouseX, [-300, 300], [-8, 8])
 
   const handleStageMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (isTouch || prefersReduced) return
@@ -370,17 +376,17 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   // Spatial calculations for 20-card deck pile & 3 trinity cards
   const spread =
     screenWidth < 640
-      ? 88
+      ? 100
       : screenWidth < 768
-        ? 145
+        ? 165
         : screenWidth < 1024
-          ? 195
+          ? 220
           : screenWidth < 1440
-            ? 275
-            : 340
+            ? 310
+            : 380
   const xOffsets = [-spread, 0, spread]
   const baseRot = [-6, 0, 6]
-  const baseY = [6, -10, 6]
+  const baseY = [8, -12, 8]
 
   const getDeckCardTransform = (i: number) => {
     const isLeft = i < 10
@@ -391,17 +397,17 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
       const t = (i - 9.5) / 9.5
       const spreadWidth =
         screenWidth < 640
-          ? 150
+          ? 160
           : screenWidth < 768
-            ? 240
+            ? 260
             : screenWidth < 1024
-              ? 360
+              ? 390
               : screenWidth < 1440
-                ? 490
-                : 600
+                ? 520
+                : 640
       return {
         x: t * spreadWidth,
-        y: Math.sin(((i + 0.5) / 20) * Math.PI) * -24 + ((i % 2 === 0 ? 1 : -1) * 2.5),
+        y: Math.sin(((i + 0.5) / 20) * Math.PI) * -26 + ((i % 2 === 0 ? 1 : -1) * 2.5),
         z: i * 1.8,
         rotateZ: t * 14,
         rotateY: 180,
@@ -423,7 +429,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
     }
 
     if (deckPhase === 'splitting') {
-      const targetX = isLeft ? -125 - packetIdx * 1.5 : 125 + packetIdx * 1.5
+      const targetX = isLeft ? -130 - packetIdx * 1.5 : 130 + packetIdx * 1.5
       const rotZ = isLeft ? -14 : 14
       return {
         x: targetX,
@@ -501,17 +507,17 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
       const t = (cardI - 9.5) / 9.5
       const spreadWidth =
         screenWidth < 640
-          ? 150
+          ? 160
           : screenWidth < 768
-            ? 240
+            ? 260
             : screenWidth < 1024
-              ? 360
+              ? 390
               : screenWidth < 1440
-                ? 490
-                : 600
+                ? 520
+                : 640
       return {
         x: t * spreadWidth,
-        y: Math.sin(((cardI + 0.5) / 20) * Math.PI) * -24 + ((cardI % 2 === 0 ? 1 : -1) * 2.5),
+        y: Math.sin(((cardI + 0.5) / 20) * Math.PI) * -26 + ((cardI % 2 === 0 ? 1 : -1) * 2.5),
         z: cardI * 1.8,
         rotateZ: t * 14,
         rotateY: 180,
@@ -534,7 +540,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
 
     if (deckPhase === 'splitting') {
       return {
-        x: 125 + packetIdx * 1.5,
+        x: 130 + packetIdx * 1.5,
         y: -packetIdx * 1.8 - 18,
         z: packetIdx * 2.5 + 20,
         rotateZ: 14,
@@ -584,12 +590,12 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
     const isCardFlipped = Boolean(flippedCards[idx])
     return {
       x: xOffsets[idx],
-      y: isSelected ? -24 : baseY[idx],
-      z: isSelected ? 40 : idx === 1 ? 30 : 20,
+      y: isSelected ? -28 : baseY[idx],
+      z: isSelected ? 50 : idx === 1 ? 35 : 25,
       rotateZ: isSelected ? 0 : baseRot[idx],
       rotateY: deckPhase === 'dealt' && isCardFlipped ? 180 : 0, // Face up when dealt, flips to 180 on individual double tap
-      scale: isSelected ? 1.06 : 0.98,
-      zIndex: isSelected ? 60 : idx === 1 ? 40 : 30,
+      scale: isSelected ? 1.08 : 0.96,
+      zIndex: isSelected ? 65 : idx === 1 ? 40 : 30,
     }
   }
 
@@ -602,7 +608,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
       onMouseLeave={handleStageMouseLeave}
       aria-label="ROF Haute Streetwear Stage"
       className={cn(
-        'relative min-h-[92vh] md:min-h-screen w-full flex flex-col justify-between overflow-hidden bg-[var(--ink)] text-[var(--bone)] select-none pt-4 pb-0',
+        'relative min-h-[96vh] md:min-h-screen w-full flex flex-col justify-between overflow-hidden bg-[var(--ink)] text-[var(--bone)] select-none pt-4 pb-0 transition-colors duration-700',
         className
       )}
     >
@@ -610,9 +616,16 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
       {/* 1. ATMOSPHERIC SACRED GEOMETRY CANVAS (DEEP PINE TEAL SPACE) */}
       {/* ============================================================ */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {/* Soft Ambient Radial Lights */}
-        <div className="absolute -top-[15%] left-1/2 -translate-x-1/2 w-[720px] md:w-[1050px] h-[720px] md:h-[1050px] rounded-full bg-[radial-gradient(circle_at_center,rgba(240,180,41,0.075)_0%,rgba(14,47,47,0.25)_45%,transparent_70%)] blur-3xl opacity-80" />
-        <div className="absolute bottom-[5%] left-1/2 -translate-x-1/2 w-[580px] md:w-[840px] h-[340px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(240,180,41,0.05)_0%,transparent_65%)] blur-2xl opacity-60" />
+        {/* Dynamic Piece Color Tone Glow */}
+        <motion.div
+          animate={{
+            backgroundColor: activeGarment.moodColor,
+          }}
+          transition={{ duration: 0.8 }}
+          className="absolute -top-[10%] left-1/2 -translate-x-1/2 w-[750px] md:w-[1100px] h-[750px] md:h-[1100px] rounded-full blur-3xl opacity-75"
+        />
+
+        <div className="absolute bottom-[8%] left-1/2 -translate-x-1/2 w-[600px] md:w-[900px] h-[360px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(240,180,41,0.06)_0%,transparent_65%)] blur-2xl opacity-60" />
 
         {/* Sacred Concentric Diamond Grid */}
         <div className="absolute inset-0 flex items-center justify-center opacity-[0.035]">
@@ -627,36 +640,36 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
         </div>
 
         {/* Diagonal Ray Accent */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(240,180,41,0.03)_0%,transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(240,180,41,0.035)_0%,transparent_50%)]" />
       </div>
 
       {/* Editorial Side Markers (Ultra-wide screens) */}
-      <div className="hidden 2xl:flex flex-col gap-4 absolute left-10 top-1/2 -translate-y-1/2 text-left font-mono text-[10px] text-[var(--bone)]/50 tracking-widest z-20 pointer-events-none">
+      <div className="hidden 2xl:flex flex-col gap-4 absolute left-12 top-1/2 -translate-y-1/2 text-left font-mono text-[10px] text-[var(--bone)]/50 tracking-widest z-20 pointer-events-none">
         <div>
-          <span className="block text-[var(--acc)] font-bold text-[9px] mb-0.5">GENRE</span>
-          <span className="text-[var(--bone)]/80">HAUTE STREETWEAR</span>
+          <span className="block text-[var(--acc)] font-bold text-[9px] mb-0.5 tracking-wider">GENRE</span>
+          <span className="text-[var(--bone)]/85">HAUTE STREETWEAR</span>
         </div>
         <div>
-          <span className="block text-[var(--acc)] font-bold text-[9px] mb-0.5">COLLECTION</span>
-          <span className="text-[var(--bone)]/80">CAPSULE 01 (SS26)</span>
+          <span className="block text-[var(--acc)] font-bold text-[9px] mb-0.5 tracking-wider">COLLECTION</span>
+          <span className="text-[var(--bone)]/85">CAPSULE 01 (SS26)</span>
         </div>
         <div>
-          <span className="block text-[var(--acc)] font-bold text-[9px] mb-0.5">ORIGIN</span>
-          <span className="text-[var(--bone)]/80">LAGOS TO THE WORLD</span>
+          <span className="block text-[var(--acc)] font-bold text-[9px] mb-0.5 tracking-wider">FABRIC</span>
+          <span className="text-[var(--bone)]/85">100% HEAVY LUXURY COTTON</span>
         </div>
       </div>
 
-      <div className="hidden 2xl:flex flex-col gap-4 absolute right-10 top-1/2 -translate-y-1/2 text-right font-mono text-[10px] text-[var(--bone)]/50 tracking-widest z-20 pointer-events-none">
+      <div className="hidden 2xl:flex flex-col gap-4 absolute right-12 top-1/2 -translate-y-1/2 text-right font-mono text-[10px] text-[var(--bone)]/50 tracking-widest z-20 pointer-events-none">
         <div>
-          <span className="block text-[var(--acc)] font-bold text-[9px] mb-0.5">PIECES</span>
-          <span className="text-[var(--bone)]/80">03 SILHOUETTES</span>
+          <span className="block text-[var(--acc)] font-bold text-[9px] mb-0.5 tracking-wider">PIECES</span>
+          <span className="text-[var(--bone)]/85">03 SILHOUETTES</span>
         </div>
         <div>
-          <span className="block text-[var(--acc)] font-bold text-[9px] mb-0.5">DISPATCH</span>
-          <span className="text-[var(--bone)]/80">NATIONWIDE & GLOBAL</span>
+          <span className="block text-[var(--acc)] font-bold text-[9px] mb-0.5 tracking-wider">ORIGIN</span>
+          <span className="text-[var(--bone)]/85">LAGOS TO THE WORLD</span>
         </div>
         <div>
-          <span className="block text-[var(--acc)] font-bold text-[9px] mb-0.5">TAGLINE</span>
+          <span className="block text-[var(--acc)] font-bold text-[9px] mb-0.5 tracking-wider">TAGLINE</span>
           <span className="text-[var(--acc)] italic font-serif text-xs">Destined for riches.</span>
         </div>
       </div>
@@ -744,14 +757,14 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
         </div>
 
         {/* Minimalist Subtitle with Fashion Focus */}
-        <p className="font-mono text-[10px] sm:text-xs text-[var(--bone)]/70 uppercase tracking-[0.26em] mb-3 sm:mb-4">
+        <p className="font-mono text-[10px] sm:text-xs text-[var(--bone)]/70 uppercase tracking-[0.26em] mb-2 sm:mb-3">
           THREE ARCHITECTURAL SILHOUETTES • AMBITION • CONFIDENCE • ORIGINALITY
         </p>
 
         {/* 3D Tilted Perspective Canvas */}
         <div
           style={{ perspective: 1200 }}
-          className="relative w-full max-w-[640px] md:max-w-[820px] lg:max-w-[1020px] xl:max-w-[1240px] 2xl:max-w-[1420px] h-[270px] sm:h-[330px] md:h-[390px] lg:h-[440px] xl:h-[490px] 2xl:h-[530px] flex items-center justify-center mb-3 sm:mb-4"
+          className="relative w-full max-w-[660px] md:max-w-[860px] lg:max-w-[1060px] xl:max-w-[1280px] 2xl:max-w-[1460px] h-[280px] sm:h-[350px] md:h-[410px] lg:h-[465px] xl:h-[515px] 2xl:h-[555px] flex items-center justify-center mb-3 sm:mb-4"
         >
           <motion.div
             style={{
@@ -882,9 +895,9 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                     deckPhase !== 'dealt'
                       ? undefined
                       : {
-                        y: isSelected ? -30 : pos.y - 14,
-                        scale: 1.08,
-                        zIndex: 50,
+                        y: isSelected ? -36 : pos.y - 18,
+                        scale: 1.1,
+                        zIndex: 70,
                         transition: { duration: 0.2 },
                       }
                   }
@@ -896,17 +909,17 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                       ? 'cursor-pointer'
                       : 'pointer-events-none',
                     deckPhase === 'dealt' && isSelected
-                      ? 'ring-2 ring-[var(--acc)] shadow-[0_24px_60px_rgba(240,180,41,0.36),0_8px_24px_rgba(0,0,0,0.6)]'
-                      : 'shadow-[0_14px_32px_rgba(0,0,0,0.65)] hover:shadow-[0_18px_40px_rgba(240,180,41,0.22)]'
+                      ? 'ring-2 ring-[var(--acc)] shadow-[0_28px_70px_rgba(240,180,41,0.4),0_12px_28px_rgba(0,0,0,0.7)]'
+                      : 'shadow-[0_16px_36px_rgba(0,0,0,0.68)] hover:shadow-[0_22px_45px_rgba(240,180,41,0.25)]'
                   )}
                 >
                   {/* FRONT FACE OF CARD (HAUTE-COUTURE STREETWEAR TAROT) */}
                   <div
                     style={{ backfaceVisibility: 'hidden' }}
-                    className="absolute inset-0 rounded-xl lg:rounded-2xl p-2.5 sm:p-3.5 lg:p-4 flex flex-col justify-between bg-[var(--bone-surface)] text-[var(--ink)] border border-[var(--acc)]/30 overflow-hidden"
+                    className="absolute inset-0 rounded-xl lg:rounded-2xl p-2.5 sm:p-4 lg:p-5 flex flex-col justify-between bg-[var(--bone-surface)] text-[var(--ink)] border border-[var(--acc)]/35 overflow-hidden shadow-inner"
                   >
                     {/* Top Specular Sheen */}
-                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/15 to-white/40 pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-white/45 pointer-events-none" />
 
                     {/* Subtle metallic reflection sweep on active card selection */}
                     {isSelected && !prefersReduced && (
@@ -915,12 +928,12 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                         initial={{ x: '-150%', opacity: 0 }}
                         animate={{ x: '180%', opacity: [0, 0.45, 0] }}
                         transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-                        className="absolute inset-y-0 -inset-x-1/2 w-full bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 pointer-events-none z-20"
+                        className="absolute inset-y-0 -inset-x-1/2 w-full bg-gradient-to-r from-transparent via-white/35 to-transparent -skew-x-12 pointer-events-none z-20"
                       />
                     )}
 
                     {/* Inset Gold Hairline Frame with Corner Diamonds */}
-                    <div className="absolute inset-1.5 sm:inset-2 border border-[var(--acc)]/30 rounded-lg pointer-events-none">
+                    <div className="absolute inset-1.5 sm:inset-2.5 border border-[var(--acc)]/35 rounded-lg pointer-events-none">
                       <div className="absolute top-1 left-1">
                         <DiamondMark size={4} accent filled />
                       </div>
@@ -941,7 +954,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                       <div className="flex flex-col items-center leading-none text-left">
                         <span
                           className={cn(
-                            'font-serif text-lg sm:text-xl lg:text-2xl font-bold',
+                            'font-serif text-xl sm:text-2xl lg:text-3xl font-bold',
                             card.letter === 'O' ? 'text-[var(--acc-on-bone)]' : 'text-[var(--ink)]'
                           )}
                         >
@@ -959,64 +972,64 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                       </div>
 
                       {/* Top Center Capsule Tag */}
-                      <span className="font-mono text-[7px] sm:text-[8px] uppercase tracking-[0.2em] text-[var(--ink)]/50 font-semibold mt-0.5">
+                      <span className="font-mono text-[7px] sm:text-[8px] uppercase tracking-[0.22em] text-[var(--ink)]/55 font-bold mt-0.5">
                         CAPSULE 01
                       </span>
 
                       {/* Top Right Price Tag */}
                       <div className="flex flex-col items-end leading-none text-right">
-                        <span className="font-sans text-[8px] sm:text-[9px] font-bold text-[var(--acc-on-bone)]">
+                        <span className="font-sans text-[9px] sm:text-[10px] font-bold text-[var(--acc-on-bone)]">
                           ₦{card.garmentPrice.toLocaleString('en-NG')}
                         </span>
-                        <span className="font-mono text-[6px] uppercase tracking-wider text-[var(--ink)]/40 mt-0.5">
+                        <span className="font-mono text-[6px] sm:text-[7px] uppercase tracking-wider text-[var(--ink)]/45 mt-0.5 font-semibold">
                           PIECE 0{card.id}
                         </span>
                       </div>
                     </div>
 
-                    {/* Center Monumental Garment Showcase with Subtle Sacred Geometry Watermark */}
-                    <div className="relative z-10 flex-1 flex flex-col items-center justify-center my-auto w-full overflow-hidden">
+                    {/* Center Monumental Garment Showcase with 3D Pop Elevation */}
+                    <div className="relative z-10 flex-1 flex flex-col items-center justify-center my-auto w-full overflow-visible">
                       {/* Subtle Geometric Watermark Behind Garment */}
                       <div className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
                         {card.letter === 'R' ? (
-                          <svg viewBox="0 0 100 100" className="w-24 h-24 text-[var(--ink)]">
+                          <svg viewBox="0 0 100 100" className="w-28 h-28 text-[var(--ink)]">
                             <polygon points="50,12 88,78 12,78" stroke="currentColor" strokeWidth="2" fill="none" />
                             <polygon points="50,26 78,74 22,74" stroke="currentColor" strokeWidth="1" fill="none" />
                           </svg>
                         ) : card.letter === 'O' ? (
-                          <svg viewBox="0 0 100 100" className="w-24 h-24 text-[var(--acc-on-bone)]">
+                          <svg viewBox="0 0 100 100" className="w-28 h-28 text-[var(--acc-on-bone)]">
                             <polygon points="50,8 92,50 50,92 8,50" stroke="currentColor" strokeWidth="2.5" fill="none" />
                             <polygon points="50,22 78,50 50,78 22,50" stroke="currentColor" strokeWidth="1.5" fill="none" />
                           </svg>
                         ) : (
-                          <svg viewBox="0 0 100 100" className="w-24 h-24 text-[var(--ink)]">
+                          <svg viewBox="0 0 100 100" className="w-28 h-28 text-[var(--ink)]">
                             <rect x="14" y="14" width="72" height="72" stroke="currentColor" strokeWidth="2" fill="none" />
                             <rect x="28" y="28" width="44" height="44" stroke="currentColor" strokeWidth="1" fill="none" />
                           </svg>
                         )}
                       </div>
 
-                      {/* REAL LUXURY GARMENT CUT-OUT (UNMISTAKABLY FASHION) */}
+                      {/* REAL LUXURY GARMENT CUT-OUT (MONUMENTAL FASHION IMPACT) */}
                       <motion.div
-                        whileHover={{ scale: 1.05 }}
+                        whileHover={{ scale: 1.08, y: -4 }}
                         transition={{ duration: 0.25 }}
-                        className="relative z-10 w-full flex items-center justify-center py-0.5 sm:py-1"
+                        className="relative z-10 w-full flex items-center justify-center py-1 sm:py-2"
                       >
                         <img
                           src={card.garmentImage}
                           alt={card.garmentName}
-                          width={240}
-                          height={240}
+                          width={320}
+                          height={320}
                           loading="eager"
                           decoding="async"
-                          className="w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-44 lg:h-44 object-contain pointer-events-none filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.24)]"
+                          className="w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 lg:w-52 lg:h-52 object-contain pointer-events-none filter drop-shadow-[0_14px_28px_rgba(0,0,0,0.32)]"
                         />
                       </motion.div>
                     </div>
 
                     {/* Bottom Garment Lockup */}
-                    <div className="relative z-10 flex flex-col items-center text-center w-full pt-1 border-t border-[var(--acc)]/20">
-                      <span className="font-serif text-xs sm:text-sm font-bold text-[var(--ink)] leading-tight tracking-tight truncate max-w-full">
+                    <div className="relative z-10 flex flex-col items-center text-center w-full pt-1.5 border-t border-[var(--acc)]/25">
+                      <span className="font-serif text-xs sm:text-sm lg:text-base font-bold text-[var(--ink)] leading-tight tracking-tight truncate max-w-full">
                         {card.garmentName}
                       </span>
                       <div className="flex items-center gap-1.5 font-mono text-[7px] sm:text-[8px] uppercase tracking-wider text-[var(--acc-on-bone)] font-semibold mt-0.5">
@@ -1031,7 +1044,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                       <span className="font-mono text-[6px] sm:text-[7px] text-[var(--ink)]/40 uppercase tracking-widest">
                         {card.serial.replace('ROF-', '')}
                       </span>
-                      <span className="font-mono text-[6px] sm:text-[7px] text-[var(--acc-on-bone)] font-semibold uppercase tracking-wider">
+                      <span className="font-mono text-[6px] sm:text-[7px] text-[var(--acc-on-bone)] font-bold uppercase tracking-wider">
                         ROF RAGE
                       </span>
                     </div>
@@ -1046,101 +1059,79 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
         </div>
 
         {/* ============================================================ */}
-        {/* INTERACTIVE HAUTE STREETWEAR SHOWROOM DOCK                   */}
+        {/* SCULPTURAL HIGH-FASHION SHOWROOM CONSOLE                     */}
         {/* ============================================================ */}
-        <motion.div
-          key={activeCardIndex}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className="w-full max-w-xl mx-auto p-3 sm:p-4 rounded-xl bg-[var(--surface-deep)]/95 border border-[var(--acc)]/40 text-[var(--bone)] shadow-2xl backdrop-blur-xl mb-4 text-left"
-        >
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2.5 border-b border-[var(--hairline)]">
-            <div className="flex items-center gap-2.5">
-              <span className="w-2 h-2 rounded-full bg-[var(--acc)] shrink-0" />
-              <div>
-                <div className="flex items-center gap-2 font-mono text-[10px] text-[var(--acc)] uppercase tracking-wider font-semibold">
+        <div className="w-full max-w-2xl mx-auto flex flex-col items-center gap-3">
+          {/* Integrated Garment Bar */}
+          <motion.div
+            key={activeCardIndex}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25 }}
+            className="w-full flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-2.5 rounded-xl bg-[var(--surface-deep)]/95 border border-[var(--acc)]/50 text-[var(--bone)] shadow-xl backdrop-blur-xl"
+          >
+            {/* Garment Title & Price */}
+            <div className="flex items-center gap-3">
+              <span className="w-2.5 h-2.5 rounded-full bg-[var(--acc)] shrink-0 animate-pulse" />
+              <div className="text-left">
+                <div className="flex items-center gap-2 font-mono text-[9px] text-[var(--acc)] uppercase tracking-wider font-semibold">
                   <span>PIECE 0{activeGarment.id}</span>
                   <span>•</span>
-                  <span>{activeGarment.pillar}</span>
+                  <span>{activeGarment.garmentColor}</span>
                 </div>
-                <h3 className="font-serif text-base sm:text-lg font-bold text-[var(--bone)] leading-tight">
-                  {activeGarment.garmentName}
-                </h3>
+                <div className="flex items-baseline gap-2">
+                  <h3 className="font-serif text-base font-bold text-[var(--bone)] leading-none">
+                    {activeGarment.garmentName}
+                  </h3>
+                  <span className="font-sans text-sm font-bold text-[var(--acc)]">
+                    ₦{activeGarment.garmentPrice.toLocaleString('en-NG')}
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center">
-              <span className="font-sans text-base sm:text-lg font-bold text-[var(--acc)]">
-                ₦{activeGarment.garmentPrice.toLocaleString('en-NG')}
-              </span>
-              <span className="font-mono text-[9px] uppercase tracking-wider text-[var(--bone)]/60">
-                {activeGarment.garmentColor}
-              </span>
-            </div>
-          </div>
-
-          <div className="pt-2.5 flex flex-wrap items-center justify-between gap-3">
-            {/* Quick Size Selector */}
-            <div className="flex items-center gap-1.5">
-              <span className="font-mono text-[9px] uppercase tracking-wider text-[var(--muted)] mr-1">SIZE:</span>
-              {(['S', 'M', 'L', 'XL', 'XXL'] as const).map((sz) => (
-                <button
-                  key={sz}
-                  type="button"
-                  onClick={() => setSelectedSize(sz)}
-                  className={cn(
-                    'w-7 h-7 flex items-center justify-center font-mono text-[10px] font-bold rounded-xs transition-colors cursor-pointer',
-                    selectedSize === sz
-                      ? 'bg-[var(--acc)] text-[var(--label-on-acc)] shadow-sm'
-                      : 'border border-[var(--hairline)] text-[var(--bone)]/75 hover:border-[var(--bone)] hover:text-[var(--bone)]'
-                  )}
-                >
-                  {sz}
-                </button>
-              ))}
-            </div>
-
-            {/* Quick Add To Bag / Direct Inspection Actions */}
+            {/* Quick Size Pills & Instant Add To Bag */}
             <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 border border-[var(--hairline)] rounded-sm p-0.5 bg-[var(--ink)]/60">
+                {(['S', 'M', 'L', 'XL', 'XXL'] as const).map((sz) => (
+                  <button
+                    key={sz}
+                    type="button"
+                    onClick={() => setSelectedSize(sz)}
+                    className={cn(
+                      'w-6 h-6 flex items-center justify-center font-mono text-[9px] font-bold rounded-xs transition-colors cursor-pointer',
+                      selectedSize === sz
+                        ? 'bg-[var(--acc)] text-[var(--label-on-acc)] shadow-sm'
+                        : 'text-[var(--bone)]/70 hover:text-[var(--bone)]'
+                    )}
+                  >
+                    {sz}
+                  </button>
+                ))}
+              </div>
+
               <Button
                 variant="primary"
                 size="sm"
                 onClick={handleQuickAddToBag}
-                className="px-3.5 py-1.5 text-[11px] font-mono uppercase tracking-wider font-bold cursor-pointer flex items-center gap-1.5"
+                className="px-3.5 py-1.5 text-[11px] font-mono uppercase tracking-wider font-bold cursor-pointer flex items-center gap-1.5 shadow-md"
               >
                 {addedNotice ? (
                   <>
                     <Check size={12} strokeWidth={3} />
-                    <span>ADDED TO BAG</span>
+                    <span>ADDED</span>
                   </>
                 ) : (
                   <>
                     <ShoppingBag size={12} />
-                    <span>+ ADD TO BAG ({selectedSize})</span>
+                    <span>+ ADD ({selectedSize})</span>
                   </>
                 )}
               </Button>
-              <button
-                type="button"
-                onClick={() => {
-                  const target = document.getElementById(activeGarment.garmentSlug)
-                  if (target) {
-                    target.scrollIntoView({ behavior: 'smooth' })
-                  } else {
-                    navigate({ to: '/shop' })
-                  }
-                }}
-                className="px-2.5 py-1.5 border border-[var(--hairline)] hover:border-[var(--bone)] text-[10px] font-mono uppercase tracking-wider text-[var(--bone)]/80 hover:text-[var(--bone)] transition-colors rounded-xs cursor-pointer"
-              >
-                Details ↓
-              </button>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
 
-        {/* Clean Tactical Controls & Action Row */}
-        <div className="flex flex-col items-center gap-2.5">
+          {/* Primary Navigation CTAs */}
           <div className="flex flex-wrap items-center justify-center gap-3">
             {/* Primary CTA: Shop The Collection */}
             <Button
@@ -1170,9 +1161,9 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
           </div>
 
           {/* Micro-hint explaining the interactive card flip (replaces former inspect button) */}
-          <p className="font-mono text-[10px] text-[var(--bone)]/60 uppercase tracking-wider flex items-center gap-1.5 pt-0.5">
+          <p className="font-mono text-[10px] text-[var(--bone)]/60 uppercase tracking-wider flex items-center gap-1.5">
             <DiamondMark size={4} accent filled />
-            <span>Double-tap any card to flip archive • Auto-reverts in 10s</span>
+            <span>Double-tap any card to inspect certified archive • Auto-reverts in 10s</span>
           </p>
         </div>
       </div>
