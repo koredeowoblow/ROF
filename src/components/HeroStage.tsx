@@ -131,7 +131,7 @@ function playSoothingSound(type: 'card' | 'flip' | 'seal' | 'click' | 'dice', en
 }
 
 // ---------------------------------------------------------------------------
-// THE 3 CARDS OF ROF: MINDSET, MANTRA & INNER REFLECTION
+// THE 3 CARDS OF ROF: ROOF • OF • FRAME (AMBITION • CONFIDENCE • ORIGINALITY)
 // ---------------------------------------------------------------------------
 interface RofCard {
   id: number
@@ -139,6 +139,7 @@ interface RofCard {
   word: string
   pillar: string
   number: string
+  roman: string
   label: string
   title: string
   mantra: string
@@ -146,8 +147,6 @@ interface RofCard {
   reflection: string
   codexEssay: string
   serial: string
-  rot: number
-  xOffset: number
 }
 
 const ROF_CARDS: RofCard[] = [
@@ -157,6 +156,7 @@ const ROF_CARDS: RofCard[] = [
     word: 'ROOF',
     pillar: 'AMBITION',
     number: '01',
+    roman: 'I',
     label: 'ROOF',
     title: 'THE APEX OF AMBITION',
     mantra: 'Built above the noise. No ceiling to what was destined.',
@@ -165,8 +165,6 @@ const ROF_CARDS: RofCard[] = [
     codexEssay:
       'The Roof represents the shelter and the summit. It is the pinnacle under which relentless ambition is forged. In Lagos or anywhere across the globe, the true architects of culture rise without asking for permission.',
     serial: 'ROF-ROOF-8821',
-    rot: -12,
-    xOffset: -130,
   },
   {
     id: 2,
@@ -174,6 +172,7 @@ const ROF_CARDS: RofCard[] = [
     word: 'OF',
     pillar: 'CONFIDENCE',
     number: '02',
+    roman: 'II',
     label: 'OF',
     title: 'THE SACRED CONNECTOR',
     mantra: 'Pressure does not break the core; it refines our edges into diamonds.',
@@ -182,8 +181,6 @@ const ROF_CARDS: RofCard[] = [
     codexEssay:
       'The sacred concentric diamond at the heart of ROF. Formed under subterranean weight, it transforms pressure into brilliant geometry. Confidence is the unbreakable certainty of your core.',
     serial: 'ROF-OF-9940',
-    rot: 0,
-    xOffset: 0,
   },
   {
     id: 3,
@@ -191,6 +188,7 @@ const ROF_CARDS: RofCard[] = [
     word: 'FRAME',
     pillar: 'ORIGINALITY',
     number: '03',
+    roman: 'III',
     label: 'FRAME',
     title: 'THE ARCHITECTURAL SKELETON',
     mantra: 'Heavyweight intention in every seam. An unbreakable frame built to outlast trends.',
@@ -199,18 +197,46 @@ const ROF_CARDS: RofCard[] = [
     codexEssay:
       'A flawless frame defines true permanence. Fast trends come and dissolve within weeks, but a solid architectural frame endures for generations. ROOF OF FRAME is the standard of original greatness.',
     serial: 'ROF-FRAME-7703',
-    rot: 12,
-    xOffset: 130,
   },
 ]
 
-const DICE_OUTCOMES: Record<number, { title: string; desc: string }> = {
-  1: { title: 'AMBITION IGNITED', desc: 'The relentless drive starts now.' },
-  2: { title: 'PRESSURE ENDURED', desc: 'Resilience solidifies the core.' },
-  3: { title: 'CONFIDENCE REFINED', desc: 'The diamond cuts through doubt.' },
-  4: { title: 'ORIGINALITY WOVEN', desc: 'Distinct from temporary hype.' },
-  5: { title: 'ROOF OF FAME REACHED', desc: 'Heavyweight mindset recognized.' },
-  6: { title: 'DESTINED FOR RICHES', desc: 'The winning roll. Your destiny is secured.' },
+const DICE_OUTCOMES: Record<number, { title: string; desc: string; perk: string; cardIndex: number }> = {
+  1: {
+    title: 'AMBITION IGNITED',
+    desc: 'The relentless drive starts now. Outwork doubt and claim the summit.',
+    perk: 'MINDSET UNLOCKED: THE ROOF APEX',
+    cardIndex: 0,
+  },
+  2: {
+    title: 'PRESSURE ENDURED',
+    desc: 'Resilience solidifies the core. The subterranean heat forges true strength.',
+    perk: 'MINDSET UNLOCKED: 260 GSM RESILIENCE',
+    cardIndex: 0,
+  },
+  3: {
+    title: 'CONFIDENCE REFINED',
+    desc: 'The sacred diamond cuts through noise. Quiet certainty in every room.',
+    perk: 'MINDSET UNLOCKED: SACRED CONFIDENCE',
+    cardIndex: 1,
+  },
+  4: {
+    title: 'ORIGINALITY WOVEN',
+    desc: 'Architectural distinction engineered in heavyweight combed terry.',
+    perk: 'MINDSET UNLOCKED: UNBROKEN FRAME',
+    cardIndex: 2,
+  },
+  5: {
+    title: 'ROOF OF FAME REACHED',
+    desc: 'Heavyweight intention recognized. The pinnacle belongs to the relentless.',
+    perk: 'MINDSET UNLOCKED: ARCHITECTURAL ASCENT',
+    cardIndex: 0,
+  },
+  6: {
+    title: 'DESTINED FOR RICHES',
+    desc: 'The winning roll. Your destiny is secured. No permission asked.',
+    perk: 'SUPREME DESTINY SECURED • VIP PASS',
+    cardIndex: 1,
+  },
 }
 
 export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
@@ -227,7 +253,9 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
   const [showCodex, setShowCodex] = useState(false)
   const [showSpecs, setShowSpecs] = useState(false)
   const [diceRolling, setDiceRolling] = useState(false)
-  const [diceNumber, setDiceNumber] = useState<number>(5)
+  const [diceNumber, setDiceNumber] = useState<number>(6)
+  const [hasRolled, setHasRolled] = useState(false)
+  const [showRollOutcome, setShowRollOutcome] = useState(false)
   const [breathPhase, setBreathPhase] = useState<'inhale' | 'exhale'>('inhale')
   const [screenWidth, setScreenWidth] = useState<number>(() =>
     typeof window !== 'undefined' ? window.innerWidth : 1280
@@ -335,17 +363,24 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
     playSoothingSound('flip', soundEnabled)
   }, [soundEnabled])
 
-  // Handle Dice Roll
+  // Handle Dice Roll & Destiny Revelation
   const handleRollDice = useCallback(() => {
     if (diceRolling) return
     setDiceRolling(true)
+    setShowRollOutcome(false)
     playSoothingSound('dice', soundEnabled)
     setTimeout(() => {
-      const outcomes = [3, 4, 5, 6, 6]
+      const outcomes = [1, 2, 3, 4, 5, 6, 6]
       const nextRoll = outcomes[Math.floor(Math.random() * outcomes.length)]
       setDiceNumber(nextRoll)
       setDiceRolling(false)
-      playSoothingSound('click', soundEnabled)
+      setHasRolled(true)
+      setShowRollOutcome(true)
+      const outcome = DICE_OUTCOMES[nextRoll]
+      if (outcome) {
+        setActiveCardIndex(outcome.cardIndex)
+      }
+      playSoothingSound('seal', soundEnabled)
     }, 550)
   }, [diceRolling, soundEnabled])
 
@@ -403,14 +438,19 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
         <div className="w-full h-full rounded-full bg-[radial-gradient(ellipse_at_center,rgba(240,180,41,0.18)_0%,rgba(236,227,203,0.05)_45%,transparent_70%)] blur-3xl" />
       </motion.div>
 
-      {/* Massive Monumental Ghosted Typography */}
-      <div className="absolute inset-0 flex flex-col justify-center pointer-events-none z-0 overflow-hidden opacity-[0.03] select-none">
-        <div className="text-[14vw] font-display font-bold leading-none tracking-tighter whitespace-nowrap text-[var(--bone)]">
-          ROF ◇ AMBITION ◇ CONFIDENCE ◇ ORIGINALITY ◇ DESTINED FOR RICHES
-        </div>
-        <div className="text-[14vw] font-display font-bold leading-none tracking-tighter whitespace-nowrap text-[var(--bone)] -translate-x-[12vw]">
-          THE DIAMOND MINDSET ◇ NO PERMISSION ◇ 260 GSM HEAVYWEIGHT DRAPE
-        </div>
+      {/* Precision Geometric Watermark (Clean Architectural Diamond) */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 overflow-hidden select-none">
+        <svg
+          viewBox="0 0 500 500"
+          className="w-[360px] h-[360px] sm:w-[500px] sm:h-[500px] lg:w-[680px] lg:h-[680px] opacity-[0.04] text-[var(--bone)]"
+        >
+          <polygon points="250,20 480,250 250,480 20,250" stroke="currentColor" strokeWidth="1.2" fill="none" />
+          <polygon points="250,60 440,250 250,440 60,250" stroke="currentColor" strokeWidth="1" fill="none" />
+          <polygon points="250,110 390,250 250,390 110,250" stroke="currentColor" strokeWidth="1" strokeDasharray="6 4" fill="none" />
+          <polygon points="250,160 340,250 250,340 160,250" stroke="var(--acc)" strokeWidth="1" fill="none" />
+          <line x1="250" y1="20" x2="250" y2="480" stroke="currentColor" strokeWidth="0.75" strokeDasharray="4 6" />
+          <line x1="20" y1="250" x2="480" y2="250" stroke="currentColor" strokeWidth="0.75" strokeDasharray="4 6" />
+        </svg>
       </div>
 
       {/* Crosshairs & Calm Architectural Markings */}
@@ -604,7 +644,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
         {/* 3D Tilted Perspective Canvas - Monumental on Big Screens */}
         <div
           style={{ perspective: 1200 }}
-          className="relative w-full max-w-[620px] lg:max-w-[880px] xl:max-w-[1080px] h-[230px] sm:h-[280px] md:h-[340px] lg:h-[420px] xl:h-[490px] flex items-center justify-center mb-6"
+          className="relative w-full max-w-[620px] lg:max-w-[900px] xl:max-w-[1100px] h-[250px] sm:h-[300px] md:h-[360px] lg:h-[420px] xl:h-[460px] flex items-center justify-center mb-5 sm:mb-6"
         >
           {/* Holographic Authenticity Seal in Corner */}
           <div className="absolute top-0 right-2 sm:right-6 lg:right-10 z-30 pointer-events-none hidden sm:block">
@@ -628,23 +668,22 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             className="relative w-full h-full flex items-center justify-center"
           >
             {/* Deep Contact Shadow */}
-            <div className="absolute -bottom-8 lg:-bottom-12 w-4/5 h-10 lg:h-16 bg-black/80 blur-2xl lg:blur-3xl rounded-full pointer-events-none" />
+            <div className="absolute -bottom-6 lg:-bottom-10 w-4/5 h-10 lg:h-14 bg-black/80 blur-2xl lg:blur-3xl rounded-full pointer-events-none" />
 
-            {/* THE 3 CARDS: R, O, F */}
+            {/* THE 3 CARDS: ROOF [R] • OF [O] • FRAME [F] */}
             {ROF_CARDS.map((card, idx) => {
               const isSelected = activeCardIndex === idx
-              const baseRot = card.rot
-              const spreadFactor =
-                screenWidth >= 1536
-                  ? 1.75
-                  : screenWidth >= 1280
-                  ? 1.5
-                  : screenWidth >= 1024
-                  ? 1.25
-                  : screenWidth < 640
-                  ? 0.65
-                  : 1.0
-              const baseOffsetX = card.xOffset * spreadFactor
+              const spread =
+                screenWidth < 640
+                  ? 78
+                  : screenWidth < 1024
+                  ? 145
+                  : screenWidth < 1440
+                  ? 210
+                  : 245
+              const xOffsets = [-spread, 0, spread]
+              const baseRot = [-7, 0, 7][idx]
+              const baseY = [6, -10, 6][idx]
               const isCardSealed = sealedMindset === card.label
 
               return (
@@ -655,140 +694,190 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                     if (!isTouch) handleSelectCard(idx)
                   }}
                   animate={{
-                    x: baseOffsetX,
-                    y: isSelected ? -32 : 0,
+                    x: xOffsets[idx],
+                    y: isSelected ? -18 : baseY,
                     rotateZ: isSelected ? 0 : baseRot,
                     rotateY: isFlipped ? 180 : 0,
-                    scale: isSelected ? 1.08 : 0.96,
-                    zIndex: isSelected ? 30 : idx + 10,
+                    scale: isSelected ? 1.05 : 0.98,
+                    zIndex: isSelected ? 30 : idx === 1 ? 20 : 10,
                   }}
                   transition={{
                     type: 'spring',
-                    stiffness: 320,
-                    damping: 28,
+                    stiffness: 340,
+                    damping: 30,
                     mass: 0.75,
                   }}
                   whileHover={
                     isTouch
                       ? undefined
                       : {
-                          y: -42,
-                          scale: 1.12,
+                          y: isSelected ? -24 : baseY - 12,
+                          scale: 1.08,
                           zIndex: 40,
                           transition: { duration: 0.2 },
                         }
                   }
                   style={{ transformStyle: 'preserve-3d' }}
                   className={cn(
-                    'absolute cursor-pointer select-none rounded-xl lg:rounded-2xl p-3.5 sm:p-5 lg:p-7 flex flex-col justify-between transition-shadow duration-400',
-                    'w-[140px] h-[215px] sm:w-[185px] sm:h-[280px] md:w-[220px] md:h-[330px] lg:w-[265px] lg:h-[400px] xl:w-[305px] xl:h-[460px]',
+                    'absolute cursor-pointer select-none rounded-xl lg:rounded-2xl transition-shadow duration-300',
+                    'w-[135px] h-[205px] sm:w-[175px] sm:h-[265px] md:w-[205px] md:h-[310px] lg:w-[230px] lg:h-[345px] xl:w-[250px] xl:h-[375px]',
                     isSelected
-                      ? 'ring-2 ring-[var(--acc)] shadow-[0_24px_50px_rgba(240,180,41,0.35)]'
-                      : 'shadow-[0_16px_32px_rgba(0,0,0,0.7)] hover:shadow-[0_20px_40px_rgba(240,180,41,0.22)]'
+                      ? 'ring-2 ring-[var(--acc)] shadow-[0_20px_50px_rgba(240,180,41,0.32),0_8px_20px_rgba(0,0,0,0.6)]'
+                      : 'shadow-[0_14px_32px_rgba(0,0,0,0.65)] hover:shadow-[0_18px_40px_rgba(240,180,41,0.22)]'
                   )}
                 >
-                  {/* FRONT FACE OF CARD */}
+                  {/* FRONT FACE OF CARD (HAUTE-COUTURE STREETWEAR TAROT) */}
                   <div
                     style={{ backfaceVisibility: 'hidden' }}
-                    className="absolute inset-0 rounded-xl lg:rounded-2xl p-3.5 sm:p-5 lg:p-7 flex flex-col justify-between bg-[var(--bone)] text-[var(--ink)] border border-[var(--hairline)] overflow-hidden"
+                    className="absolute inset-0 rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-5 flex flex-col justify-between bg-[#f4ede0] text-[var(--ink)] border border-[var(--acc)]/30 overflow-hidden"
                   >
                     {/* Top Specular Sheen */}
-                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-white/45 pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/15 to-white/40 pointer-events-none" />
 
-                    {/* Top-Left Card Corner Index */}
-                    <div className="relative z-10 flex flex-col items-center leading-none text-left self-start">
-                      <span
-                        className={cn(
-                          'font-serif text-2xl sm:text-3xl lg:text-4xl font-bold',
-                          card.letter === 'O' ? 'text-[var(--acc-on-bone)]' : 'text-[var(--ink)]'
-                        )}
-                      >
-                        {card.letter}
-                      </span>
-                      <DiamondMark
-                        size={8}
-                        accent={card.letter === 'O'}
-                        filled
-                        className="mt-0.5 opacity-90"
-                      />
-                      <span className="font-mono text-[8px] lg:text-[10px] text-[var(--muted)] font-bold mt-1">
-                        {card.number}
-                      </span>
+                    {/* Inset Gold Hairline Frame with Corner Diamonds */}
+                    <div className="absolute inset-2 sm:inset-2.5 border border-[var(--acc)]/30 rounded-lg pointer-events-none">
+                      <div className="absolute top-1 left-1">
+                        <DiamondMark size={4} accent filled />
+                      </div>
+                      <div className="absolute top-1 right-1">
+                        <DiamondMark size={4} accent filled />
+                      </div>
+                      <div className="absolute bottom-1 left-1">
+                        <DiamondMark size={4} accent filled />
+                      </div>
+                      <div className="absolute bottom-1 right-1">
+                        <DiamondMark size={4} accent filled />
+                      </div>
                     </div>
 
-                    {/* Center Monumental Art */}
-                    <div className="relative z-10 flex flex-col items-center justify-center my-auto">
-                      {card.letter === 'O' ? (
-                        <div className="relative flex items-center justify-center my-1">
-                          <svg
-                            viewBox="0 0 100 100"
-                            className="w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 xl:w-38 xl:h-38 text-[var(--acc-on-bone)]"
-                          >
-                            <polygon
-                              points="50,10 90,50 50,90 10,50"
-                              stroke="currentColor"
-                              strokeWidth="4"
-                              fill="rgba(143,82,0,0.10)"
-                            />
-                            <polygon
-                              points="50,28 72,50 50,72 28,50"
-                              stroke="currentColor"
-                              strokeWidth="2.5"
-                              fill="rgba(143,82,0,0.18)"
-                            />
-                            <circle cx="50" cy="50" r="4" fill="currentColor" />
-                          </svg>
-                          <span className="absolute font-serif font-bold text-5xl sm:text-6xl lg:text-7xl xl:text-8xl text-[var(--acc-on-bone)] drop-shadow-sm">
-                            O
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="relative flex items-center justify-center my-1">
-                          <svg
-                            viewBox="0 0 80 80"
-                            className="w-16 h-16 sm:w-20 sm:h-20 lg:w-28 lg:h-28 xl:w-34 xl:h-34 text-[var(--ink)]/25 absolute inset-0 m-auto pointer-events-none"
-                          >
-                            <path
-                              d="M 12,15 L 32,34 L 65,28 M 18,65 L 40,52 L 62,70"
-                              stroke="currentColor"
-                              strokeWidth="1.5"
-                              fill="none"
-                            />
-                          </svg>
-                          <span className="relative z-10 font-serif font-bold text-6xl sm:text-7xl lg:text-8xl xl:text-9xl text-[var(--ink)] drop-shadow-sm">
-                            {card.letter}
-                          </span>
-                        </div>
-                      )}
-
-                      {/* Card Meaning & Pillar Tag (R = ROOF, O = OF, F = FRAME) */}
-                      <span className="relative z-10 font-mono text-[10px] sm:text-[11px] lg:text-xs xl:text-sm uppercase tracking-[0.24em] font-bold text-[var(--ink)] mt-1">
-                        {card.word}
-                      </span>
-                      <span className="relative z-10 font-mono text-[8px] lg:text-[9px] uppercase tracking-[0.2em] text-[var(--acc-on-bone)] font-semibold">
-                        {card.pillar}
-                      </span>
-                    </div>
-
-                    {/* Bottom-Right Corner Index */}
-                    <div className="relative z-10 flex items-center justify-between w-full">
-                      {isCardSealed && (
-                        <span className="flex items-center gap-1 font-mono text-[8px] lg:text-[10px] uppercase tracking-wider text-[var(--acc-on-bone)] font-bold">
-                          <Check size={11} strokeWidth={3} />
-                          SEALED
-                        </span>
-                      )}
-                      <div className="flex flex-col items-center leading-none text-right ml-auto rotate-180">
+                    {/* Top Header Row with Index Pip */}
+                    <div className="relative z-10 flex items-start justify-between w-full">
+                      {/* Top-Left Card Corner Pip */}
+                      <div className="flex flex-col items-center leading-none text-left">
                         <span
                           className={cn(
-                            'font-serif text-2xl sm:text-3xl lg:text-4xl font-bold',
+                            'font-serif text-xl sm:text-2xl lg:text-3xl font-bold',
                             card.letter === 'O' ? 'text-[var(--acc-on-bone)]' : 'text-[var(--ink)]'
                           )}
                         >
                           {card.letter}
                         </span>
                         <DiamondMark
-                          size={8}
+                          size={6}
+                          accent={card.letter === 'O'}
+                          filled
+                          className="mt-0.5 opacity-90"
+                        />
+                        <span className="font-mono text-[7px] sm:text-[8px] text-[var(--muted)] font-bold mt-0.5">
+                          {card.roman}
+                        </span>
+                      </div>
+
+                      {/* Top Center Archive Tag */}
+                      <span className="font-mono text-[7px] sm:text-[8px] uppercase tracking-[0.26em] text-[var(--ink)]/45 font-semibold mt-0.5">
+                        ARCHIVE 01
+                      </span>
+
+                      {/* Sealed Status Indicator if Active */}
+                      {isCardSealed ? (
+                        <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-[var(--acc)] text-[var(--label-on-acc)] font-mono text-[7px] uppercase tracking-wider font-bold rounded-xs shadow-xs">
+                          <Check size={8} strokeWidth={3} />
+                          <span>SEALED</span>
+                        </span>
+                      ) : (
+                        <div className="w-4 h-4" />
+                      )}
+                    </div>
+
+                    {/* Center Monumental Art with Architectural Geometry */}
+                    <div className="relative z-10 flex flex-col items-center justify-center my-auto w-full">
+                      {card.letter === 'R' ? (
+                        /* CARD R: ROOF APEX SUMMIT MOTIF */
+                        <div className="relative flex items-center justify-center mb-1">
+                          <svg
+                            viewBox="0 0 100 100"
+                            className="w-20 h-20 sm:w-24 sm:h-24 lg:w-30 lg:h-30 text-[var(--ink)]/15 absolute inset-0 m-auto pointer-events-none"
+                          >
+                            <polygon points="50,12 88,78 12,78" stroke="currentColor" strokeWidth="1.5" fill="none" />
+                            <polygon points="50,26 78,74 22,74" stroke="currentColor" strokeWidth="1" fill="none" />
+                            <line x1="50" y1="12" x2="50" y2="78" stroke="currentColor" strokeWidth="0.75" strokeDasharray="3 3" />
+                            <polygon points="50,4 56,12 50,20 44,12" fill="var(--acc)" />
+                          </svg>
+                          <span className="relative z-10 font-serif font-bold text-5xl sm:text-6xl lg:text-7xl text-[var(--ink)] drop-shadow-sm">
+                            R
+                          </span>
+                        </div>
+                      ) : card.letter === 'O' ? (
+                        /* CARD O: SACRED CONCENTRIC DIAMOND */
+                        <div className="relative flex items-center justify-center mb-1">
+                          <svg
+                            viewBox="0 0 100 100"
+                            className="w-20 h-20 sm:w-24 sm:h-24 lg:w-30 lg:h-30 text-[var(--acc-on-bone)]"
+                          >
+                            <polygon
+                              points="50,8 92,50 50,92 8,50"
+                              stroke="currentColor"
+                              strokeWidth="2.5"
+                              fill="rgba(143,82,0,0.06)"
+                            />
+                            <polygon
+                              points="50,22 78,50 50,78 22,50"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                              fill="rgba(143,82,0,0.12)"
+                            />
+                            <polygon points="50,34 66,50 50,66 34,50" stroke="currentColor" strokeWidth="1" fill="none" />
+                            <circle cx="50" cy="50" r="3.5" fill="currentColor" />
+                          </svg>
+                          <span className="absolute font-serif font-bold text-4xl sm:text-5xl lg:text-6xl text-[var(--acc-on-bone)] drop-shadow-sm">
+                            O
+                          </span>
+                        </div>
+                      ) : (
+                        /* CARD F: 260 GSM ARCHITECTURAL FRAME WIREFRAME */
+                        <div className="relative flex items-center justify-center mb-1">
+                          <svg
+                            viewBox="0 0 100 100"
+                            className="w-20 h-20 sm:w-24 sm:h-24 lg:w-30 lg:h-30 text-[var(--ink)]/15 absolute inset-0 m-auto pointer-events-none"
+                          >
+                            <rect x="14" y="14" width="72" height="72" stroke="currentColor" strokeWidth="1.5" fill="none" />
+                            <line x1="14" y1="14" x2="86" y2="86" stroke="currentColor" strokeWidth="0.75" strokeDasharray="3 3" />
+                            <line x1="86" y1="14" x2="14" y2="86" stroke="currentColor" strokeWidth="0.75" strokeDasharray="3 3" />
+                            <rect x="28" y="28" width="44" height="44" stroke="currentColor" strokeWidth="1" fill="none" />
+                            <polygon points="50,14 54,18 50,22 46,18" fill="var(--acc)" />
+                            <polygon points="50,78 54,82 50,86 46,82" fill="var(--acc)" />
+                          </svg>
+                          <span className="relative z-10 font-serif font-bold text-5xl sm:text-6xl lg:text-7xl text-[var(--ink)] drop-shadow-sm">
+                            F
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Card Meaning & Pillar Tag (R = ROOF, O = OF, F = FRAME) */}
+                      <span className="relative z-10 font-mono text-[11px] sm:text-xs lg:text-sm uppercase tracking-[0.24em] font-bold text-[var(--ink)] mt-0.5">
+                        {card.word}
+                      </span>
+                      <span className="relative z-10 font-mono text-[7px] sm:text-[8px] uppercase tracking-[0.22em] text-[var(--acc-on-bone)] font-semibold">
+                        {card.pillar} // {card.number}
+                      </span>
+                    </div>
+
+                    {/* Bottom-Right Inverted Corner Pip */}
+                    <div className="relative z-10 flex items-center justify-between w-full">
+                      <span className="font-mono text-[7px] sm:text-[8px] text-[var(--ink)]/40 uppercase tracking-widest">
+                        {card.serial.replace('ROF-', '')}
+                      </span>
+                      <div className="flex flex-col items-center leading-none text-right rotate-180">
+                        <span
+                          className={cn(
+                            'font-serif text-xl sm:text-2xl lg:text-3xl font-bold',
+                            card.letter === 'O' ? 'text-[var(--acc-on-bone)]' : 'text-[var(--ink)]'
+                          )}
+                        >
+                          {card.letter}
+                        </span>
+                        <DiamondMark
+                          size={6}
                           accent={card.letter === 'O'}
                           filled
                           className="mt-0.5 opacity-90"
@@ -803,7 +892,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                       backfaceVisibility: 'hidden',
                       transform: 'rotateY(180deg)',
                     }}
-                    className="absolute inset-0 rounded-xl p-3.5 sm:p-5 flex flex-col justify-between bg-[#0a2323] text-[var(--bone)] border border-[var(--acc)] overflow-hidden shadow-2xl"
+                    className="absolute inset-0 rounded-xl lg:rounded-2xl p-3.5 sm:p-5 flex flex-col justify-between bg-[#0a2323] text-[var(--bone)] border border-[var(--acc)] overflow-hidden shadow-2xl"
                   >
                     <div className="absolute inset-2 border border-[var(--bone)]/20 rounded-lg flex items-center justify-center overflow-hidden">
                       <div className="absolute inset-0 opacity-15 bg-[radial-gradient(circle_at_center,var(--acc)_0%,transparent_70%)]" />
@@ -834,15 +923,93 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
           </motion.div>
         </div>
 
+        {/* ============================================================ */}
+        {/* DESTINY REVELATION DECREE (INSTANT ROLL REWARD & FEEDBACK) */}
+        {/* ============================================================ */}
+        <AnimatePresence>
+          {showRollOutcome && !diceRolling && currentOutcome && (
+            <motion.div
+              initial={{ opacity: 0, y: 14, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.96 }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full max-w-xl mx-auto mb-4 p-4 sm:p-5 bg-[#0a2424]/95 border-2 border-[var(--acc)] rounded-lg shadow-[0_16px_50px_rgba(0,0,0,0.8),0_0_30px_rgba(240,180,41,0.25)] backdrop-blur-xl relative overflow-hidden text-left"
+            >
+              {/* Top gold bar glow */}
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[var(--acc)] to-transparent" />
+
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                  <span className="inline-flex items-center justify-center w-8 h-8 rounded-sm bg-[var(--acc)] text-[var(--label-on-acc)] font-mono font-bold text-sm shadow-md">
+                    {diceNumber}
+                  </span>
+                  <div>
+                    <div className="flex items-center gap-1.5 font-mono text-[10px] text-[var(--acc)] uppercase tracking-widest font-bold">
+                      <Sparkles size={11} />
+                      <span>DESTINY REVEALED • ARCHIVE DECREE</span>
+                    </div>
+                    <h4 className="font-serif text-lg sm:text-xl font-bold text-[var(--bone)] leading-tight">
+                      {currentOutcome.title}
+                    </h4>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setShowRollOutcome(false)}
+                  className="p-1 text-[var(--muted)] hover:text-[var(--bone)] cursor-pointer"
+                  title="Close Decree"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              <p className="mt-2 text-xs sm:text-sm text-[var(--bone)]/90 leading-relaxed font-sans">
+                "{currentOutcome.desc}"
+              </p>
+
+              <div className="mt-3 pt-3 border-t border-[var(--hairline)] flex flex-wrap items-center justify-between gap-2.5">
+                <div className="flex items-center gap-1.5 font-mono text-[10px] text-[var(--acc)] uppercase tracking-wider font-bold">
+                  <ShieldCheck size={13} />
+                  <span>{currentOutcome.perk}</span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleSealMindset}
+                    className="px-3 py-1 bg-[var(--acc)] text-[var(--label-on-acc)] text-[10px] font-mono uppercase tracking-wider font-bold rounded-xs cursor-pointer hover:brightness-110 transition-all flex items-center gap-1 shadow-sm"
+                  >
+                    <Check size={11} strokeWidth={3} />
+                    <span>SEAL DESTINY</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleRollDice}
+                    className="px-2.5 py-1 border border-[var(--hairline)] hover:border-[var(--bone)] text-[10px] font-mono uppercase tracking-wider text-[var(--bone)] rounded-xs cursor-pointer bg-[var(--ink)]/60"
+                  >
+                    RE-ROLL
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Clean Tactical Controls & Action Row (Uncluttered) */}
         <div className="flex flex-wrap items-center justify-center gap-3">
-          {/* Interactive Destiny Die Button */}
+          {/* Interactive Destiny Die Button with Dynamic State & Feedback */}
           <motion.button
             type="button"
             onClick={handleRollDice}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.94 }}
-            className="flex items-center gap-2 px-4 py-2.5 bg-[#133d3d] hover:bg-[#184d4d] text-[var(--bone)] rounded-sm shadow-lg border border-[var(--acc)]/40 cursor-pointer transition-colors"
+            className={cn(
+              "flex items-center gap-2 px-4 py-2.5 rounded-sm shadow-lg border cursor-pointer transition-all",
+              hasRolled
+                ? "bg-[#184d4d] hover:bg-[#1e5f5f] text-[var(--bone)] border-[var(--acc)] shadow-[0_4px_20px_rgba(240,180,41,0.25)]"
+                : "bg-[#133d3d] hover:bg-[#184d4d] text-[var(--bone)] border-[var(--acc)]/40"
+            )}
           >
             <motion.div
               animate={
@@ -876,8 +1043,18 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                 </div>
               )}
             </motion.div>
-            <span className="font-mono text-xs font-bold uppercase tracking-wider">
-              {diceRolling ? 'ROLLING...' : `DESTINY ROLL [${diceNumber}]`}
+            <span className="font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+              {diceRolling ? (
+                'ROLLING DESTINY...'
+              ) : hasRolled ? (
+                <>
+                  <span>DESTINY [{diceNumber}]:</span>
+                  <span className="text-[var(--acc)]">{currentOutcome?.title}</span>
+                  <Check size={12} className="text-[var(--acc)]" />
+                </>
+              ) : (
+                `DESTINY ROLL [${diceNumber}]`
+              )}
             </span>
           </motion.button>
 
