@@ -16,6 +16,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      injectRegister: null, // Managed via src/lib/pwa.ts with auto-reload controller listeners
       includeAssets: ['favicon.ico', 'robots.txt'],
       manifest: {
         name: 'ROF RAGE | Destined for riches',
@@ -39,6 +40,8 @@ export default defineConfig({
         ],
       },
       workbox: {
+        skipWaiting: true,
+        clientsClaim: true,
         globPatterns: ['**/*.{js,css,html,svg,woff2}'],
         cleanupOutdatedCaches: true,
         runtimeCaching: [
