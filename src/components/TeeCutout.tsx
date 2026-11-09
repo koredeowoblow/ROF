@@ -115,11 +115,11 @@ export const TeeCutout: React.FC<TeeCutoutProps> = ({
                 stroke="#8a140f"
                 strokeWidth="1"
               />
-              <circle cx="6" cy="6" r="2" fill="#fff6ec" />
-              <circle cx="16" cy="6" r="2" fill="#fff6ec" />
-              <circle cx="11" cy="11" r="2" fill="#fff6ec" />
-              <circle cx="6" cy="16" r="2" fill="#fff6ec" />
-              <circle cx="16" cy="16" r="2" fill="#fff6ec" />
+              <circle cx="6" cy="6" r="2" fill="#f4efe6" />
+              <circle cx="16" cy="6" r="2" fill="#f4efe6" />
+              <circle cx="11" cy="11" r="2" fill="#f4efe6" />
+              <circle cx="6" cy="16" r="2" fill="#f4efe6" />
+              <circle cx="16" cy="16" r="2" fill="#f4efe6" />
             </g>
 
             {/* Print Tagline */}
@@ -174,7 +174,7 @@ export const TeeCutout: React.FC<TeeCutoutProps> = ({
               fontStyle="italic"
               fontSize="34"
               fontWeight="bold"
-              fill="#fff6ec"
+              fill="#f4efe6"
             >
               ROF RAGE
             </text>

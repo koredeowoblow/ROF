@@ -195,7 +195,7 @@ function HomePage() {
                     withArrow={addedId !== product.id}
                     fullWidth
                     onClick={() => handleQuickAdd(product)}
-                    className={addedId === product.id ? 'bg-[#1b382b] text-[#fff6ec]' : ''}
+                    className={addedId === product.id ? 'bg-[var(--bone)] text-[var(--ink)]' : ''}
                   >
                     {addedId === product.id ? 'Piece added to bag ✓' : 'Add to bag'}
                   </Button>

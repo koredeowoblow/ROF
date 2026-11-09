@@ -21,18 +21,18 @@ export default defineConfig({
         name: 'ROF RAGE | Destined for riches',
         short_name: 'ROF RAGE',
         description: 'ROF RAGE clothing and fashion. Destined for riches.',
-        theme_color: '#0c0b0a',
-        background_color: '#0c0b0a',
+        theme_color: '#0e2f2f',
+        background_color: '#0e2f2f',
         display: 'standalone',
         orientation: 'portrait',
         icons: [
           {
-            src: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"%3E%3Crect width="192" height="192" fill="%230c0b0a"/%3E%3Cpolygon points="96,16 176,96 96,176 16,96" fill="%23e5372d"/%3E%3Cpolygon points="96,44 148,96 96,148 44,96" fill="%230c0b0a"/%3E%3C/svg%3E',
+            src: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"%3E%3Crect width="192" height="192" fill="%230e2f2f"/%3E%3Cpolygon points="96,16 176,96 96,176 16,96" fill="%23f0b429"/%3E%3Cpolygon points="96,44 148,96 96,148 44,96" fill="%230e2f2f"/%3E%3C/svg%3E',
             sizes: '192x192',
             type: 'image/svg+xml',
           },
           {
-            src: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"%3E%3Crect width="512" height="512" fill="%230c0b0a"/%3E%3Cpolygon points="256,40 472,256 256,472 40,256" fill="%23e5372d"/%3E%3Cpolygon points="256,120 392,256 256,392 120,256" fill="%230c0b0a"/%3E%3C/svg%3E',
+            src: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"%3E%3Crect width="512" height="512" fill="%230e2f2f"/%3E%3Cpolygon points="256,40 472,256 256,472 40,256" fill="%23f0b429"/%3E%3Cpolygon points="256,120 392,256 256,392 120,256" fill="%230e2f2f"/%3E%3C/svg%3E',
             sizes: '512x512',
             type: 'image/svg+xml',
           },

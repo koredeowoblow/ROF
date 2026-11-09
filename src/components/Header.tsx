@@ -49,14 +49,14 @@ export const Header: React.FC = () => {
       {/* Skip to main content link for keyboard accessibility */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[var(--acc)] focus:text-[#fff6ec] focus:outline-none"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[var(--acc)] focus:text-[var(--label-on-acc)] focus:outline-none"
       >
         Skip to main content
       </a>
 
       <header
         data-tone="ink"
-        className="fixed top-0 left-0 right-0 z-40 bg-[var(--ink)]/95 backdrop-blur-md border-b border-[rgba(236,230,216,0.18)]"
+        className="fixed top-0 left-0 right-0 z-40 bg-[var(--ink)]/95 backdrop-blur-md border-b border-[var(--hairline)]"
       >
         <div className="mx-auto flex h-16 md:h-20 max-w-[var(--max-content)] items-center justify-between px-4 md:px-8">
           {/* Left: Logo & Mindset Retention Badge */}
@@ -98,7 +98,7 @@ export const Header: React.FC = () => {
               type="button"
               onClick={() => setBagOpen(!bagOpen)}
               aria-label={`Shopping bag with ${totalPieces} items`}
-              className="touch-target-48 relative flex items-center gap-2 px-3 py-2 text-[var(--bone)] hover:text-[#fff6ec] transition-colors"
+              className="touch-target-48 relative flex items-center gap-2 px-3 py-2 text-[var(--bone)] hover:text-[var(--acc)] transition-colors"
             >
               <ShoppingBag className="h-5 w-5 stroke-[1.8]" />
               <span className="hidden sm:inline-block text-xs uppercase tracking-wider font-medium">
@@ -114,7 +114,7 @@ export const Header: React.FC = () => {
                     animate={{ scale: 1, y: 0, opacity: 1 }}
                     exit={{ scale: 0.5, opacity: 0 }}
                     transition={{ type: 'spring', stiffness: 500, damping: 25 }}
-                    className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--acc)] px-1.5 text-[10px] font-bold text-[#fff6ec]"
+                    className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--acc)] px-1.5 text-[10px] font-bold text-[var(--label-on-acc)]"
                   >
                     {totalPieces}
                   </motion.span>

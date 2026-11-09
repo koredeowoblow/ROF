@@ -17,7 +17,7 @@
     text-rendering: optimizeLegibility;
     scroll-behavior: smooth;
     scrollbar-width: thin;
-    scrollbar-color: rgba(236, 230, 216, 0.25) var(--ink);
+    scrollbar-color: rgba(236, 227, 203, 0.25) var(--ink);
   }
 
   /* Custom Luxury Scrollbar */
@@ -29,17 +29,17 @@
     background: var(--ink);
   }
   ::-webkit-scrollbar-thumb {
-    background: rgba(236, 230, 216, 0.22);
+    background: rgba(236, 227, 203, 0.22);
     border-radius: 3px;
   }
   ::-webkit-scrollbar-thumb:hover {
     background: var(--acc);
   }
 
-  /* High-fashion text highlight */
+  /* High-fashion text highlight: Marigold gold background with Pine teal text */
   ::selection {
     background-color: var(--acc);
-    color: #fff6ec;
+    color: var(--label-on-acc);
   }
 
   body {

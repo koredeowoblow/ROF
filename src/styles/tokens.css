@@ -1,10 +1,13 @@
 :root {
   /* Three colours, one rule */
-  --ink: #0c0b0a;
-  --bone: #ece6d8;
-  --acc-on-ink: #e5372d;
-  --acc-on-bone: #c1211a;
-  --label-on-acc: #fff6ec;
+  /* Main (about 60%): Pine teal */
+  --ink: #0e2f2f;
+  /* Second (about 30%): Aged cream */
+  --bone: #ece3cb;
+  /* Accent (about 10%): Marigold gold (italic headlines, big numbers, buttons, moving strip) */
+  --acc-on-ink: #f0b429;
+  --acc-on-bone: #8f5200; /* High-contrast burnished gold/amber on aged cream ground */
+  --label-on-acc: #0e2f2f; /* Deep pine teal label text on radiant marigold gold */
 
   /* Typography */
   --font-display: 'Instrument Serif', Georgia, serif;
@@ -33,14 +36,14 @@
   /* Max content width */
   --max-content: 1360px;
 
-  /* Default tone is ink */
+  /* Default tone is Pine Teal */
   --bg: var(--ink);
   --fg: var(--bone);
   --acc: var(--acc-on-ink);
-  --muted: rgba(236, 230, 216, 0.64);
-  --faint: rgba(236, 230, 216, 0.40);
-  --hairline: rgba(236, 230, 216, 0.18);
-  --surface-tint: rgba(236, 230, 216, 0.05);
+  --muted: rgba(236, 227, 203, 0.65);
+  --faint: rgba(236, 227, 203, 0.40);
+  --hairline: rgba(236, 227, 203, 0.16);
+  --surface-tint: rgba(236, 227, 203, 0.05);
 }
 
 /* Tone bindings: components read ONLY --fg, --bg, --acc, --muted, --hairline */
@@ -48,10 +51,10 @@
   --bg: var(--ink);
   --fg: var(--bone);
   --acc: var(--acc-on-ink);
-  --muted: rgba(236, 230, 216, 0.64);
-  --faint: rgba(236, 230, 216, 0.40);
-  --hairline: rgba(236, 230, 216, 0.18);
-  --surface-tint: rgba(236, 230, 216, 0.05);
+  --muted: rgba(236, 227, 203, 0.65);
+  --faint: rgba(236, 227, 203, 0.40);
+  --hairline: rgba(236, 227, 203, 0.16);
+  --surface-tint: rgba(236, 227, 203, 0.05);
   background-color: var(--bg);
   color: var(--fg);
 }
@@ -60,11 +63,10 @@
   --bg: var(--bone);
   --fg: var(--ink);
   --acc: var(--acc-on-bone);
-  --muted: rgba(12, 11, 10, 0.64);
-  --faint: rgba(12, 11, 10, 0.40);
-  --hairline: rgba(12, 11, 10, 0.18);
-  --surface-tint: rgba(12, 11, 10, 0.05);
+  --muted: rgba(14, 47, 47, 0.65);
+  --faint: rgba(14, 47, 47, 0.40);
+  --hairline: rgba(14, 47, 47, 0.16);
+  --surface-tint: rgba(14, 47, 47, 0.05);
   background-color: var(--bg);
   color: var(--fg);
 }
-

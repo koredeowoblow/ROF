@@ -68,7 +68,7 @@ export const DiamondCursor: React.FC = () => {
         <polygon
           points="8,1 15,8 8,15 1,8"
           fill="var(--acc)"
-          stroke="#fff6ec"
+          stroke="#0e2f2f"
           strokeWidth="1.2"
         />
       </svg>

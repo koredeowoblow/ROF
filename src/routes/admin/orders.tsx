@@ -303,7 +303,7 @@ function AdminOrdersPage() {
                       {order.status === 'packed' && (
                         <button
                           onClick={() => handleTransition(order.id, 'out_for_delivery')}
-                          className="px-2 py-1 bg-[var(--acc)] text-[#fff6ec] text-[10px] uppercase font-semibold"
+                          className="px-2 py-1 bg-[var(--acc)] text-[var(--label-on-acc)] text-[10px] uppercase font-semibold"
                         >
                           Dispatch
                         </button>
@@ -336,7 +336,7 @@ function AdminOrdersPage() {
           filteredOrders.map((order) => (
             <div
               key={order.id}
-              className="p-5 border border-[var(--hairline)] bg-[#121110] space-y-3"
+              className="p-5 border border-[var(--hairline)] bg-[#0a2323] space-y-3"
             >
               <div className="flex items-center justify-between">
                 <span className="font-mono font-bold text-base text-[var(--bone)]">{order.id}</span>
@@ -367,7 +367,7 @@ function AdminOrdersPage() {
                   {order.status === 'received' && (
                     <button
                       onClick={() => handleTransition(order.id, 'confirmed')}
-                      className="px-3 py-1.5 bg-[var(--acc)] text-[#fff6ec] text-xs font-semibold uppercase"
+                      className="px-3 py-1.5 bg-[var(--acc)] text-[var(--label-on-acc)] text-xs font-semibold uppercase"
                     >
                       Confirm
                     </button>
@@ -383,7 +383,7 @@ function AdminOrdersPage() {
                   {order.status === 'packed' && (
                     <button
                       onClick={() => handleTransition(order.id, 'out_for_delivery')}
-                      className="px-3 py-1.5 bg-[var(--acc)] text-[#fff6ec] text-xs font-semibold uppercase"
+                      className="px-3 py-1.5 bg-[var(--acc)] text-[var(--label-on-acc)] text-xs font-semibold uppercase"
                     >
                       Dispatch
                     </button>

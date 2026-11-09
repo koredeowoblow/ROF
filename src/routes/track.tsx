@@ -166,7 +166,7 @@ function TrackOrderPage() {
                       <span
                         className={`absolute -left-6 h-5 w-5 rounded-full flex items-center justify-center text-[10px] transition-colors ${
                           isDone
-                            ? 'bg-[var(--acc-on-bone)] text-[#fff6ec]'
+                            ? 'bg-[var(--acc-on-bone)] text-[var(--bone)]'
                             : 'bg-[var(--bone)] border border-[var(--hairline)] text-[var(--muted)]'
                         } ${isCurrent ? 'ring-4 ring-[var(--acc-on-bone)]/25 animate-pulse' : ''}`}
                       >

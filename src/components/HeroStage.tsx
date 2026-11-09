@@ -360,7 +360,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
       onMouseLeave={handleMouseLeave}
       data-tone="ink"
       className={cn(
-        'relative min-h-[96svh] w-full flex flex-col justify-between pt-16 sm:pt-20 pb-0 border-b border-[var(--hairline)] grain-overlay overflow-hidden select-none cursor-default bg-[#0c0b0a]',
+        'relative min-h-[96svh] w-full flex flex-col justify-between pt-16 sm:pt-20 pb-0 border-b border-[var(--hairline)] grain-overlay overflow-hidden select-none cursor-default bg-[var(--ink)]',
         className
       )}
     >
@@ -383,7 +383,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
         }}
         className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] sm:w-[1200px] h-[650px] pointer-events-none z-0"
       >
-        <div className="w-full h-full rounded-full bg-[radial-gradient(ellipse_at_center,rgba(229,55,45,0.25)_0%,rgba(236,230,216,0.06)_45%,transparent_70%)] blur-3xl" />
+        <div className="w-full h-full rounded-full bg-[radial-gradient(ellipse_at_center,rgba(240,180,41,0.18)_0%,rgba(236,227,203,0.05)_45%,transparent_70%)] blur-3xl" />
       </motion.div>
 
       {/* Massive Monumental Ghosted Typography */}
@@ -471,15 +471,15 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                   className={cn(
                     'px-3.5 py-1 text-[11px] font-mono uppercase tracking-[0.18em] transition-all cursor-pointer rounded-xs flex items-center gap-1.5',
                     isActive
-                      ? 'bg-[var(--acc)] text-[#fff6ec] font-bold shadow-md'
+                      ? 'bg-[var(--acc)] text-[var(--label-on-acc)] font-bold shadow-md'
                       : 'text-[var(--muted)] hover:text-[var(--bone)] hover:bg-[var(--bone)]/5'
                   )}
                 >
-                  <span className={isActive ? 'text-[#fff6ec]' : 'text-[var(--acc)]'}>
+                  <span className={isActive ? 'text-[var(--label-on-acc)]' : 'text-[var(--acc)]'}>
                     [{card.letter}]
                   </span>
                   <span>{card.label}</span>
-                  {isCardSealed && <Check size={11} className="text-[#fff6ec]" />}
+                  {isCardSealed && <Check size={11} className="text-[var(--label-on-acc)]" />}
                 </button>
               )
             })}
@@ -498,7 +498,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               className={cn(
                 'flex items-center gap-1 px-2.5 py-1 border text-[10px] uppercase tracking-wider cursor-pointer transition-colors rounded-xs',
                 showSpecs
-                  ? 'border-[var(--acc)] bg-[var(--acc)] text-[#fff6ec] font-bold'
+                  ? 'border-[var(--acc)] bg-[var(--acc)] text-[var(--label-on-acc)] font-bold'
                   : 'border-[var(--hairline)] text-[var(--bone)]/75 hover:text-[var(--bone)] hover:border-[var(--bone)] bg-[var(--ink)]/70'
               )}
             >
@@ -642,14 +642,14 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                     'absolute cursor-pointer select-none rounded-xl p-3.5 sm:p-5 flex flex-col justify-between transition-shadow duration-400',
                     'w-[135px] h-[205px] sm:w-[175px] sm:h-[265px] md:w-[200px] md:h-[305px]',
                     isSelected
-                      ? 'ring-2 ring-[var(--acc)] shadow-[0_24px_50px_rgba(229,55,45,0.45)]'
-                      : 'shadow-[0_16px_32px_rgba(0,0,0,0.7)] hover:shadow-[0_20px_40px_rgba(229,55,45,0.25)]'
+                      ? 'ring-2 ring-[var(--acc)] shadow-[0_24px_50px_rgba(240,180,41,0.3)]'
+                      : 'shadow-[0_16px_32px_rgba(0,0,0,0.7)] hover:shadow-[0_20px_40px_rgba(240,180,41,0.18)]'
                   )}
                 >
                   {/* FRONT FACE OF CARD */}
                   <div
                     style={{ backfaceVisibility: 'hidden' }}
-                    className="absolute inset-0 rounded-xl p-3.5 sm:p-5 flex flex-col justify-between bg-[#f7f3ea] text-[#141312] border border-[#2b2824] overflow-hidden"
+                    className="absolute inset-0 rounded-xl p-3.5 sm:p-5 flex flex-col justify-between bg-[var(--bone)] text-[var(--ink)] border border-[var(--hairline)] overflow-hidden"
                   >
                     {/* Top Specular Sheen */}
                     <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-white/45 pointer-events-none" />
@@ -659,7 +659,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                       <span
                         className={cn(
                           'font-serif text-2xl sm:text-3xl font-bold',
-                          card.letter === 'O' ? 'text-[var(--acc-on-bone)]' : 'text-[#141312]'
+                          card.letter === 'O' ? 'text-[var(--acc-on-bone)]' : 'text-[var(--ink)]'
                         )}
                       >
                         {card.letter}
@@ -670,7 +670,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                         filled
                         className="mt-0.5 opacity-90"
                       />
-                      <span className="font-mono text-[8px] text-[#575249] font-bold mt-1">
+                      <span className="font-mono text-[8px] text-[var(--muted)] font-bold mt-1">
                         {card.number}
                       </span>
                     </div>
@@ -687,13 +687,13 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                               points="50,10 90,50 50,90 10,50"
                               stroke="currentColor"
                               strokeWidth="4"
-                              fill="rgba(193,33,26,0.06)"
+                              fill="rgba(143,82,0,0.10)"
                             />
                             <polygon
                               points="50,28 72,50 50,72 28,50"
                               stroke="currentColor"
                               strokeWidth="2.5"
-                              fill="rgba(193,33,26,0.12)"
+                              fill="rgba(143,82,0,0.18)"
                             />
                             <circle cx="50" cy="50" r="4" fill="currentColor" />
                           </svg>
@@ -705,7 +705,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                         <div className="relative flex items-center justify-center my-1">
                           <svg
                             viewBox="0 0 80 80"
-                            className="w-16 h-16 sm:w-20 sm:h-20 text-[#2b2824]/25 absolute inset-0 m-auto pointer-events-none"
+                            className="w-16 h-16 sm:w-20 sm:h-20 text-[var(--ink)]/25 absolute inset-0 m-auto pointer-events-none"
                           >
                             <path
                               d="M 12,15 L 32,34 L 65,28 M 18,65 L 40,52 L 62,70"
@@ -714,14 +714,14 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                               fill="none"
                             />
                           </svg>
-                          <span className="relative z-10 font-serif font-bold text-6xl sm:text-7xl text-[#141312] drop-shadow-sm">
+                          <span className="relative z-10 font-serif font-bold text-6xl sm:text-7xl text-[var(--ink)] drop-shadow-sm">
                             {card.letter}
                           </span>
                         </div>
                       )}
 
                       {/* Card Pillar Tag */}
-                      <span className="relative z-10 font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.24em] font-bold text-[#4a453e] mt-1">
+                      <span className="relative z-10 font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.24em] font-bold text-[var(--muted)] mt-1">
                         {card.label}
                       </span>
                     </div>
@@ -738,7 +738,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                         <span
                           className={cn(
                             'font-serif text-2xl sm:text-3xl font-bold',
-                            card.letter === 'O' ? 'text-[var(--acc-on-bone)]' : 'text-[#141312]'
+                            card.letter === 'O' ? 'text-[var(--acc-on-bone)]' : 'text-[var(--ink)]'
                           )}
                         >
                           {card.letter}
@@ -759,7 +759,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                       backfaceVisibility: 'hidden',
                       transform: 'rotateY(180deg)',
                     }}
-                    className="absolute inset-0 rounded-xl p-3.5 sm:p-5 flex flex-col justify-between bg-[#11100f] text-[#ece6d8] border border-[var(--acc)] overflow-hidden shadow-2xl"
+                    className="absolute inset-0 rounded-xl p-3.5 sm:p-5 flex flex-col justify-between bg-[#0a2323] text-[var(--bone)] border border-[var(--acc)] overflow-hidden shadow-2xl"
                   >
                     <div className="absolute inset-2 border border-[var(--bone)]/20 rounded-lg flex items-center justify-center overflow-hidden">
                       <div className="absolute inset-0 opacity-15 bg-[radial-gradient(circle_at_center,var(--acc)_0%,transparent_70%)]" />
@@ -770,7 +770,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                       >
                         <polygon points="60,8 112,60 60,112 8,60" stroke="currentColor" strokeWidth="1" fill="none" />
                         <polygon points="60,20 100,60 60,100 20,60" stroke="currentColor" strokeWidth="1" fill="none" />
-                        <polygon points="60,32 88,60 60,88 32,60" stroke="var(--acc)" strokeWidth="1.5" fill="rgba(229,55,45,0.15)" />
+                        <polygon points="60,32 88,60 60,88 32,60" stroke="var(--acc)" strokeWidth="1.5" fill="rgba(240,180,41,0.20)" />
                         <polygon points="60,44 76,60 60,76 44,60" stroke="var(--acc)" strokeWidth="1" fill="none" />
                       </svg>
 
@@ -803,15 +803,15 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               'flex items-center gap-2 px-4 py-2 rounded-sm shadow-xl cursor-pointer transition-all border',
               isCurrentCardSealed
                 ? 'bg-[var(--bone)] text-[var(--ink)] border-[var(--bone)] font-bold'
-                : 'bg-[var(--acc)] hover:bg-[#c1211a] text-[#fff6ec] border-[#8a140f] font-semibold'
+                : 'bg-[var(--acc)] hover:bg-[#fabf36] text-[var(--label-on-acc)] border-[#e0a31a] font-bold shadow-[0_8px_24px_rgba(240,180,41,0.28)]'
             )}
           >
             {isSealing ? (
-              <Sparkles size={14} className="animate-spin text-[#fff6ec]" />
+              <Sparkles size={14} className="animate-spin text-[var(--label-on-acc)]" />
             ) : isCurrentCardSealed ? (
               <Check size={14} className="text-[var(--acc-on-bone)]" />
             ) : (
-              <ShieldCheck size={14} className="text-[#fff6ec]" />
+              <ShieldCheck size={14} className="text-[var(--label-on-acc)]" />
             )}
             <span className="font-mono text-[11px] uppercase tracking-wider">
               {isSealing
@@ -828,7 +828,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
             onClick={handleRollDice}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.94 }}
-            className="flex items-center gap-2 px-3.5 py-2 bg-[#c1211a] hover:bg-[#e5372d] text-[#fff6ec] rounded-sm shadow-lg border border-[#8a140f] cursor-pointer transition-colors"
+            className="flex items-center gap-2 px-3.5 py-2 bg-[#133d3d] hover:bg-[#184d4d] text-[var(--bone)] rounded-sm shadow-lg border border-[var(--acc)]/40 cursor-pointer transition-colors"
           >
             <motion.div
               animate={
@@ -841,24 +841,24 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                   : { rotateX: 0, rotateY: 0, scale: 1 }
               }
               transition={{ duration: 0.55, ease: 'easeInOut' }}
-              className="w-4 h-4 bg-[#96120c] rounded-xs border border-[#ffe0dc]/40 flex items-center justify-center p-0.5 shadow-inner"
+              className="w-4 h-4 bg-[#0e2f2f] rounded-xs border border-[var(--acc)]/60 flex items-center justify-center p-0.5 shadow-inner"
             >
               {diceNumber === 6 ? (
                 <div className="grid grid-cols-2 gap-0.5 w-full h-full p-0.5">
-                  <div className="w-1 h-1 bg-white rounded-full" />
-                  <div className="w-1 h-1 bg-white rounded-full" />
-                  <div className="w-1 h-1 bg-white rounded-full" />
-                  <div className="w-1 h-1 bg-white rounded-full" />
-                  <div className="w-1 h-1 bg-white rounded-full" />
-                  <div className="w-1 h-1 bg-white rounded-full" />
+                  <div className="w-1 h-1 bg-[var(--acc)] rounded-full" />
+                  <div className="w-1 h-1 bg-[var(--acc)] rounded-full" />
+                  <div className="w-1 h-1 bg-[var(--acc)] rounded-full" />
+                  <div className="w-1 h-1 bg-[var(--acc)] rounded-full" />
+                  <div className="w-1 h-1 bg-[var(--acc)] rounded-full" />
+                  <div className="w-1 h-1 bg-[var(--acc)] rounded-full" />
                 </div>
               ) : (
                 <div className="relative w-full h-full">
-                  <div className="absolute top-0 left-0 w-1 h-1 bg-white rounded-full" />
-                  <div className="absolute top-0 right-0 w-1 h-1 bg-white rounded-full" />
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-1 bg-white rounded-full" />
-                  <div className="absolute bottom-0 left-0 w-1 h-1 bg-white rounded-full" />
-                  <div className="absolute bottom-0 right-0 w-1 h-1 bg-white rounded-full" />
+                  <div className="absolute top-0 left-0 w-1 h-1 bg-[var(--acc)] rounded-full" />
+                  <div className="absolute top-0 right-0 w-1 h-1 bg-[var(--acc)] rounded-full" />
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-1 bg-[var(--acc)] rounded-full" />
+                  <div className="absolute bottom-0 left-0 w-1 h-1 bg-[var(--acc)] rounded-full" />
+                  <div className="absolute bottom-0 right-0 w-1 h-1 bg-[var(--acc)] rounded-full" />
                 </div>
               )}
             </motion.div>
@@ -895,7 +895,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               Destined for{' '}
               <motion.span
                 whileHover={{ scale: 1.04 }}
-                className="italic font-serif text-[var(--acc)] inline-block transition-transform duration-200 cursor-pointer drop-shadow-[0_4px_24px_rgba(229,55,45,0.45)]"
+                className="italic font-serif text-[var(--acc)] inline-block transition-transform duration-200 cursor-pointer drop-shadow-[0_4px_24px_rgba(240,180,41,0.35)]"
               >
                 riches.
               </motion.span>
@@ -961,7 +961,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                     navigate({ to: '/shop' })
                   }
                 }}
-                className="w-full sm:w-auto uppercase tracking-wider text-xs font-semibold px-8 py-4 cursor-pointer shadow-xl hover:shadow-[0_8px_30px_rgba(229,55,45,0.4)] transition-shadow"
+                className="w-full sm:w-auto uppercase tracking-wider text-xs font-semibold px-8 py-4 cursor-pointer shadow-xl hover:shadow-[0_8px_30px_rgba(240,180,41,0.3)] transition-shadow"
               >
                 Witness The Capsule
               </Button>
@@ -1043,7 +1043,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.94, y: 20 }}
               transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-              className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto bg-[#0f0e0d] border border-[var(--hairline)] rounded-lg p-6 sm:p-8 text-[var(--bone)] shadow-2xl"
+              className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto bg-[#0a2323] border border-[var(--hairline)] rounded-lg p-6 sm:p-8 text-[var(--bone)] shadow-2xl"
             >
               {/* Header */}
               <div className="flex items-center justify-between pb-4 border-b border-[var(--hairline)]">
@@ -1090,7 +1090,7 @@ export const HeroStage: React.FC<HeroStageProps> = ({ className }) => {
                 <button
                   type="button"
                   onClick={() => setShowCodex(false)}
-                  className="px-4 py-2 bg-[var(--acc)] text-[#fff6ec] uppercase tracking-wider text-[11px] font-bold rounded-xs cursor-pointer"
+                  className="px-4 py-2 bg-[var(--acc)] text-[var(--label-on-acc)] uppercase tracking-wider text-[11px] font-bold rounded-xs cursor-pointer"
                 >
                   RETURN TO SANCTUARY
                 </button>
